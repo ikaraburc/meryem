@@ -5,18 +5,18 @@ import telebot
 import json
 import time
 
-telegram_chat_id = 675290340
+telegram_chat_id = 5536977745
 
-TELEGRAM_API_KEY1 = '5262142568:AAEgoWC3f7PAsHhMr5QENw4k7wKPMRJo794'
+TELEGRAM_API_KEY1 = '6197528258:AAEb8-6_iuW1z7_tTsUBejj-H7e-_Lkn_Es'
 tbot_genel = telebot.TeleBot(TELEGRAM_API_KEY1)
 
-TELEGRAM_API_KEY2 = '5036185619:AAHOB2hLEaz1NDHfK6OBxqQZfiPUPqfj2fw'
+TELEGRAM_API_KEY2 = '6030385999:AAF6VgYmhQlc948iMHgSjNWp52XBaBteM6A'
 tbot_ozel = telebot.TeleBot(TELEGRAM_API_KEY2)
 
 # key ve secret key girilmesi
 def gen_sign(method, url, query_string=None, payload_string=None):
-    key = '271a6cf852703f7dd115beb53ce5a56b'
-    secret = '805d188cc47713286794cc827dd2594d9f665d48bf7c6e30386e636bb90d2157'
+    key = '26b35f7512bf529458763bb357ad9078'
+    secret = '20055569d1097c71dbc636b9295f9a2dbc69128d8e048aa1cf93494d7b4ab0b1'
 
     t = time.time()
     m = hashlib.sha512()
