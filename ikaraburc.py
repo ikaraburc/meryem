@@ -890,9 +890,9 @@ while True:
     af = min(af, taf)
     # ************- TSF -*******************************#
     
-    ssi, sfi, ms = 1, 3, 2
+    ssi, sfi, ms = 0, 4, 2
     if sf < mf:
-        ssi, sfi, ms = 2, 5, 4
+        ssi, sfi, ms = 1, 5, 4
         
     for fs in range(asi, afi + 1):
         if 50 <= mbids[fs] * fbids[fs]:
@@ -920,7 +920,7 @@ while True:
     sf = max(sf, tsf)
     # ************- HEDEFE ULAŞTIYSAK -*******************************#
     
-    if fbids[0] >= hf:
+    if fbids[0] >= max(hf, songaort * km):
         if tsf / fbids[0] < 1.005:
             sf = fbids[0]
         elif tsf / (fasks[0]-k) < 1.005:
