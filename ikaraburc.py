@@ -541,7 +541,7 @@ class coin_trader:
         
         anapara = round(usdt_to + agider - sgelir, 2)
         mmf = round(anapara / (usdt_to / cp + ctm) * 1.002, digit)
-        
+        print(usdt_to, agider, sgelir)
         harcanan = min(agider, anapara)
         if harcanan == 0:
             kar_tutari = 0
