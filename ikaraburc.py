@@ -543,7 +543,7 @@ class coin_trader:
         mmf = round(anapara / (usdt_to / cp + ctm) * 1.002, digit)
      
         harcanan = min(agider, anapara)
-        if harcanan == 0:
+        if ceder < 1:
             kar_tutari = 0
             kar_orani = 0
             mf = 0
