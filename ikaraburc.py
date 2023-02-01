@@ -525,26 +525,32 @@ class coin_trader:
         agider, sgelir, amiktar, limit = 0, 0, 0, 0
         mf, amf, mmf, kar_tutari, kar_orani = 0, 0, 0, 0, 0
  
-        if ceder >= 1:
-            for x in r:
-                limit = limit + 1
-                if x["currency_pair"] == r[0]["currency_pair"]:
-                    if x["side"] == "buy":
-                        miktar = miktar - float(x["amount"])
-                        agider = agider + float(x["amount"]) * float(x["price"])
-                        if x["fee_currency"] == coin_adi:
-                            miktar = miktar + float(x["fee"])
-                    else:
-                        miktar = miktar + float(x["amount"])
-                        sgelir = sgelir + float(x["amount"]) * float(x["price"]) / 1.002
+        for x in r:
+            limit = limit + 1
+            if x["currency_pair"] == str(self.coin).upper():
+                if x["side"] == "buy":
+                    miktar = miktar - float(x["amount"])
+                    agider = agider + float(x["amount"]) * float(x["price"])
+                    if x["fee_currency"] == coin_adi:
+                        miktar = miktar + float(x["fee"])
                 else:
-                    break
+                    miktar = miktar + float(x["amount"])
+                    sgelir = sgelir + float(x["amount"]) * float(x["price"]) / 1.002
+            else:
+                break
+        
+        anapara = round(usdt_to + agider - sgelir, 2)
+        mmf = round(anapara / (usdt_to / cp + ctm) * 1.002, digit)
+        
+        harcanan = min(agider, anapara)
+        if harcanan == 0:
+            kar_tutari = 0
+            kar_orani = 0
+            mf = 0
+        else:
             kar_tutari = round(sgelir + ceder - agider, 2)
-            anapara = round(usdt_to + agider - sgelir, 2)
-            harcanan = min(agider, anapara)
             kar_orani = round(kar_tutari / harcanan * 100, 2)
             mf = round((agider - sgelir) / ctm * 1.002, digit)
-            mmf = round(anapara / (usdt_to / cp + ctm) * 1.002, digit)
 
         bilanco = PrettyTable()
         bilanco.field_names = [str(self.coin).upper(), cp]
@@ -833,13 +839,14 @@ while True:
         hsf = max(songaort, sonafiyat) * km
 
     elif sonislem == "sell":
-        haf = min(songsort, sonsfiyat) / km
+        haf = min(songaort, sonaort)
         hsf = sonsort
         if tut0 > mulk/slk * 0.7:
+            haf = min(songsort, sonsfiyat) / km
             hsf = max(songaort * km, songsort * km)
 
     af = haf
-    if adk >= 1.07 and haf > 0:
+    if adk >= 1.07:
         af = min(af, zaf)
         
     sf = hsf
@@ -881,9 +888,7 @@ while True:
             taf = fbids[yai] + k
         af = taf
    
-    if ceder < mulk / slk:
-        p1 = max(ctm * cp - mulk / alk, 10)
-        p2 = usdt_to - p1
+    if harcanan < mulk /4:
         haf = taf
         af = taf
     
