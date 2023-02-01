@@ -858,9 +858,10 @@ while True:
         
         m1 = max(mulk / alk - usdt_to, 10) / cp
         m2 = ctm - m1
-
+    
+    hf = max(hf, songaort * km, sonaort * km, fbids[1])
     if sf >= hf:
-        sf = max(min(sf, hf), songaort * km)
+        sf = min(sf, hf)
     
         
     # ************- TAF -*******************************#
@@ -925,7 +926,7 @@ while True:
     sf = max(sf, tsf)
     # ************- HEDEFE ULAŞTIYSAK -*******************************#
     
-    if fbids[0] >= max(hf, songaort * km):
+    if fbids[0] >= hf:
         if tsf / fbids[0] < 1.005:
             sf = fbids[0]
         elif tsf / (fasks[0]-k) < 1.005:
@@ -980,7 +981,7 @@ while True:
     # ************- EKRANA PRİNT BÖLÜMÜ -*******************************#
     fiyatlar = PrettyTable()
     fiyatlar.field_names = [str(str(bolge) + " adk=" + str(adk) + " km=" + str(km)), str("cp= " + str(cp)),
-                            str("hf " + str(hf))]
+                            str("hf " + str(round(hf,digit)))]
     fiyatlar.add_row([str("af,sf,hp= " + str(round(hp, 2))), round(af, digit), round(sf, digit)])
     fiyatlar.add_row(
         [str(str(sonislem) + " haf,hsf " + str(round(hsf / haf, 2))), round(haf, digit), round(hsf, digit)])
