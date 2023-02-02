@@ -996,7 +996,7 @@ while True:
     fiyatlar.add_row([str("zaf, zsf zk=" + str(round(zk, 2))), round(zaf, digit), round(zsf, digit)])
     fiyatlar.add_row([str("zip_min, zip_max tdk=" + str(tdk)), round(zip_min, digit), round(zip_max, digit)])
     fiyatlar.add_row([str(str(round(mulk, 2)) +"$ "+str(round(ctm, mdigit))+"#"), round(mulk / alk, 2), round(mulk / slk / cp, mdigit)])
-    fiyatlar.add_row([str("alk, slk=" + str(alk) +"-"+str(slk)), round(amiktar * af, 2), round(smiktar, mdigit)])
+    fiyatlar.add_row([str("alk, slk=" + str(alk) +"-"+str(slk)), round(p1, 2), round(m1, mdigit)])
 
     print(fiyatlar)
 
