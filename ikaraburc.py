@@ -635,7 +635,7 @@ while True:
         tc_fiyatlar()
         t1 = time.time()
 
-        if len(toplu) > 20 * 60 / veri_sn :
+        if len(toplu) > 10 * 60 / veri_sn :
             toplu.pop(0)
 
     if harcanan >= mulk / 5:
