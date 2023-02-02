@@ -660,9 +660,11 @@ while True:
                 
             while True:
                 tc_degisim()
-                if bulunanlar[-1] != "abcd":
+                ct = coin_trader(str(bulunan))
+                ct.mumlar_10s()
+                if tmumlar[0] >= min(dmumlar[:120]) * 1.10:
                     tbot_ozel.send_message(telegram_chat_id, str(bulunan + str(" coine girildi...")))
-                    ct = coin_trader(str(bulunan))
+                    
                     ct.coin_digit()
                     T1 = threading.Thread(target=ct.coin_fiyat)
                     T2 = threading.Thread(target=ct.bakiye_getir)
@@ -703,15 +705,15 @@ while True:
 
     if adk >= 1.15:
         bolge = "USYükseliş..."
-        asi, afi, ma = 1, 10, 7
+        asi, afi, ma = 2, 10, 7
 
     elif 1.15 > adk >= 1.10:
         bolge = "SYükseliş..."
-        asi, afi, ma = 1, 8, 6
+        asi, afi, ma = 2, 8, 6
 
     elif 1.10 > adk >= 1.05:
         bolge = "Yükseliş..."
-        asi, afi, ma = 1, 6, 5
+        asi, afi, ma = 1, 6, 4
 
     elif 1.05 > adk and tdk >= 1.03:
         bolge = "Stabil"
@@ -827,7 +829,7 @@ while True:
         m2 = sm2
 
     # ************- HAF + HSF -*******************************#
-    haf, hsf = 0, 0
+    haf, hsf = zaf, zsf
     if sonislem == "buy":
         haf = sonaort
         if tut0 > mulk / alk * 0.7:
@@ -948,7 +950,7 @@ while True:
             afiyat = af
             afiyat1 = round(min(afiyat * 0.93, fbids[10] + k), digit)
 
-            amiktar = (p1 - 0.5)/afiyat
+            amiktar = (p1 - 0.5) / afiyat
             amiktar1 = (usdt_to - p1) / afiyat1
 
             ct.coklu_al()
@@ -967,7 +969,7 @@ while True:
             if m2 > 0:
                 f2 = (hp - sf * m1 - usdt_to) / m2
             
-            if sf < hf:
+            if sf < hf or sf * ctm < hp:
                 m1 = m1 - 4/sf
                 
             sfiyat1 = round(max(sf * 1.1, fasks[10] - k, f2), digit)
