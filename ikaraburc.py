@@ -705,11 +705,11 @@ while True:
 
     if adk >= 1.15:
         bolge = "USYükseliş..."
-        asi, afi, ma = 2, 10, 7
+        asi, afi, ma = 5, 10, 7
 
     elif 1.15 > adk >= 1.10:
         bolge = "SYükseliş..."
-        asi, afi, ma = 2, 8, 6
+        asi, afi, ma = 4, 7, 5
 
     elif 1.10 > adk >= 1.05:
         bolge = "Yükseliş..."
