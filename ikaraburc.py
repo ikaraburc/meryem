@@ -849,12 +849,12 @@ while True:
         
     sf = hsf
 
-    if usdt_to <= mulk / alk and cp < sonafiyat * 0.99:
+    if usdt_to <= mulk /4:
         if hsf / zsf < km:
             zsf = hsf
         sf = min(hsf, zsf)
         
-        m1 = max(mulk / alk - usdt_to, 10) / cp
+        m1 = max(mulk / 4 - usdt_to, 10) / cp
         m2 = ctm - m1
     
     hf = max(hf, songaort * km, sonaort * km, fbids[1])
