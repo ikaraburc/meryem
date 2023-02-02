@@ -703,11 +703,11 @@ while True:
 
     if adk >= 1.15:
         bolge = "USYükseliş..."
-        asi, afi, ma = 2, 10, 6
+        asi, afi, ma = 1, 10, 7
 
     elif 1.15 > adk >= 1.10:
         bolge = "SYükseliş..."
-        asi, afi, ma = 2, 8, 6
+        asi, afi, ma = 1, 8, 6
 
     elif 1.10 > adk >= 1.05:
         bolge = "Yükseliş..."
@@ -967,7 +967,7 @@ while True:
             if m2 > 0:
                 f2 = (hp - sf * m1 - usdt_to) / m2
             
-            if sf < hf or kar_orani < 1.03:
+            if sf < hf:
                 m1 = m1 - 4/sf
                 
             sfiyat1 = round(max(sf * 1.1, fasks[10] - k, f2), digit)
