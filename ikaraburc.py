@@ -612,8 +612,6 @@ yeni_tara = "hayır"
 if ceder < 1:
     yeni_tara = "evet"
 
-tbot_ozel.send_message(telegram_chat_id, str("İşlem yeniden başlatıldı."))
-
 afiyat = cp * 0.98
 sfiyat = cp * 1.05
 msg_bilgi = "hayır"
@@ -701,11 +699,11 @@ while True:
 
     alk, slk = 4, 4
     km = round(max(min(zip_max/cp * 0.9, 1.07), 1.03), 2)
-    zk = round(max(1.05, (1 + (tdk - 1) * 0.35)), 2)
+    zk = round(max(1.05, (1 + (tdk - 1) * 0.4)), 2)
 
     if adk >= 1.15:
         bolge = "USYükseliş..."
-        asi, afi, ma = 5, 10, 7
+        asi, afi, ma = 5, 12, 7
 
     elif 1.15 > adk >= 1.10:
         bolge = "SYükseliş..."
@@ -723,7 +721,7 @@ while True:
     if tdk < 1.03:
         bolge = "Ölü"
         km = 1.02
-        alk, slk = 2, 2
+        alk, slk = 3, 3
         asi, afi, ma = 0, 5, 2
 
     # ************- ZAF + ZSF BUL -*******************************#
@@ -898,7 +896,7 @@ while True:
     
     ssi, sfi, ms = 0, 4, 2
     if sf < mf:
-        ssi, sfi, ms = 1, 5, 4
+        ssi, sfi, ms = 1, 4, 4
         
     for fs in range(asi, afi + 1):
         if 50 <= mbids[fs] * fbids[fs]:
