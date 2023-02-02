@@ -521,9 +521,8 @@ class coin_trader:
 
         miktar = ctm
         anapara = mulk
-        harcanan = 0
-        agider, sgelir, amiktar, limit = 0, 0, 0, 0
-        mf, amf, mmf, kar_tutari, kar_orani = 0, 0, 0, 0, 0
+        agider, sgelir, limit = 0, 0, 0
+        mf, mmf, kar_orani = 0, 0, 0
  
         for x in r:
             limit = limit + 1
@@ -541,11 +540,10 @@ class coin_trader:
         
         anapara = round(usdt_to + agider - sgelir, 2)
         kar_tutari = round(ceder - agider + sgelir, 2)
-        mmf = round(anapara / (usdt_to / cp + ctm) * 1.002, digit)
-        
         harcanan = min(agider, anapara)
         if ceder >= 1:
             mf = round((agider - sgelir) / ctm * 1.002, digit)
+            mmf = round(anapara / (usdt_to / cp + ctm) * 1.002, digit)
         if harcanan > 1:
             kar_orani = round(kar_tutari / harcanan * 100, 2)
        
@@ -563,7 +561,7 @@ class coin_trader:
         sonislem, sonafiyat, sonsfiyat = "bos", 0, 0
         sonislems = r[:limit]
         if ceder >= 1:
-            for x in sonislems:
+            for x in r:
                 if x["side"] == "buy":
                     sonafiyat = float(x["price"])
                     break
@@ -697,8 +695,11 @@ while True:
     tdk = round(zip_max / zip_min, 2)
     adk = round(cp / zip_min, 2)
 
-    alk, slk = 4, 4
-    km = round(max(min(zip_max/cp * 0.9, 1.07), 1.03), 2)
+    alk, slk = 5, 5
+    if cp < mf and adk >= 1.10:
+        alk, slk = 4, 2
+        
+    km = round(max(min(zip_max/cp * 0.9, 1.07), 1.02), 2)
     zk = round(max(1.05, (1 + (tdk - 1) * 0.4)), 2)
 
     if adk >= 1.15:
@@ -720,9 +721,8 @@ while True:
     
     if tdk < 1.03:
         bolge = "Ölü"
-        km = 1.02
-        alk, slk = 3, 3
         asi, afi, ma = 0, 5, 2
+        alk, slk = 2, 2
 
     # ************- ZAF + ZSF BUL -*******************************#
 
@@ -761,7 +761,7 @@ while True:
                 gamik = gamik + float(sonislems[i]["amount"])
                 gatut = gatut + float(sonislems[i]["price"]) * float(sonislems[i]["amount"])
                 songaort = gatut / gamik
-                if gamik >= mulk / alk / cp * 0.9:
+                if gatut >= mulk / alk * 0.9:
                     break
 
         for i in range(0, len(sonislems)):
@@ -769,7 +769,7 @@ while True:
                 gsmik = gsmik + float(sonislems[i]["amount"])
                 gstut = gstut + float(sonislems[i]["price"]) * float(sonislems[i]["amount"])
                 songsort = gstut / gsmik
-                if gsmik >= mulk / alk / cp * 0.9:
+                if gstut >= mulk / slk * 0.9:
                     break
 
         for i in range(len(sonislems)):
@@ -802,18 +802,25 @@ while True:
     else:
         sonaort = 0
         sonsort = 0
-    p1 = mulk / alk
+    p1 = usdt_to % (mulk / alk)
     p2 = usdt_to - p1
 
-    m1 = mulk / slk / cp
+    m1 = ctm % (mulk / slk / cp)
     m2 = ctm - m1
-
+    
     if usdt_to <= mulk / alk * 1.1:
         p1 = usdt_to
         p2 = 0
+    elif min(p1, p2) <= mulk/10:
+        p1 = mulk/alk
+        p2 = usdt_to - p1
+    
     if ceder <= mulk / slk * 1.1:
         m1 = ctm
         m2 = 0
+    elif min(m1, m2) * cp <= mulk/10:
+        m1 = mulk / slk / cp
+        m2 = ctm - m1
 
     if p2 > 0:
         ap1 = min(p1, p2)
@@ -825,19 +832,19 @@ while True:
         sm2 = max(m1, m2)
         m1 = sm1
         m2 = sm2
-
+ 
     # ************- HAF + HSF -*******************************#
     haf, hsf = zaf, zsf
     if sonislem == "buy":
         haf = sonaort
-        if tut0 > mulk / alk * 0.7:
+        if max(tut0, p1)>= mulk / alk * 0.9:
             haf = songaort / km
         hsf = max(songaort, sonafiyat) * km
 
     elif sonislem == "sell":
         haf = min(songaort, sonaort, sonsort/km)
         hsf = sonsort
-        if tut0 > mulk/slk * 0.7:
+        if max(m1 * cp, tut0) >= mulk/slk/cp * 0.9:
             haf = min(songsort, sonsfiyat) / km
             hsf = max(songaort * km, songsort * km)
 
@@ -847,19 +854,19 @@ while True:
         
     sf = hsf
 
-    if usdt_to <= mulk /4:
+    if usdt_to <= mulk/4:
         if hsf / zsf < km:
             zsf = hsf
         sf = min(hsf, zsf)
         
-        m1 = max(mulk / 4 - usdt_to, 10) / cp
+        m1 = max(mulk/4 - usdt_to, 10) / cp
         m2 = ctm - m1
     
+        
     hf = max(hf, songaort * km, sonaort * km, fbids[1])
     if sf >= hf:
         sf = min(sf, hf)
-    
-        
+            
     # ************- TAF -*******************************#
 
     for fa in range(asi, afi + 1):
@@ -896,7 +903,7 @@ while True:
     
     ssi, sfi, ms = 0, 4, 2
     if sf < mf:
-        ssi, sfi, ms = 1, 4, 4
+        ssi, sfi, ms = 2, 5, 4
         
     for fs in range(asi, afi + 1):
         if 50 <= mbids[fs] * fbids[fs]:
@@ -987,9 +994,9 @@ while True:
     fiyatlar.add_row(["son gaort, gsort ", round(songaort, digit), round(songsort, digit)])
     fiyatlar.add_row([str("taf, tsf " + str(round(tsf / taf, 2))), round(taf, digit), round(tsf, digit)])
     fiyatlar.add_row([str("zaf, zsf zk=" + str(round(zk, 2))), round(zaf, digit), round(zsf, digit)])
-    fiyatlar.add_row(
-        [str("zip_min, zip_max tdk=" + str(tdk)), round(zip_min, digit), round(zip_max, digit)])
-    fiyatlar.add_row([str("dolar, adet " + str(round(mulk, 2))), round(mulk / alk, 2), round(mulk / slk / cp, mdigit)])
+    fiyatlar.add_row([str("zip_min, zip_max tdk=" + str(tdk)), round(zip_min, digit), round(zip_max, digit)])
+    fiyatlar.add_row([str(str(round(mulk, 2)) +"$ "+str(round(ctm, mdigit))+"#"), round(mulk / alk, 2), round(mulk / slk / cp, mdigit)])
+    fiyatlar.add_row([str("alk, slk=" + str(alk) +"-"+str(slk)), round(amiktar * af, 2), round(smiktar, mdigit)])
 
     print(fiyatlar)
 
