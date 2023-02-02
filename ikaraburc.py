@@ -540,17 +540,15 @@ class coin_trader:
                 break
         
         anapara = round(usdt_to + agider - sgelir, 2)
+        kar_tutari = round(ceder - agider + sgelir, 2)
         mmf = round(anapara / (usdt_to / cp + ctm) * 1.002, digit)
-     
+        
         harcanan = min(agider, anapara)
-        if ceder < 1:
-            kar_tutari = 0
-            kar_orani = 0
-            mf = 0
-        else:
-            kar_tutari = round(sgelir + ceder - agider, 2)
-            kar_orani = round(kar_tutari / harcanan * 100, 2)
+        if ceder >= 1:
             mf = round((agider - sgelir) / ctm * 1.002, digit)
+        if harcanan > 1:
+            kar_orani = round(kar_tutari / harcanan * 100, 2)
+       
 
         bilanco = PrettyTable()
         bilanco.field_names = [str(self.coin).upper(), cp]
@@ -613,10 +611,8 @@ alim_ok = "hayır"
 yeni_tara = "hayır"
 if ceder < 1:
     yeni_tara = "evet"
-    tbot_ozel.send_message(telegram_chat_id, str("Elde coin kalmadığı için yeni coin taranıyor."))
-else:
-    tbot_ozel.send_message(telegram_chat_id, bilanco)
-    tbot_ozel.send_message(telegram_chat_id, str("İşlem yeniden başlatıldı."))
+
+tbot_ozel.send_message(telegram_chat_id, str("İşlem yeniden başlatıldı."))
 
 afiyat = cp * 0.98
 sfiyat = cp * 1.05
@@ -711,11 +707,11 @@ while True:
 
     elif 1.15 > adk >= 1.10:
         bolge = "SYükseliş..."
-        asi, afi, ma = 2, 8, 5
+        asi, afi, ma = 2, 8, 6
 
     elif 1.10 > adk >= 1.05:
         bolge = "Yükseliş..."
-        asi, afi, ma = 2, 6, 4
+        asi, afi, ma = 1, 6, 5
 
     elif 1.05 > adk and tdk >= 1.03:
         bolge = "Stabil"
@@ -890,6 +886,8 @@ while True:
         af = taf
    
     if harcanan < mulk /4:
+        if ceder > 1:
+            p1 = max(mulk/alk - ceder, 10)
         haf = taf
         af = taf
     
