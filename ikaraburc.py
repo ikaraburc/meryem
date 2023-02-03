@@ -554,7 +554,7 @@ class coin_trader:
         bilanco.add_row([str(" Usdt= " + str(round(usdt_to, 2))), str("mmf= " + str(mmf))])
         bilanco.add_row([str("Apara= " + str(round(anapara, 2))), str(str("harcanan= ") + str(round(harcanan, 2)))])
         bilanco.add_row(
-            [str(" Mülk= " + str(round(mulk, 2))), str(str("Max ctm= ") + str(round(usdt_to / cp + ctm, mdigit)))])
+            [str(" Mülk= " + str(round(mulk, 2))), str(str("Agider= ") + str(round(agider, 2)))])
         bilanco.add_row([str(str(kar_tutari) + " $"), str("% " + str(kar_orani))])
         bilanco.align[str(self.coin).upper()] = "l"
 
@@ -658,9 +658,9 @@ while True:
                 tc_degisim()
                 ct = coin_trader(str(bulunan))
                 ct.mumlar_10s()
-                toran = round(tmumlar[0] / min(dmumlar[:120]),2)
-                print("10 dakika dip fiyat = ", min(dmumlar[:120]), " % ", toran)
-                if toran >= 1.10:
+                toran = round(tmumlar[0] / min(dmumlar[:90]),2)
+                print("10 dakika dip fiyat = ", min(dmumlar[:90]), " % ", toran)
+                if max(toran, bul_oran)>= 1.10:
                     tbot_ozel.send_message(telegram_chat_id, str(bulunan + str(" coine girildi...")))
                     
                     ct.coin_digit()
@@ -691,37 +691,38 @@ while True:
                 continue
     # ************- STABİL - PUMP - DUMP BÖLGESİ -*******************************#
 
-    at = 6 * 45
+    at = 6 * 30
     zip_max = max(tmumlar[:at])
     zip_min = min(dmumlar[:at])
     tdk = round(zip_max / zip_min, 2)
     adk = round(cp / zip_min, 2)
-
-    alk, slk = 4, 4
         
-    km = round(max(min(zip_max/cp * 0.9, 1.05), 1.02), 2)
-    zk = round(max(1.05, (1 + (tdk - 1) * 0.4)), 2)
+    km = 1.02
+    zk = round(max(1.05, 1 + 0.4 * (tdk-1)),2)
 
     if adk >= 1.15:
         bolge = "USYükseliş..."
         asi, afi, ma = 5, 10, 5
+        alk, slk = 4, 2
 
     elif 1.15 > adk >= 1.10:
         bolge = "SYükseliş..."
         asi, afi, ma = 4, 7, 4
+        alk, slk = 4, 2
 
     elif 1.10 > adk >= 1.05:
         bolge = "Yükseliş..."
-        asi, afi, ma = 2, 6, 3
+        asi, afi, ma = 2, 6, 2
+        alk, slk = 3, 3
 
     elif 1.05 > adk and tdk >= 1.03:
         bolge = "Stabil"
         asi, afi, ma = 1, 5, 2
-        alk, slk = 3, 3
+        alk, slk = 2, 2
     
     if tdk < 1.03:
         bolge = "Ölü"
-        alk, slk = 3, 3
+        alk, slk = 1, 1
         asi, afi, ma = 1, 5, 2
 
     # ************- ZAF + ZSF BUL -*******************************#
@@ -743,9 +744,7 @@ while True:
     hp = anapara + harcanan * (km - 1)
     if ceder >= 1:
         hf = round(max((hp - usdt_to) / ctm, fbids[1]), digit)
-        if mulk > anapara and mf <= 0:
-            hf = fbids[1]
-
+      
     # ************- AL SAT GEÇMİŞ BÖLÜMÜ -*******************************#
 
     sonort0, sonort1 = 0, 0
@@ -837,14 +836,14 @@ while True:
     haf, hsf = zaf, zsf
     if sonislem == "buy":
         haf = sonaort
-        if max(tut0, p1)>= mulk / alk * 0.9:
+        if max(tut0, p1)>= mulk / 4 * 0.9:
             haf = songaort / km
         hsf = max(songaort, sonafiyat) * km
 
     elif sonislem == "sell":
         haf = min(songaort, sonaort, sonsort/km)
         hsf = sonsort
-        if max(m1 * cp, tut0) >= mulk/slk/cp * 0.9:
+        if max(m1 * cp, tut0) >= mulk/4/cp * 0.9:
             haf = min(songsort, sonsfiyat) / km
             hsf = max(songaort * km, songsort * km)
 
@@ -854,14 +853,13 @@ while True:
         
     sf = hsf
 
-    if usdt_to <= mulk/4:
+    if usdt_to <= mulk/alk:
         if hsf / zsf < km:
             zsf = hsf
         sf = min(hsf, zsf)
         
-        m1 = max(mulk/4 - usdt_to, 10) / cp
+        m1 = max(mulk/alk - usdt_to, 10) / cp
         m2 = ctm - m1
-    
         
     hf = max(hf, songaort * km, sonaort * km, fbids[1])
     if sf >= hf:
@@ -882,7 +880,7 @@ while True:
         taf = fbids[eai] + k
 
     if af >= taf * 1.003:
-        for yai in range(eai, asi - 1, -1):
+        for yai in range(eai, - 1, -1):
             if abs(taf - fbids[yai]) / fbids[yai] >= 3 / 1000:
                 yai = yai + 1
                 break
@@ -902,9 +900,7 @@ while True:
     af = min(af, taf)
     # ************- TSF -*******************************#
     
-    ssi, sfi, ms = 0, 4, 2
-    if sf < mf:
-        ssi, sfi, ms = 2, 5, 4
+    ssi, sfi, ms = 0, 5, 2
         
     for fs in range(asi, afi + 1):
         if 50 <= mbids[fs] * fbids[fs]:
@@ -919,8 +915,8 @@ while True:
         tsf = fasks[esi] - k
 
     if sf <= tsf * 1.003:
-        for ysi in range(esi, ssi - 1, -1):
-            if abs(tsf - fasks[ysi]) / fasks[ysi] >= 3 / 1000:
+        for ysi in range(esi, - 1, -1):
+            if abs(tsf - fasks[ysi]) / fasks[ysi] >= 0.5/100:
                 ysi = ysi + 1
                 break
         if fasks[ysi] == sfiyat:
