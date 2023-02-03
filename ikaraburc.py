@@ -722,6 +722,7 @@ while True:
     if tdk < 1.03:
         bolge = "Ölü"
         alk, slk = 3, 3
+        asi, afi, ma = 1, 5, 2
 
     # ************- ZAF + ZSF BUL -*******************************#
 
@@ -891,10 +892,10 @@ while True:
             taf = fbids[yai] + k
         af = taf
    
-    if harcanan < mulk/3:
+    if harcanan < mulk/alk:
         haf = taf
         if ceder > 1:
-            p1 = max(mulk/3 - ceder, 10)
+            p1 = max(mulk/alk - ceder, 10)
             
         af = taf
     
