@@ -695,7 +695,7 @@ while True:
     zip_max = max(tmumlar[:at])
     zip_min = min(dmumlar[:at])
     tdk = round(zip_max / zip_min, 2)
-    adk = round(cp / zip_min, 2)
+    adk = round(fbids[0] / zip_min, 2)
         
     km = 1.02
     zk = round(max(1.05, 1 + 0.4 * (tdk-1)),2)
@@ -836,14 +836,14 @@ while True:
     haf, hsf = zaf, zsf
     if sonislem == "buy":
         haf = sonaort
-        if max(tut0, p1)>= mulk / 4 * 0.9:
+        if max(tut0, p1)>= mulk / alk * 0.9:
             haf = songaort / km
         hsf = max(songaort, sonafiyat) * km
 
     elif sonislem == "sell":
         haf = min(songaort, sonaort, sonsort/km)
         hsf = sonsort
-        if max(m1 * cp, tut0) >= mulk/4/cp * 0.9:
+        if max(m1 * cp, tut0) >= mulk/slk * 0.9:
             haf = min(songsort, sonsfiyat) / km
             hsf = max(songaort * km, songsort * km)
 
