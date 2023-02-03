@@ -658,7 +658,9 @@ while True:
                 tc_degisim()
                 ct = coin_trader(str(bulunan))
                 ct.mumlar_10s()
-                if tmumlar[0] >= min(dmumlar[:120]) * 1.10:
+                toran = round(tmumlar[0] / min(dmumlar[:120]),2)
+                print("10 dakika dip fiyat = ", min(dmumlar[:120]), " % ", toran)
+                if toran >= 1.10:
                     tbot_ozel.send_message(telegram_chat_id, str(bulunan + str(" coine girildi...")))
                     
                     ct.coin_digit()
@@ -695,24 +697,22 @@ while True:
     tdk = round(zip_max / zip_min, 2)
     adk = round(cp / zip_min, 2)
 
-    alk, slk = 5, 5
-    if cp < mf and adk >= 1.10:
-        alk, slk = 4, 2
+    alk, slk = 4, 4
         
-    km = round(max(min(zip_max/cp * 0.9, 1.07), 1.02), 2)
+    km = round(max(min(zip_max/cp * 0.9, 1.05), 1.02), 2)
     zk = round(max(1.05, (1 + (tdk - 1) * 0.4)), 2)
 
     if adk >= 1.15:
         bolge = "USYükseliş..."
-        asi, afi, ma = 5, 12, 7
+        asi, afi, ma = 5, 10, 5
 
     elif 1.15 > adk >= 1.10:
         bolge = "SYükseliş..."
-        asi, afi, ma = 4, 7, 5
+        asi, afi, ma = 4, 7, 4
 
     elif 1.10 > adk >= 1.05:
         bolge = "Yükseliş..."
-        asi, afi, ma = 1, 6, 4
+        asi, afi, ma = 2, 6, 3
 
     elif 1.05 > adk and tdk >= 1.03:
         bolge = "Stabil"
@@ -721,8 +721,7 @@ while True:
     
     if tdk < 1.03:
         bolge = "Ölü"
-        asi, afi, ma = 0, 5, 2
-        alk, slk = 2, 2
+        alk, slk = 3, 3
 
     # ************- ZAF + ZSF BUL -*******************************#
 
@@ -740,7 +739,7 @@ while True:
     zsf = zsf / 1.005
 
     hf = 0
-    hp = anapara + harcanan * (max(1.03, km) - 1)
+    hp = anapara + harcanan * (km - 1)
     if ceder >= 1:
         hf = round(max((hp - usdt_to) / ctm, fbids[1]), digit)
         if mulk > anapara and mf <= 0:
@@ -892,10 +891,11 @@ while True:
             taf = fbids[yai] + k
         af = taf
    
-    if harcanan < mulk /4:
-        if ceder > 1:
-            p1 = max(mulk/alk - ceder, 10)
+    if harcanan < mulk/3:
         haf = taf
+        if ceder > 1:
+            p1 = max(mulk/3 - ceder, 10)
+            
         af = taf
     
     af = min(af, taf)
@@ -932,9 +932,9 @@ while True:
     # ************- HEDEFE ULAŞTIYSAK -*******************************#
     
     if fbids[0] >= hf:
-        if tsf / fbids[0] < 1.005:
+        if tsf / fbids[0] < 1.01:
             sf = fbids[0]
-        elif tsf / (fasks[0]-k) < 1.005:
+        elif tsf / (fasks[0]-k) < 1.01:
             sf = fasks[0] - k
         else:
             sf = tsf
@@ -974,7 +974,7 @@ while True:
             if m2 > 0:
                 f2 = (hp - sf * m1 - usdt_to) / m2
             
-            if sf < hf or sf * ctm < hp:
+            if sf < hf or sf * ctm + usdt_to < hp:
                 m1 = m1 - 4/sf
                 
             sfiyat1 = round(max(sf * 1.1, fasks[10] - k, f2), digit)
