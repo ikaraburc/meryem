@@ -859,7 +859,7 @@ while True:
 
     elif sonislem == "sell":
         haf = min(max(songaort,sonaort), sonsort/km)
-        hsf = sonsort
+        hsf = max(songaort, sonafiyat) * km
         if max(m1 * cp, tut0) >= mulk/slk * 0.9:
             haf = min(songsort, sonsfiyat) / km
             hsf = max(songaort * km, songsort * km)
