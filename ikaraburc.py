@@ -554,8 +554,8 @@ class coin_trader:
         mf, mmf, kar_orani = 0, 0, 0
  
         for x in r:
-            limit = limit + 1
             if x["currency_pair"] == str(self.coin).upper():
+                limit = limit + 1
                 if x["side"] == "buy":
                     miktar = miktar - float(x["amount"])
                     agider = agider + float(x["amount"]) * float(x["price"])
@@ -880,7 +880,7 @@ while True:
             
     # ************- TAF -*******************************#
 
-    for fa in range(asi, afi + 1):
+    for fa in range(0, 5):
         if 50 <= masks[fa] * fasks[fa]:
             break
     for eai in range(asi, afi + 1):
@@ -916,7 +916,7 @@ while True:
     
     ssi, sfi, ms = 0, 4, 2
         
-    for fs in range(asi, afi + 1):
+    for fs in range(0, 5):
         if 50 <= mbids[fs] * fbids[fs]:
             break
     for esi in range(ssi, sfi + 1):
