@@ -158,15 +158,15 @@ def tc_degisim():
     ytablo.add_row(["1saat dip =", min(d1mumlar[:60])])
     ytablo.add_row([d24f, t24f])
    
-    
-    ao = 5
-    if t24f / bf < 1.10:
+    ao = 3
+    sony = (bf/min(d1mumlar[:20])-1)*100
+    if t24f / bf < 1.10 or sony >= 7:
         for i in toplu:
             if i[0] == bc:
                 toplu.remove(i)
                     
-    if max((bf/min(d1mumlar[:20])-1)*100, changes[bti]) >= ao:
-        if bf < min(min(d1mumlar[:60]) * 1.10, t24f/1.10):
+    elif max(bo, sony) >= ao:
+        if bf < min(d1mumlar[:60]) * 1.07:
             bulunanlar.append(bc)
             if len(bulunanlar) > 5:
                 bulunanlar.pop(0)
@@ -870,12 +870,12 @@ while True:
         
     sf = hsf
 
-    if usdt_to <= mulk/alk:
+    if usdt_to <= mulk/slk:
         if hsf / zsf < km:
             zsf = hsf
         sf = min(hsf, zsf)
         
-        m1 = max(mulk/alk - usdt_to, 10) / cp
+        m1 = max(mulk/slk - usdt_to, 10) / cp
         m2 = ctm - m1
             
     # ************- TAF -*******************************#
@@ -913,8 +913,11 @@ while True:
             
     af = min(af, taf)
     # ************- TSF -*******************************#
-    
     ssi, sfi, ms = 0, 4, 2
+    if sf < songaort * km:
+        ssi, sfi, ms = 2, 4, 3
+    elif sf >= songaort * 1.07:
+        ssi, sfi, ms = 0, 3, 2
         
     for fs in range(0, 5):
         if 50 <= mbids[fs] * fbids[fs]:
