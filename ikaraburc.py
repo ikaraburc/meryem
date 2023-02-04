@@ -881,10 +881,6 @@ while True:
         
         m1 = max(mulk/alk - usdt_to, 10) / cp
         m2 = ctm - m1
-        
-    hf = max(hf, songaort * km, sonaort * km, fbids[1])
-    if sf >= hf:
-        sf = min(sf, hf)
             
     # ************- TAF -*******************************#
 
@@ -945,12 +941,11 @@ while True:
             tsf = fasks[ysi + 1] - k
         else:
             tsf = fasks[ysi] - k
-        sf = tsf
-    
+      
     sf = max(sf, tsf)
     # ************- HEDEFE ULAŞTIYSAK -*******************************#
     
-    if fbids[0] >= hf:
+    if fbids[0] >= hsf:
         if tsf / fbids[0] < 1.01:
             sf = fbids[0]
             
