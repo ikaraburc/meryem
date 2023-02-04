@@ -159,7 +159,7 @@ def tc_degisim():
    
     
     ao = 5
-    if abs(changes[bti]) >= ao:
+    if max((bf/min(d1mumlar[:20])-1)*100, changes[bti]) >= ao:
         if bf < min(min(d1mumlar[:60]) * 1.10, t24f/1.10):
             bulunanlar.append(bc)
             if len(bulunanlar) > 5:
@@ -630,9 +630,6 @@ ct.bakiye_getir()
 ct.alsat_gecmisi()
 
 alim_ok = "hayır"
-yeni_tara = "hayır"
-if ceder < 1:
-    yeni_tara = "evet"
 
 afiyat = cp * 0.98
 sfiyat = cp * 1.05
@@ -668,7 +665,6 @@ while True:
             tbot_ozel.send_message(telegram_chat_id, str("Eldeki son mal satıldı. Yeni mal taranıyor..."))
             tbot_ozel.send_message(telegram_chat_id, str(bilanco))
             yeni_tara = "evet"
-            bulunanlar = ["abc", "abcd"]
 
         if yeni_tara == "evet":
             emirleri_sil()
@@ -733,18 +729,18 @@ while True:
 
     elif 1.10 > adk >= 1.05:
         bolge = "Yükseliş..."
-        asi, afi, ma = 0, 6, 2
+        asi, afi, ma = 1, 6, 2
         alk, slk = 3, 3
 
     elif 1.05 > adk and tdk >= 1.03:
         bolge = "Stabil"
-        asi, afi, ma = 0, 5, 2
+        asi, afi, ma = 1, 5, 2
         alk, slk = 2, 2
     
     if tdk < 1.03:
         bolge = "Ölü"
         alk, slk = 2, 2
-        asi, afi, ma = 0, 5, 2
+        asi, afi, ma = 1, 5, 2
 
     # ************- ZAF + ZSF BUL -*******************************#
 
@@ -945,7 +941,7 @@ while True:
     sf = max(sf, tsf)
     # ************- HEDEFE ULAŞTIYSAK -*******************************#
     
-    if fbids[0] >= hsf:
+    if fbids[0] >= hsf >= max(hf, mf):
         if tsf / fbids[0] < 1.01:
             sf = fbids[0]
             
