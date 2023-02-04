@@ -98,9 +98,9 @@ def tc_fiyatlar():
     url = '/spot/tickers'
     data = requests.request('GET', host + prefix + url, headers=headers).json()
 
-    global coins, prices1, hacim, bulunanlar
+    global bulunanlar, toplu
 
-    tekli = []
+    toplu = []
     bulunanlar = ["abc", "abcd"]
     
     for i in range(len(data)):
@@ -112,10 +112,10 @@ def tc_fiyatlar():
                 and float(data[i]["last"]) > 0 \
                 and float(data[i]["low_24h"]) > 0 \
                 and float(data[i]["high_24h"])/float(data[i]["low_24h"]) > 1.20 \
+                and float(data[i]["high_24h"])/float(data[i]["last"]) > 1.10 \
                 and float(data[i]["quote_volume"]) > 80000:
-            tekli.append([data[i]["currency_pair"], float(data[i]["last"]), float(data[i]["low_24h"]), float(data[i]["high_24h"])])
-    toplu.append(tekli)
-
+            toplu.append([data[i]["currency_pair"], float(data[i]["last"]), float(data[i]["low_24h"]), float(data[i]["high_24h"])])
+    
 
 def tc_degisim():
     global bc, bo, bf, ytablo, bti
@@ -133,32 +133,38 @@ def tc_degisim():
     url = '/spot/tickers'
     data = requests.request('GET', host + prefix + url, headers=headers).json()
 
-    for x in range(len(toplu[0])):
+    for x in range(len(toplu)):
         for y in data:
-            if toplu[0][x][0] == y['currency_pair']:
+            if toplu[x][0] == y['currency_pair']:
                 prices2.append(float(y['last']))
 
-    for i in range(len(toplu[0])):
-        changes.append(round(((prices2[i] / toplu[0][i][1]) - 1) * 100, 2))
+    for i in range(len(toplu)):
+        changes.append(round(((prices2[i] / toplu[i][1]) - 1) * 100, 2))
 
     bti = changes.index(max(changes))
-    bc = toplu[0][bti][0]
+    bc = toplu[bti][0]
+    d24f = toplu[bti][2]
+    t24f = toplu[bti][3]
+    
     bf = prices2[bti]
-    d24f = toplu[0][bti][2]
-    t24f = toplu[0][bti][3]
     bo = changes[bti]
     
     m1mumlar(bc)
     tdo = round((t24f/d24f-1)*100,2)
     
     ytablo.field_names = [str(bc), str("%="+str(bo) + " 24%=" + str(tdo))]
-    ytablo.add_row(["Coin Adedi", len(toplu[0])])
+    ytablo.add_row(["Coin Adedi", len(toplu)])
     ytablo.add_row(["Anlık Fiyat", bf])
     ytablo.add_row(["1saat dip =", min(d1mumlar[:60])])
     ytablo.add_row([d24f, t24f])
    
     
     ao = 5
+    if t24f / bf < 1.10:
+        for i in toplu:
+            if i[0] == bc:
+                toplu.remove(i)
+                    
     if max((bf/min(d1mumlar[:20])-1)*100, changes[bti]) >= ao:
         if bf < min(min(d1mumlar[:60]) * 1.10, t24f/1.10):
             bulunanlar.append(bc)
@@ -169,9 +175,8 @@ def tc_degisim():
             tbot_genel.send_message(telegram_chat_id, str("https://www.gate.io/tr/trade-old/" + str(bc)))
         
         for i in toplu:
-            for y in i:
-                if y[0] == bc:
-                    i.remove(y)
+            if i[0] == bc:
+                toplu.remove(i)
 
 
 class coin_trader:
@@ -637,7 +642,6 @@ msg_bilgi = "hayır"
 msg_pump = "hayır"
 msg_risk = "hayır"
 
-toplu = []
 tc_fiyatlar()
 t1 = time.time()
 import threading
@@ -647,13 +651,10 @@ while True:
     ct.toplu_islem()
     print(bilanco)
 
-    veri_sn = 1 * 60
+    veri_sn = 10 * 60
     if time.time() - t1 >= veri_sn:
         tc_fiyatlar()
         t1 = time.time()
-
-        if len(toplu) > 10 * 60 / veri_sn :
-            toplu.pop(0)
 
     if harcanan >= mulk / 5:
         alim_ok = "evet"
@@ -670,9 +671,8 @@ while True:
             emirleri_sil()
             son_coin()
             for i in toplu:
-                for y in i:
-                    if y[0] == scoin:
-                        i.remove(y)
+                if i[0] == scoin:
+                    toplu.remove(i)
             bulunanlar= ["abc"]
             while True:
                 tc_degisim()
@@ -858,7 +858,7 @@ while True:
         hsf = max(songaort, sonafiyat) * km
 
     elif sonislem == "sell":
-        haf = min(songaort, sonsort/km)
+        haf = min(max(songaort,sonaort), sonsort/km)
         hsf = sonsort
         if max(m1 * cp, tut0) >= mulk/slk * 0.9:
             haf = min(songsort, sonsfiyat) / km
