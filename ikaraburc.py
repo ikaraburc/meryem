@@ -720,12 +720,12 @@ while True:
     if adk >= 1.15:
         bolge = "USYükseliş..."
         asi, afi, ma = 5, 10, 5
-        alk, slk = 4, 4
+        alk, slk = 4, 2
 
     elif 1.15 > adk >= 1.10:
         bolge = "SYükseliş..."
         asi, afi, ma = 4, 7, 4
-        alk, slk = 4, 4
+        alk, slk = 4, 2
 
     elif 1.10 > adk >= 1.05:
         bolge = "Yükseliş..."
@@ -735,11 +735,11 @@ while True:
     elif 1.05 > adk and tdk >= 1.03:
         bolge = "Stabil"
         asi, afi, ma = 1, 5, 2
-        alk, slk = 2, 2
+        alk, slk = 2, 3
     
     if tdk < 1.03:
         bolge = "Ölü"
-        alk, slk = 2, 2
+        alk, slk = 2, 3
         asi, afi, ma = 1, 5, 2
 
     # ************- ZAF + ZSF BUL -*******************************#
