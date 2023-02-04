@@ -57,21 +57,38 @@ def son_coin():
     global scoin
     scoin = r[0]["currency_pair"]
 
-def pazar_gecmisi(bulunan):
-    import requests
-    t = int(time.time() - 30 * 60)
+def m1mumlar(bc):
 
+    # coding: utf-8
+    import requests
     host = "https://api.gateio.ws"
     prefix = "/api/v4"
     headers = {'Accept': 'application/json', 'Content-Type': 'application/json'}
+    url = '/spot/candlesticks'
+    query_param = 'currency_pair=' + bc + '&interval=1m' + '&limit=1000'
+    while True:
+        try:
+            r = requests.request('GET', host + prefix + url + "?" + query_param, headers=headers).json()
+        except ConnectionError as e:  # This is the correct syntax
+            print(e)
+            time.sleep(1)
+            r = "Nothing"
 
-    url = '/spot/trades'
-    query_param = 'currency_pair=' + str(bulunan) + "&from=" + str(t)
-    r = requests.request('GET', host + prefix + url + "?" + query_param, headers=headers).json()
+        except ValueError:
+            print("Gelen Dosya Json değil...")
+            r = "Nothing"
 
-    global palim
-    palim = sum([float(i["price"]) * float(i["amount"]) for i in r if i["side"] == "buy"])
+        if r != "Nothing":
+            break
+        else:
+            print("Bağlantı bekleniyor...")
+            continue
 
+    global t1mumlar, d1mumlar
+    t1mumlar = [float(i[3]) for i in r]
+    d1mumlar = [float(i[4]) for i in r]
+    t1mumlar.reverse()
+    d1mumlar.reverse()
 
 def tc_fiyatlar():
     host = "https://api.gateio.ws"
@@ -85,7 +102,7 @@ def tc_fiyatlar():
 
     tekli = []
     bulunanlar = ["abc", "abcd"]
-
+    
     for i in range(len(data)):
         if "_USDT" in data[i]["currency_pair"] \
                 and "3S" not in data[i]["currency_pair"] \
@@ -94,13 +111,14 @@ def tc_fiyatlar():
                 and "5L" not in data[i]["currency_pair"] \
                 and float(data[i]["last"]) > 0 \
                 and float(data[i]["low_24h"]) > 0 \
+                and float(data[i]["high_24h"])/float(data[i]["low_24h"]) > 1.20 \
                 and float(data[i]["quote_volume"]) > 80000:
-            tekli.append([data[i]["currency_pair"], float(data[i]["last"])])
+            tekli.append([data[i]["currency_pair"], float(data[i]["last"]), float(data[i]["low_24h"]), float(data[i]["high_24h"])])
     toplu.append(tekli)
 
 
 def tc_degisim():
-    global bulunan, bul_oran, ytablo, bti
+    global bc, bo, bf, ytablo, bti
 
     ytablo = PrettyTable()
     ytablo.clear()
@@ -124,29 +142,35 @@ def tc_degisim():
         changes.append(round(((prices2[i] / toplu[0][i][1]) - 1) * 100, 2))
 
     bti = changes.index(max(changes))
-    bulunan = toplu[0][bti][0]
-    bul_oran = changes[bti]
-    print(len(toplu[0]), " coinden yukselen= ", bulunan, " % ", bul_oran, " fiyat = ", prices2[bti])
-
-    ao = 10
-
+    bc = toplu[0][bti][0]
+    bf = prices2[bti]
+    d24f = toplu[0][bti][2]
+    t24f = toplu[0][bti][3]
+    bo = changes[bti]
+    
+    m1mumlar(bc)
+    tdo = round((t24f/d24f-1)*100,2)
+    
+    ytablo.field_names = [str(bc), str("%="+str(bo) + " 24%=" + str(tdo))]
+    ytablo.add_row(["Coin Adedi", len(toplu[0])])
+    ytablo.add_row(["Anlık Fiyat", bf])
+    ytablo.add_row(["1saat dip =", min(d1mumlar[:60])])
+    ytablo.add_row([d24f, t24f])
+   
+    
+    ao = 5
     if abs(changes[bti]) >= ao:
-
-        bulunanlar.append(bulunan)
-
-        ytablo.field_names = [str(bulunan), str("% " + str(bul_oran))]
-        ytablo.add_row(["Yeni Fiyat", prices2[bti]])
-        ytablo.add_row(["Eski Fiyat", toplu[0][bti][1]])
-
-        if len(bulunanlar) > 5:
-            bulunanlar.pop(0)
-
-        tbot_genel.send_message(telegram_chat_id, str(ytablo))
-        tbot_genel.send_message(telegram_chat_id, str("https://www.gate.io/tr/trade-old/" + str(bulunan)))
+        if bf < min(min(d1mumlar[:60]) * 1.10, t24f/1.10):
+            bulunanlar.append(bc)
+            if len(bulunanlar) > 5:
+                bulunanlar.pop(0)
+            
+            tbot_genel.send_message(telegram_chat_id, str(ytablo))
+            tbot_genel.send_message(telegram_chat_id, str("https://www.gate.io/tr/trade-old/" + str(bc)))
         
         for i in toplu:
             for y in i:
-                if y[0] == bulunan:
+                if y[0] == bc:
                     i.remove(y)
 
 
@@ -653,16 +677,13 @@ while True:
                 for y in i:
                     if y[0] == scoin:
                         i.remove(y)
-                
+            bulunanlar= ["abc"]
             while True:
                 tc_degisim()
-                ct = coin_trader(str(bulunan))
-                ct.mumlar_10s()
-                toran = round(tmumlar[0] / min(dmumlar[:90]),2)
-                print("10 dakika dip fiyat = ", min(dmumlar[:90]), " % ", toran)
-                if max(toran, bul_oran)>= 1.10:
-                    tbot_ozel.send_message(telegram_chat_id, str(bulunan + str(" coine girildi...")))
-                    
+                print(ytablo)
+                if bulunanlar[-1] == bc:
+                    tbot_ozel.send_message(telegram_chat_id, str(bc + str(" coine girildi...")))
+                    ct = coin_trader(str(bc))
                     ct.coin_digit()
                     T1 = threading.Thread(target=ct.coin_fiyat)
                     T2 = threading.Thread(target=ct.bakiye_getir)
@@ -703,27 +724,27 @@ while True:
     if adk >= 1.15:
         bolge = "USYükseliş..."
         asi, afi, ma = 5, 10, 5
-        alk, slk = 4, 2
+        alk, slk = 4, 4
 
     elif 1.15 > adk >= 1.10:
         bolge = "SYükseliş..."
         asi, afi, ma = 4, 7, 4
-        alk, slk = 4, 2
+        alk, slk = 4, 4
 
     elif 1.10 > adk >= 1.05:
         bolge = "Yükseliş..."
-        asi, afi, ma = 2, 6, 2
+        asi, afi, ma = 0, 6, 2
         alk, slk = 3, 3
 
     elif 1.05 > adk and tdk >= 1.03:
         bolge = "Stabil"
-        asi, afi, ma = 1, 5, 2
+        asi, afi, ma = 0, 5, 2
         alk, slk = 2, 2
     
     if tdk < 1.03:
         bolge = "Ölü"
-        alk, slk = 1, 1
-        asi, afi, ma = 1, 5, 2
+        alk, slk = 2, 2
+        asi, afi, ma = 0, 5, 2
 
     # ************- ZAF + ZSF BUL -*******************************#
 
@@ -848,7 +869,7 @@ while True:
             hsf = max(songaort * km, songsort * km)
 
     af = haf
-    if adk >= 1.07:
+    if adk > 1.07:
         af = min(af, zaf)
         
     sf = hsf
@@ -892,15 +913,16 @@ while True:
    
     if harcanan < mulk/alk:
         haf = taf
+        af = haf
+        if adk >= 1.15:
+            af = min(zaf, haf)
         if ceder > 1:
             p1 = max(mulk/alk - ceder, 10)
             
-        af = taf
-    
     af = min(af, taf)
     # ************- TSF -*******************************#
     
-    ssi, sfi, ms = 0, 5, 2
+    ssi, sfi, ms = 0, 4, 2
         
     for fs in range(asi, afi + 1):
         if 50 <= mbids[fs] * fbids[fs]:
@@ -931,10 +953,6 @@ while True:
     if fbids[0] >= hf:
         if tsf / fbids[0] < 1.01:
             sf = fbids[0]
-        elif tsf / (fasks[0]-k) < 1.01:
-            sf = fasks[0] - k
-        else:
-            sf = tsf
             
     # ************- AL SAT EMİRLERİNİ GÖNDER BÖLÜMÜ -*******************************#
     af = round(af, digit)
