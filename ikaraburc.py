@@ -1,13 +1,11 @@
 import requests
 from prettytable import PrettyTable
 from requests.exceptions import ConnectionError
-
+import threading
 from sifreler import *
 
 
 def emirleri_sil():
-    # coding: utf-8
-    import requests
 
     host = "https://api.gateio.ws"
     prefix = "/api/v4"
@@ -58,9 +56,7 @@ def son_coin():
     scoin = r[0]["currency_pair"]
 
 def m1mumlar(bc):
-
-    # coding: utf-8
-    import requests
+    
     host = "https://api.gateio.ws"
     prefix = "/api/v4"
     headers = {'Accept': 'application/json', 'Content-Type': 'application/json'}
@@ -341,8 +337,6 @@ class coin_trader:
         fasks = [float(x[0]) for x in r["asks"]]
 
     def mumlar_10s(self):
-        # coding: utf-8
-        import requests
 
         host = "https://api.gateio.ws"
         prefix = "/api/v4"
@@ -606,21 +600,18 @@ class coin_trader:
         T3 = threading.Thread(target=self.alsat_gecmisi)
         T4 = threading.Thread(target=self.tahta_getir)
         T5 = threading.Thread(target=self.mumlar_10s)
-        T6 = threading.Thread(target=tc_degisim)
 
         T1.start()
         T2.start()
         T3.start()
         T4.start()
         T5.start()
-        T6.start()
 
         T1.join()
         T2.join()
         T3.join()
         T4.join()
         T5.join()
-        T6.join()
 
 
 # ***********************************************************************************************************************************************************
@@ -644,7 +635,6 @@ msg_risk = "hayır"
 
 tc_fiyatlar()
 t1 = time.time()
-import threading
 
 
 while True:
