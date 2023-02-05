@@ -710,7 +710,7 @@ while True:
     elif 1.05 > adk and tdk >= 1.03:
         bolge = "Stabil"
         asi, afi, ma = 1, 5, 2
-        alk, slk = 2, 3
+        alk, slk = 3, 4
     
     if tdk < 1.03:
         bolge = "Ölü"
@@ -890,9 +890,7 @@ while True:
     af = min(af, taf)
     # ************- TSF -*******************************#
     ssi, sfi, ms = 0, 4, 2
-    if sf < songaort * kms:
-        ssi, sfi, ms = 1, 4, 2
-    elif sf >= songaort * 1.07:
+    if sf >= songaort * 1.07:
         ssi, sfi, ms = 0, 3, 2
         
     for fs in range(0, 5):
