@@ -671,23 +671,8 @@ while True:
                     tbot_ozel.send_message(telegram_chat_id, str(bc + str(" coine girildi...")))
                     ct = coin_trader(str(bc))
                     ct.coin_digit()
-                    T1 = threading.Thread(target=ct.coin_fiyat)
-                    T2 = threading.Thread(target=ct.bakiye_getir)
-                    T3 = threading.Thread(target=ct.alsat_gecmisi)
-                    T4 = threading.Thread(target=ct.tahta_getir)
-                    T5 = threading.Thread(target=ct.mumlar_10s)
+                    ct.toplu_islem()
 
-                    T1.start()
-                    T2.start()
-                    T3.start()
-                    T4.start()
-                    T5.start()
-
-                    T1.join()
-                    T2.join()
-                    T3.join()
-                    T4.join()
-                    T5.join()
                     emirleri_sil()
                     t2 = time.time()
 
@@ -704,7 +689,7 @@ while True:
     tdk = round(zip_max / zip_min, 2)
     adk = round(fbids[0] / zip_min, 2)
         
-    km = 1.02
+    km, kms = 1.02, 1.02
     zk = round(max(1.05, 1 + 0.4 * (tdk-1)),2)
 
     if adk >= 1.15:
@@ -730,6 +715,7 @@ while True:
     if tdk < 1.03:
         bolge = "Ölü"
         alk, slk = 2, 3
+        km, kms = 1.01, 1.02
         asi, afi, ma = 1, 5, 2
 
     # ************- ZAF + ZSF BUL -*******************************#
@@ -845,14 +831,14 @@ while True:
         haf = sonaort
         if max(tut0, p1)>= mulk / alk * 0.9:
             haf = songaort / km
-        hsf = max(songaort, sonafiyat) * km
+        hsf = max(songaort, sonafiyat) * kms
 
     elif sonislem == "sell":
         haf = min(max(songaort,sonaort), sonsort/km)
-        hsf = max(songaort, sonafiyat) * km
+        hsf = max(songaort, sonafiyat) * kms
         if max(m1 * cp, tut0) >= mulk/slk * 0.9:
             haf = min(songsort, sonsfiyat) / km
-            hsf = max(songaort * km, songsort * km)
+            hsf = max(songaort, songsort) * kms
 
     af = haf
     if adk > 1.07:
@@ -861,7 +847,7 @@ while True:
     sf = hsf
 
     if usdt_to <= mulk/slk:
-        if hsf / zsf < km:
+        if hsf / zsf < kms:
             zsf = hsf
         sf = min(hsf, zsf)
         
@@ -904,8 +890,8 @@ while True:
     af = min(af, taf)
     # ************- TSF -*******************************#
     ssi, sfi, ms = 0, 4, 2
-    if sf < songaort * km:
-        ssi, sfi, ms = 2, 4, 3
+    if sf < songaort * kms:
+        ssi, sfi, ms = 1, 4, 2
     elif sf >= songaort * 1.07:
         ssi, sfi, ms = 0, 3, 2
         
