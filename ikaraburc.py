@@ -683,14 +683,15 @@ while True:
                 continue
     # ************- STABİL - PUMP - DUMP BÖLGESİ -*******************************#
 
-    at = 6 * 30
+    at = 6 * 60
     zip_max = max(tmumlar[:at])
     zip_min = min(dmumlar[:at])
     tdk = round(zip_max / zip_min, 2)
     adk = round(fbids[0] / zip_min, 2)
         
-    km, kms = 1.02, 1.02
-    zk = round(max(1.05, 1 + 0.4 * (tdk-1)),2)
+    km = 1.02
+    kms = round(max(1.02, min(zip_max / fasks[0], 1.05)),2)
+    zk = round(max(1.03, 1+(tdk-1)*0.4),2)
 
     if adk >= 1.15:
         bolge = "USYükseliş..."
@@ -705,7 +706,7 @@ while True:
     elif 1.10 > adk >= 1.05:
         bolge = "Yükseliş..."
         asi, afi, ma = 1, 6, 2
-        alk, slk = 3, 3
+        alk, slk = 4, 4
 
     elif 1.05 > adk and tdk >= 1.03:
         bolge = "Stabil"
@@ -714,8 +715,8 @@ while True:
     
     if tdk < 1.03:
         bolge = "Ölü"
-        alk, slk = 2, 3
-        km, kms = 1.01, 1.02
+        alk, slk = 3, 4
+        km = 1.01
         asi, afi, ma = 1, 5, 2
 
     # ************- ZAF + ZSF BUL -*******************************#
@@ -829,6 +830,8 @@ while True:
     haf, hsf = zaf, zsf
     if sonislem == "buy":
         haf = sonaort
+        if gstut > 0:
+            haf = min(songsort, sonsort) / km
         if max(tut0, p1)>= mulk / alk * 0.9:
             haf = songaort / km
         hsf = max(songaort, sonafiyat) * kms
@@ -847,8 +850,6 @@ while True:
     sf = hsf
 
     if usdt_to <= mulk/slk:
-        if hsf / zsf < kms:
-            zsf = hsf
         sf = min(hsf, zsf)
         
         m1 = max(mulk/slk - usdt_to, 10) / cp
@@ -968,17 +969,18 @@ while True:
 
     # ************- EKRANA PRİNT BÖLÜMÜ -*******************************#
     fiyatlar = PrettyTable()
-    fiyatlar.field_names = [str(str(bolge) + " adk=" + str(adk) + " km=" + str(km)), str("cp= " + str(cp)),
-                            str("hf " + str(round(hf,digit)))]
-    fiyatlar.add_row([str("af,sf,hp= " + str(round(hp, 2))), round(af, digit), round(sf, digit)])
+    fiyatlar.field_names = [str(str(bolge) + " adk=" + str(adk)), str("cp= " + str(cp)),
+                            str("Mulk=" + str(round(mulk, 2)) + " hp=" + str(round(hp, 2)))]
+    fiyatlar.add_row([str("km= " + str(km)),str("kms= " + str(kms)),str("hf " + str(round(hf,digit)))])
+    fiyatlar.add_row([str("af,sf"), round(af, digit), round(sf, digit)])
     fiyatlar.add_row(
         [str(str(sonislem) + " haf,hsf " + str(round(hsf / haf, 2))), round(haf, digit), round(hsf, digit)])
     fiyatlar.add_row(["son aort, sort ", round(sonaort, digit), round(sonsort, digit)])
     fiyatlar.add_row(["son gaort, gsort ", round(songaort, digit), round(songsort, digit)])
     fiyatlar.add_row([str("taf, tsf " + str(round(tsf / taf, 2))), round(taf, digit), round(tsf, digit)])
     fiyatlar.add_row([str("zaf, zsf zk=" + str(round(zk, 2))), round(zaf, digit), round(zsf, digit)])
-    fiyatlar.add_row([str("zip_min, zip_max tdk=" + str(tdk)), round(zip_min, digit), round(zip_max, digit)])
-    fiyatlar.add_row([str(str(round(mulk, 2)) +"$ "+str(round(ctm, mdigit))+"#"), round(mulk / alk, 2), round(mulk / slk / cp, mdigit)])
+    fiyatlar.add_row([str("zmin, zmax tdk=" + str(tdk)), round(zip_min, digit), round(zip_max, digit)])
+    fiyatlar.add_row([str(str(round(ctm, mdigit))+"#"), round(mulk / alk, 2), round(mulk / slk / cp, mdigit)])
     fiyatlar.add_row([str("alk, slk=" + str(alk) +"-"+str(slk)), round(p1, 2), round(m1, mdigit)])
 
     print(fiyatlar)
