@@ -689,33 +689,33 @@ while True:
     tdk = round(zip_max / zip_min, 2)
     adk = round(fbids[0] / zip_min, 2)
         
-    km = 1.02
-    kms = round(max(1.02, min(zip_max / fasks[0], 1.05)),2)
+    km = 1.05
+    kms = round(max(1.05, min(zip_max / fasks[0], 1.05)),2)
     zk = round(max(1.03, 1+(tdk-1)*0.4),2)
 
     if adk >= 1.15:
         bolge = "USYükseliş..."
         asi, afi, ma = 5, 10, 5
-        alk, slk = 4, 2
+        alk, slk = 4, 4
 
     elif 1.15 > adk >= 1.10:
         bolge = "SYükseliş..."
         asi, afi, ma = 4, 7, 4
-        alk, slk = 4, 2
+        alk, slk = 3, 3
 
     elif 1.10 > adk >= 1.05:
         bolge = "Yükseliş..."
         asi, afi, ma = 1, 6, 2
-        alk, slk = 4, 4
+        alk, slk = 2, 2
 
     elif 1.05 > adk and tdk >= 1.03:
         bolge = "Stabil"
         asi, afi, ma = 1, 5, 2
-        alk, slk = 3, 4
+        alk, slk = 1, 1
     
     if tdk < 1.03:
         bolge = "Ölü"
-        alk, slk = 3, 4
+        alk, slk = 1, 1
         km = 1.01
         asi, afi, ma = 1, 5, 2
 
@@ -969,9 +969,9 @@ while True:
 
     # ************- EKRANA PRİNT BÖLÜMÜ -*******************************#
     fiyatlar = PrettyTable()
-    fiyatlar.field_names = [str(str(bolge) + " adk=" + str(adk)), str("cp= " + str(cp)),
-                            str("Mulk=" + str(round(mulk, 2)) + " hp=" + str(round(hp, 2)))]
-    fiyatlar.add_row([str("km= " + str(km)),str("kms= " + str(kms)),str("hf " + str(round(hf,digit)))])
+    fiyatlar.field_names = [str(str(bolge) + " adk=" + str(adk)),
+                            str("  hp " + str(round(hp, 0))),str("hf " + str(round(hf,digit)))]
+    fiyatlar.add_row([str("km= " + str(km) + " kms= " + str(kms)),str("Mulk " + str(round(mulk, 0))), str("cp " + str(cp))])
     fiyatlar.add_row([str("af,sf"), round(af, digit), round(sf, digit)])
     fiyatlar.add_row(
         [str(str(sonislem) + " haf,hsf " + str(round(hsf / haf, 2))), round(haf, digit), round(hsf, digit)])
