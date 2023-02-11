@@ -626,6 +626,8 @@ ct.bakiye_getir()
 ct.alsat_gecmisi()
 
 alim_ok = "hayır"
+if ceder < 1:
+    yeni_tara = "evet"
 
 afiyat = cp * 0.98
 sfiyat = cp * 1.05
