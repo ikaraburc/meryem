@@ -696,26 +696,26 @@ while True:
     if adk >= 1.15:
         bolge = "USYükseliş..."
         asi, afi, ma = 5, 10, 5
-        alk, slk = 4, 4
+        alk, slk = 4, 2
 
     elif 1.15 > adk >= 1.10:
         bolge = "SYükseliş..."
         asi, afi, ma = 4, 7, 4
-        alk, slk = 3, 3
+        alk, slk = 3, 2
 
     elif 1.10 > adk >= 1.05:
         bolge = "Yükseliş..."
         asi, afi, ma = 1, 6, 2
-        alk, slk = 2, 2
+        alk, slk = 3, 3
 
     elif 1.05 > adk and tdk >= 1.03:
         bolge = "Stabil"
         asi, afi, ma = 1, 5, 2
-        alk, slk = 1, 1
+        alk, slk = 2, 3
     
     if tdk < 1.03:
         bolge = "Ölü"
-        alk, slk = 1, 1
+        alk, slk = 2, 3
         km = 1.01
         asi, afi, ma = 1, 5, 2
 
@@ -844,7 +844,7 @@ while True:
             hsf = max(songaort, songsort) * kms
 
     af = haf
-    if adk > 1.07:
+    if adk >= 1.07:
         af = min(af, zaf)
         
     sf = hsf
@@ -879,14 +879,6 @@ while True:
         else:
             taf = fbids[yai] + k
         af = taf
-   
-    if harcanan < mulk/alk:
-        haf = taf
-        af = haf
-        if adk >= 1.15:
-            af = min(zaf, haf)
-        if ceder > 1:
-            p1 = max(mulk/alk - ceder, 10)
             
     af = min(af, taf)
     # ************- TSF -*******************************#
