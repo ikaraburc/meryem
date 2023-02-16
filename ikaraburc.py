@@ -108,7 +108,7 @@ def tc_fiyatlar():
                 and float(data[i]["last"]) > 0 \
                 and float(data[i]["low_24h"]) > 0 \
                 and float(data[i]["high_24h"])/float(data[i]["low_24h"]) > 1.20 \
-                and float(data[i]["high_24h"])/float(data[i]["last"]) > 1.10 \
+                and float(data[i]["high_24h"])/float(data[i]["last"]) >= 1.15 \
                 and float(data[i]["quote_volume"]) > 80000:
             toplu.append([data[i]["currency_pair"], float(data[i]["last"]), float(data[i]["low_24h"]), float(data[i]["high_24h"])])
     
@@ -137,7 +137,7 @@ def tc_degisim():
     for i in range(len(toplu)):
         changes.append(round(((prices2[i] / toplu[i][1]) - 1) * 100, 2))
 
-    bti = changes.index(max(changes))
+    bti = changes.index(min(changes))
     bc = toplu[bti][0]
     d24f = toplu[bti][2]
     t24f = toplu[bti][3]
@@ -154,21 +154,20 @@ def tc_degisim():
     ytablo.add_row(["1saat dip =", min(d1mumlar[:60])])
     ytablo.add_row([d24f, t24f])
    
-    ao = 3
+    ao = 5
     sony = (bf/min(d1mumlar[:20])-1)*100
-    if t24f / bf < 1.10 or sony >= 7:
+    if t24f / bf < 1.10 or sony >= 5:
         for i in toplu:
             if i[0] == bc:
                 toplu.remove(i)
                     
-    elif max(bo, sony) >= ao:
-        if bf < min(d1mumlar[:60]) * 1.07:
-            bulunanlar.append(bc)
-            if len(bulunanlar) > 5:
-                bulunanlar.pop(0)
+    elif abs(bo) >= ao:
+        bulunanlar.append(bc)
+        if len(bulunanlar) > 5:
+            bulunanlar.pop(0)
             
-            tbot_genel.send_message(telegram_chat_id, str(ytablo))
-            tbot_genel.send_message(telegram_chat_id, str("https://www.gate.io/tr/trade-old/" + str(bc)))
+        tbot_genel.send_message(telegram_chat_id, str(ytablo))
+        tbot_genel.send_message(telegram_chat_id, str("https://www.gate.io/tr/trade-old/" + str(bc)))
         
         for i in toplu:
             if i[0] == bc:
@@ -691,28 +690,29 @@ while True:
     tdk = round(zip_max / zip_min, 2)
     adk = round(fbids[0] / zip_min, 2)
         
-    km = 1.05
-    kms = round(max(1.05, min(zip_max / fasks[0], 1.05)),2)
-    zk = round(max(1.03, 1+(tdk-1)*0.4),2)
+    km = 1.03
+    kms = round(max(1.03, min(max(zip_max / fasks[0], 1+abs(kar_orani)/100), 1.05)),2)
+    zip = 1.02
+    zk = round(max(1.05, 1+(tdk-1)*0.33),2)
 
     if adk >= 1.15:
         bolge = "USYükseliş..."
-        asi, afi, ma = 5, 10, 5
-        alk, slk = 4, 2
+        asi, afi, ma = 1, 7, 6
+        alk, slk = 4, 1
 
     elif 1.15 > adk >= 1.10:
         bolge = "SYükseliş..."
-        asi, afi, ma = 4, 7, 4
+        asi, afi, ma = 1, 7, 5
         alk, slk = 3, 2
 
     elif 1.10 > adk >= 1.05:
         bolge = "Yükseliş..."
-        asi, afi, ma = 1, 6, 2
+        asi, afi, ma = 1, 6, 4
         alk, slk = 3, 3
 
     elif 1.05 > adk and tdk >= 1.03:
         bolge = "Stabil"
-        asi, afi, ma = 1, 5, 2
+        asi, afi, ma = 1, 5, 3
         alk, slk = 2, 3
     
     if tdk < 1.03:
@@ -810,9 +810,10 @@ while True:
         p1 = mulk/alk
         p2 = usdt_to - p1
     
-    if ceder <= mulk / slk * 1.1:
+    if ceder <= mulk / slk * 1.1 or 1+kar_orani/100 >= kms:
         m1 = ctm
         m2 = 0
+        slk = 1
     elif min(m1, m2) * cp <= mulk/10:
         m1 = mulk / slk / cp
         m2 = ctm - m1
@@ -832,10 +833,10 @@ while True:
     haf, hsf = zaf, zsf
     if sonislem == "buy":
         haf = sonaort
-        if gstut > 0:
+        if gstut >= mulk/slk:
             haf = min(songsort, sonsort) / km
-        if max(tut0, p1)>= mulk / alk * 0.9:
-            haf = songaort / km
+        if max(tut0, p1)>= mulk / alk * 0.95:
+            haf = songaort / zip
         hsf = max(songaort, sonafiyat) * kms
 
     elif sonislem == "sell":
@@ -843,7 +844,7 @@ while True:
         hsf = max(songaort, sonafiyat) * kms
         if max(m1 * cp, tut0) >= mulk/slk * 0.9:
             haf = min(songsort, sonsfiyat) / km
-            hsf = max(songaort, songsort) * kms
+            hsf = max(songaort * kms, songsort * zip)
 
     af = haf
     if adk >= 1.07:
@@ -853,10 +854,18 @@ while True:
 
     if usdt_to <= mulk/slk:
         sf = min(hsf, zsf)
-        
+        if abs(zsf - songaort)/songaort < 1.03:
+            sf = min(hsf, songaort * 1.01)
         m1 = max(mulk/slk - usdt_to, 10) / cp
         m2 = ctm - m1
-            
+    
+    if sf >= hf * 0.99:
+        sf = max(hf , hsf)
+    elif sf >= mf * 0.99:
+        sf = max(sf, mf * kms)
+    elif sf >= songaort * 0.99:
+        sf = max(sf, songaort * kms)
+        
     # ************- TAF -*******************************#
 
     for fa in range(0, 5):
@@ -885,7 +894,7 @@ while True:
     af = min(af, taf)
     # ************- TSF -*******************************#
     ssi, sfi, ms = 0, 4, 2
-    if sf >= songaort * 1.07:
+    if sf >= max(songaort, mf) * 1.07:
         ssi, sfi, ms = 0, 3, 2
         
     for fs in range(0, 5):
@@ -901,7 +910,7 @@ while True:
         tsf = fasks[esi] - k
 
     if sf <= tsf * 1.003:
-        for ysi in range(esi, - 1, -1):
+        for ysi in range(esi, ssi - 1, -1):
             if abs(tsf - fasks[ysi]) / fasks[ysi] >= 0.5/100:
                 ysi = ysi + 1
                 break
