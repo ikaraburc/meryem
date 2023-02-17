@@ -107,8 +107,7 @@ def tc_fiyatlar():
                 and "5L" not in data[i]["currency_pair"] \
                 and float(data[i]["last"]) > 0 \
                 and float(data[i]["low_24h"]) > 0 \
-                and float(data[i]["high_24h"])/float(data[i]["low_24h"]) > 1.20 \
-                and float(data[i]["high_24h"])/float(data[i]["last"]) >= 1.15 \
+                and float(data[i]["change_percentage"]) >= 10 \
                 and float(data[i]["quote_volume"]) > 80000:
             toplu.append([data[i]["currency_pair"], float(data[i]["last"]), float(data[i]["low_24h"]), float(data[i]["high_24h"])])
     
@@ -151,12 +150,11 @@ def tc_degisim():
     ytablo.field_names = [str(bc), str("%="+str(bo) + " 24%=" + str(tdo))]
     ytablo.add_row(["Coin Adedi", len(toplu)])
     ytablo.add_row(["Anlık Fiyat", bf])
-    ytablo.add_row(["1saat dip =", min(d1mumlar[:60])])
     ytablo.add_row([d24f, t24f])
    
     ao = 5
     sony = (bf/min(d1mumlar[:20])-1)*100
-    if t24f / bf < 1.10 or sony >= 5:
+    if t24f / bf < 1.15 or sony >= 5:
         for i in toplu:
             if i[0] == bc:
                 toplu.remove(i)
@@ -950,7 +948,7 @@ while True:
             if m2 > 0:
                 f2 = (hp - sf * m1 - usdt_to) / m2
             
-            if sf < hf or sf * ctm + usdt_to < hp:
+            if sf < max(hf, songaort) or sf * ctm + usdt_to < hp:
                 m1 = m1 - 4/sf
             else:
                 m1 = ctm
