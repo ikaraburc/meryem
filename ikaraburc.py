@@ -854,8 +854,6 @@ while True:
 
     if usdt_to <= mulk/slk:
         sf = min(hsf, zsf)
-        if abs(zsf - songaort)/songaort < 1.03:
-            sf = min(hsf, songaort * 1.01)
         m1 = max(mulk/slk - usdt_to, 10) / cp
         m2 = ctm - m1
     
