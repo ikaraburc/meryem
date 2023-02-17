@@ -809,10 +809,9 @@ while True:
         p1 = mulk/alk
         p2 = usdt_to - p1
     
-    if ceder <= mulk / slk * 1.1 or 1+kar_orani/100 >= kms:
+    if ceder <= mulk / slk * 1.1:
         m1 = ctm
         m2 = 0
-        slk = 1
     elif min(m1, m2) * cp <= mulk/10:
         m1 = mulk / slk / cp
         m2 = ctm - m1
@@ -830,7 +829,6 @@ while True:
  
     # ************- HAF + HSF -*******************************#
     haf, hsf = zaf, zsf
-
     if harcanan >= 1:
         if sonislem == "buy":
             haf = sonaort
@@ -856,13 +854,6 @@ while True:
         sf = min(hsf, zsf)
         m1 = max(mulk/slk - usdt_to, 10) / cp
         m2 = ctm - m1
-    
-    if sf >= hf * 0.99:
-        sf = max(hf , hsf)
-    elif sf >= mf * 0.99:
-        sf = max(sf, mf * kms)
-    elif sf >= songaort * 0.99:
-        sf = max(sf, songaort * kms)
         
     # ************- TAF -*******************************#
 
@@ -961,7 +952,9 @@ while True:
             
             if sf < hf or sf * ctm + usdt_to < hp:
                 m1 = m1 - 4/sf
-                
+            else:
+                m1 = ctm
+                m2 = 0
             sfiyat1 = round(max(sf * 1.1, fasks[10] - k, f2), digit)
             smiktar = m1
             smiktar1 = m2
