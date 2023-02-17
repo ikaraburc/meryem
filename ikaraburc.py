@@ -512,7 +512,7 @@ class coin_trader:
         headers = {'Accept': 'application/json', 'Content-Type': 'application/json'}
 
         url = '/spot/my_trades'
-        query_param = "limit=1000"
+        query_param = 'currency_pair=' + self.coin + "&" +"limit=1000"
 
         sign_headers = gen_sign('GET', prefix + url, query_param)
         headers.update(sign_headers)
@@ -547,7 +547,7 @@ class coin_trader:
         mf, mmf, kar_orani = 0, 0, 0
  
         for x in r:
-            if x["currency_pair"] == str(self.coin).upper():
+            if miktar * float(x["price"]) >= 1 :
                 limit = limit + 1
                 if x["side"] == "buy":
                     miktar = miktar - float(x["amount"])
@@ -569,7 +569,6 @@ class coin_trader:
         if harcanan > 1:
             kar_orani = round(kar_tutari / harcanan * 100, 2)
        
-
         bilanco = PrettyTable()
         bilanco.field_names = [str(self.coin).upper(), cp]
         bilanco.add_row([str("Ceder= " + str(round(ceder, 2))), str("mf = " + str(max(mf, 0)))])
@@ -750,7 +749,7 @@ while True:
     mik0, mik1 = 0, 0
     tut0, tut1 = 0, 0
 
-    if ceder >= 1:
+    if harcanan >= 1:
         for i in range(0, len(sonislems)):
             if sonislems[i]["side"] == "buy":
                 gamik = gamik + float(sonislems[i]["amount"])
@@ -831,25 +830,26 @@ while True:
  
     # ************- HAF + HSF -*******************************#
     haf, hsf = zaf, zsf
-    if sonislem == "buy":
-        haf = sonaort
-        if gstut >= mulk/slk:
-            haf = min(songsort, sonsort) / km
-        if max(tut0, p1)>= mulk / alk * 0.95:
-            haf = songaort / zip
-        hsf = max(songaort, sonafiyat) * kms
 
-    elif sonislem == "sell":
-        haf = min(max(songaort,sonaort), sonsort/km)
-        hsf = max(songaort, sonafiyat) * kms
-        if max(m1 * cp, tut0) >= mulk/slk * 0.9:
-            haf = min(songsort, sonsfiyat) / km
-            hsf = max(songaort * kms, songsort * zip)
+    if harcanan >= 1:
+        if sonislem == "buy":
+            haf = sonaort
+            if gstut >= mulk/slk:
+                haf = min(songsort, sonsort) / km
+            if max(tut0, p1)>= mulk / alk * 0.95:
+                haf = songaort / zip
+            hsf = max(songaort, sonafiyat) * kms
+
+        elif sonislem == "sell":
+            haf = min(max(songaort,sonaort), sonsort/km)
+            hsf = max(songaort, sonafiyat) * kms
+            if max(m1 * cp, tut0) >= mulk/slk * 0.9:
+                haf = min(songsort, sonsfiyat) / km
+                hsf = max(songaort * kms, songsort * zip)
 
     af = haf
     if adk >= 1.07:
-        af = min(af, zaf)
-        
+        af = min(af, zaf)  
     sf = hsf
 
     if usdt_to <= mulk/slk:
@@ -923,7 +923,7 @@ while True:
     if fbids[0] >= hsf >= max(hf, mf):
         if tsf / fbids[0] < 1.01:
             sf = fbids[0]
-            
+   
     # ************- AL SAT EMİRLERİNİ GÖNDER BÖLÜMÜ -*******************************#
     af = round(af, digit)
     sf = round(sf, digit)
