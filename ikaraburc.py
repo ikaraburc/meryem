@@ -111,7 +111,7 @@ def tc_fiyatlar():
                 and float(data[i]["quote_volume"]) > 80000:
             toplu.append([data[i]["currency_pair"], float(data[i]["last"]), float(data[i]["low_24h"]), float(data[i]["high_24h"])])
     
-
+    print("coin sayısı ", len(toplu))
 def tc_degisim():
     global bc, bo, bf, ytablo, bti
 
@@ -136,7 +136,7 @@ def tc_degisim():
     for i in range(len(toplu)):
         changes.append(round(((prices2[i] / toplu[i][1]) - 1) * 100, 2))
 
-    bti = changes.index(min(changes))
+    bti = changes.index(max(changes))
     bc = toplu[bti][0]
     d24f = toplu[bti][2]
     t24f = toplu[bti][3]
@@ -152,7 +152,7 @@ def tc_degisim():
     ytablo.add_row(["Anlık Fiyat", bf])
     ytablo.add_row([d24f, t24f])
    
-    ao = 5
+    ao = 3
     sony = (bf/min(d1mumlar[:20])-1)*100
     if t24f / bf < 1.15 or sony >= 5:
         for i in toplu:
@@ -948,7 +948,7 @@ while True:
             if m2 > 0:
                 f2 = (hp - sf * m1 - usdt_to) / m2
             
-            if sf < max(hf, songaort) or sf * ctm + usdt_to < hp:
+            if sf < max(hf, songaort * kms) or sf * ctm + usdt_to < hp:
                 m1 = m1 - 4/sf
             else:
                 m1 = ctm
