@@ -854,7 +854,8 @@ while True:
         sf = min(hsf, zsf)
         m1 = max(mulk/4 - usdt_to, 10) / cp
         m2 = ctm - m1
-        
+    if ceder <= mulk/4:
+        af = max(haf, zaf)
     # ************- TAF -*******************************#
 
     for fa in range(0, 5):
