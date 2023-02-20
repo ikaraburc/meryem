@@ -133,6 +133,7 @@ def tc_degisim():
             if toplu[x][0] == y['currency_pair']:
                 prices2.append(float(y['last']))
 
+    
     for i in range(len(toplu)):
         changes.append(round(((prices2[i] / toplu[i][1]) - 1) * 100, 2))
 
@@ -145,21 +146,23 @@ def tc_degisim():
     bo = changes[bti]
     
     m1mumlar(bc)
-    tdo = round((t24f/d24f-1)*100,2)
+    tdo24 = round((t24f/d24f-1)*100,2)
+    tdo2 = round((max(t1mumlar[:120])/min(d1mumlar[:120])-1)*100,2)
     
-    ytablo.field_names = [str(bc), str("%="+str(bo) + " 24%=" + str(tdo))]
+    ytablo.field_names = [str(bc), str("%="+str(bo) + " 24%=" + str(tdo24))]
     ytablo.add_row(["Coin Adedi", len(toplu)])
     ytablo.add_row(["Anlık Fiyat", bf])
     ytablo.add_row([d24f, t24f])
    
     ao = 3
-    sony = (bf/min(d1mumlar[:20])-1)*100
-    if t24f / bf < 1.15 or sony >= 5:
+    
+    do = (bf/min(d1mumlar[:120])-1)*100
+    if t24f / bf < 1.15 or do >= 5 or tdo2 < 10:
         for i in toplu:
             if i[0] == bc:
                 toplu.remove(i)
                     
-    elif abs(bo) >= ao:
+    elif max(abs(bo), do) >= ao:
         bulunanlar.append(bc)
         if len(bulunanlar) > 5:
             bulunanlar.pop(0)
@@ -687,7 +690,7 @@ while True:
     tdk = round(zip_max / zip_min, 2)
     adk = round(fbids[0] / zip_min, 2)
         
-    km = 1.03
+    km = 1.05
     kms = round(max(1.03, min(max(zip_max / fasks[0], 1+abs(kar_orani)/100), 1.05)),2)
     zip = 1.02
     zk = round(max(1.05, 1+(tdk-1)*0.33),2)
@@ -794,26 +797,25 @@ while True:
     else:
         sonaort = 0
         sonsort = 0
+    
     p1 = usdt_to % (mulk / alk)
-    p2 = usdt_to - p1
-
+    if p1 < 1:
+        p1 = mulk/alk
+    
     m1 = ctm % (mulk / slk / cp)
+    if m1 * cp < 1:
+        m1 = mulk / slk / cp
+    
+    p2 = usdt_to - p1
     m2 = ctm - m1
     
-    if usdt_to <= mulk / alk * 1.1:
+    if usdt_to <= mulk / alk * 1.10:
         p1 = usdt_to
         p2 = 0
-    elif min(p1, p2) <= mulk/10:
-        p1 = mulk/alk
-        p2 = usdt_to - p1
-    
-    if ceder <= mulk / slk * 1.1:
+    if ctm <= mulk / slk / cp * 1.10:
         m1 = ctm
         m2 = 0
-    elif min(m1, m2) * cp <= mulk/10:
-        m1 = mulk / slk / cp
-        m2 = ctm - m1
-
+        
     if p2 > 0:
         ap1 = min(p1, p2)
         ap2 = max(p1, p2)
