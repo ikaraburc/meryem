@@ -157,7 +157,7 @@ def tc_degisim():
     ao = 3
     
     do = (bf/min(d1mumlar[:120])-1)*100
-    if t24f / bf < 1.15 or do >= 5 or tdo2 < 10:
+    if t24f / bf < 1.15 or do >= 5 or tdo2 < 10 or len(t1mumlar) < 900:
         for i in toplu:
             if i[0] == bc:
                 toplu.remove(i)
@@ -883,7 +883,7 @@ while True:
     af = min(af, taf)
     # ************- TSF -*******************************#
     ssi, sfi, ms = 0, 4, 2
-    if sf >= max(songaort, mf) * 1.07:
+    if sf >= max(songaort,sonaort, mf) * 1.07:
         ssi, sfi, ms = 0, 3, 2
         
     for fs in range(0, 5):
