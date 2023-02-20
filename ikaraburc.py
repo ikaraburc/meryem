@@ -690,7 +690,7 @@ while True:
     tdk = round(zip_max / zip_min, 2)
     adk = round(fbids[0] / zip_min, 2)
         
-    km = 1.05
+    km = 1.03
     kms = round(max(1.03, min(max(zip_max / fasks[0], 1+abs(kar_orani)/100), 1.05)),2)
     zip = 1.02
     zk = round(max(1.05, 1+(tdk-1)*0.33),2)
@@ -850,9 +850,9 @@ while True:
         af = min(af, zaf)  
     sf = hsf
 
-    if usdt_to <= mulk/slk:
+    if usdt_to <= mulk/4:
         sf = min(hsf, zsf)
-        m1 = max(mulk/slk - usdt_to, 10) / cp
+        m1 = max(mulk/4 - usdt_to, 10) / cp
         m2 = ctm - m1
         
     # ************- TAF -*******************************#
