@@ -691,9 +691,9 @@ while True:
     adk = round(fbids[0] / zip_min, 2)
         
     km = 1.03
-    kms = round(max(1.03, min(max(zip_max / fasks[0], 1+abs(kar_orani)/100), 1.05)),2)
+    kms = round(max(1.03, min(max(zip_max / fasks[0], 1+abs(kar_orani)/100), 1.06)),2)
     zip = 1.02
-    zk = round(max(1.05, 1+(tdk-1)*0.33),2)
+    zk = round(max(1.05,kms, 1+(tdk-1)*0.33),2)
 
     if adk >= 1.15:
         bolge = "USYükseliş..."
@@ -703,23 +703,17 @@ while True:
     elif 1.15 > adk >= 1.10:
         bolge = "SYükseliş..."
         asi, afi, ma = 1, 7, 5
-        alk, slk = 3, 2
+        alk, slk = 4, 2
 
     elif 1.10 > adk >= 1.05:
         bolge = "Yükseliş..."
         asi, afi, ma = 1, 6, 4
-        alk, slk = 3, 3
+        alk, slk = 4, 3
 
-    elif 1.05 > adk and tdk >= 1.03:
+    elif 1.05 > adk:
         bolge = "Stabil"
         asi, afi, ma = 1, 5, 3
-        alk, slk = 2, 3
-    
-    if tdk < 1.03:
-        bolge = "Ölü"
-        alk, slk = 2, 3
-        km = 1.01
-        asi, afi, ma = 1, 5, 2
+        alk, slk = 3, 4
 
     # ************- ZAF + ZSF BUL -*******************************#
 
@@ -836,7 +830,7 @@ while True:
                 haf = min(songsort, sonsort) / km
             if max(tut0, p1)>= mulk / alk * 0.95:
                 haf = songaort / zip
-            hsf = max(songaort, sonafiyat) * kms
+            hsf = max(songaort, sonaort) * kms
 
         elif sonislem == "sell":
             haf = min(max(songaort,sonaort), sonsort/km)
@@ -850,11 +844,13 @@ while True:
         af = min(af, zaf)  
     sf = hsf
 
-    if usdt_to <= mulk/4:
+    if usdt_to <= mulk/slk:
+        if zsf / hsf < km:
+            zsf = hsf
         sf = min(hsf, zsf)
-        m1 = max(mulk/4 - usdt_to, 10) / cp
+        m1 = max(mulk/slk - usdt_to, 10) / cp
         m2 = ctm - m1
-    if ceder <= mulk/4:
+    if ceder <= mulk/alk:
         af = max(haf, zaf)
     # ************- TAF -*******************************#
 
@@ -884,9 +880,9 @@ while True:
     af = min(af, taf)
     # ************- TSF -*******************************#
     ssi, sfi, ms = 0, 4, 2
-    if sf >= max(songaort,sonaort, mf) * 1.07:
-        ssi, sfi, ms = 0, 3, 2
-        
+    if sf < hsf:
+        ssi, sfi, ms = 1, 4, 3
+      
     for fs in range(0, 5):
         if 50 <= mbids[fs] * fbids[fs]:
             break
