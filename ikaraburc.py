@@ -691,30 +691,29 @@ while True:
     adk = round(fbids[0] / zip_min, 2)
         
     km = 1.03
-    kms = round(max(1.03, min(max(zip_max / fasks[0], 1+abs(kar_orani)/100), 1.06)),2)
-    zip = 1.02
-    zk = round(max(1.05,kms, 1+(tdk-1)*0.33),2)
+    kms = round(max(1.03, min(1.05, max(zip_max / fasks[0], mf/fbids[0]))),2)
+    zk = round(max(1.05, 1+(tdk-1)*0.33),2)
 
     if adk >= 1.15:
         bolge = "USYükseliş..."
-        asi, afi, ma = 1, 7, 6
-        alk, slk = 4, 1
+        asi, afi, ma = 4, 7, 4
+        alk, slk = 5, 1
 
     elif 1.15 > adk >= 1.10:
         bolge = "SYükseliş..."
-        asi, afi, ma = 1, 7, 5
+        asi, afi, ma = 3, 7, 3
         alk, slk = 4, 2
 
     elif 1.10 > adk >= 1.05:
         bolge = "Yükseliş..."
-        asi, afi, ma = 1, 6, 4
-        alk, slk = 4, 3
+        asi, afi, ma = 2, 6, 2
+        alk, slk = 4, 4
 
     elif 1.05 > adk:
         bolge = "Stabil"
-        asi, afi, ma = 1, 5, 3
-        alk, slk = 3, 4
-
+        asi, afi, ma = 1, 5, 2
+        alk, slk = 2, 5
+        
     # ************- ZAF + ZSF BUL -*******************************#
 
     for x in range(1, 1000):
@@ -829,7 +828,7 @@ while True:
             if gstut >= mulk/slk:
                 haf = min(songsort, sonsort) / km
             if max(tut0, p1)>= mulk / alk * 0.95:
-                haf = songaort / zip
+                haf = songaort / km
             hsf = max(songaort, sonaort) * kms
 
         elif sonislem == "sell":
@@ -837,7 +836,7 @@ while True:
             hsf = max(songaort, sonafiyat) * kms
             if max(m1 * cp, tut0) >= mulk/slk * 0.9:
                 haf = min(songsort, sonsfiyat) / km
-                hsf = max(songaort * kms, songsort * zip)
+                hsf = max(songaort * kms, songsort * km)
 
     af = haf
     if adk >= 1.07:
@@ -845,9 +844,9 @@ while True:
     sf = hsf
 
     if usdt_to <= mulk/slk:
-        if hsf / zsf < km:
+        if hsf/zsf <= kms:
             zsf = hsf
-        sf = min(hsf, zsf)
+        sf = min(max(sonaort, songaort) * km, zsf)
         m1 = max(mulk/slk - usdt_to, 10) / cp
         m2 = ctm - m1
     if ceder <= mulk/alk:
@@ -881,8 +880,10 @@ while True:
     # ************- TSF -*******************************#
     ssi, sfi, ms = 0, 4, 2
     if sf < hsf:
-        ssi, sfi, ms = 1, 4, 3
-      
+        ssi, sfi, ms = 2, 4, 2
+    elif sf >= max(songaort * kms, hf, hsf):
+        ssi, sfi, ms = 0, 3, 2
+        
     for fs in range(0, 5):
         if 50 <= mbids[fs] * fbids[fs]:
             break
@@ -944,7 +945,9 @@ while True:
             
             if sf < max(hf, max(sonaort, songaort) * kms, mf) or sf * ctm + usdt_to < hp:
                 m1 = m1 - 4/sf
-                
+            else:
+                m1 = ctm
+                m2 = 0
             sfiyat1 = round(max(sf * 1.1, fasks[10] - k, f2), digit)
             smiktar = m1
             smiktar1 = m2
