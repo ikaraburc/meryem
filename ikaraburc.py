@@ -845,7 +845,7 @@ while True:
     sf = hsf
 
     if usdt_to <= mulk/slk:
-        if zsf / hsf < km:
+        if hsf / zsf < km:
             zsf = hsf
         sf = min(hsf, zsf)
         m1 = max(mulk/slk - usdt_to, 10) / cp
@@ -906,11 +906,6 @@ while True:
             tsf = fasks[ysi] - k
       
     sf = max(sf, tsf)
-    # ************- HEDEFE ULAŞTIYSAK -*******************************#
-    
-    if fbids[0] >= hsf >= max(hf, mf):
-        if tsf / fbids[0] < 1.01:
-            sf = fbids[0]
    
     # ************- AL SAT EMİRLERİNİ GÖNDER BÖLÜMÜ -*******************************#
     af = round(af, digit)
@@ -947,11 +942,9 @@ while True:
             if m2 > 0:
                 f2 = (hp - sf * m1 - usdt_to) / m2
             
-            if sf < max(hf, songaort * kms) or sf * ctm + usdt_to < hp:
+            if sf < max(hf, max(sonaort, songaort) * kms, mf) or sf * ctm + usdt_to < hp:
                 m1 = m1 - 4/sf
-            else:
-                m1 = ctm
-                m2 = 0
+                
             sfiyat1 = round(max(sf * 1.1, fasks[10] - k, f2), digit)
             smiktar = m1
             smiktar1 = m2
