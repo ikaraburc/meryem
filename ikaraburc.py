@@ -692,7 +692,7 @@ while True:
         
     km = 1.03
     kms = round(max(1.03, min(1.05, max(zip_max / fasks[0], mf/fbids[0]))),2)
-    zk = round(max(1.05, 1+(tdk-1)*0.33),2)
+    zk = round(max(1.07, 1+(tdk-1)*0.33),2)
 
     if adk >= 1.15:
         bolge = "USYükseliş..."
@@ -712,7 +712,7 @@ while True:
     elif 1.05 > adk:
         bolge = "Stabil"
         asi, afi, ma = 2, 5, 2
-        alk, slk = 3, 5
+        alk, slk = 4, 5
         
     # ************- ZAF + ZSF BUL -*******************************#
 
