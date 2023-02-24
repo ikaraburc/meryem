@@ -105,9 +105,11 @@ def tc_fiyatlar():
                 and "3L" not in data[i]["currency_pair"] \
                 and "5S" not in data[i]["currency_pair"] \
                 and "5L" not in data[i]["currency_pair"] \
+                and float(data[i]["change_percentage"]) > 0 \
                 and float(data[i]["last"]) > 0 \
                 and float(data[i]["low_24h"]) > 0 \
-                and float(data[i]["change_percentage"]) >= 10 \
+                and float(data[i]["high_24h"])/float(data[i]["last"]) >= 1.15 \
+                and float(data[i]["high_24h"])/float(data[i]["low_24h"]) >= 1.20 \
                 and float(data[i]["quote_volume"]) > 80000:
             toplu.append([data[i]["currency_pair"], float(data[i]["last"]), float(data[i]["low_24h"]), float(data[i]["high_24h"])])
     
@@ -144,25 +146,23 @@ def tc_degisim():
     
     bf = prices2[bti]
     bo = changes[bti]
-    
     m1mumlar(bc)
     tdo24 = round((t24f/d24f-1)*100,2)
     tdo2 = round((max(t1mumlar[:120])/min(d1mumlar[:120])-1)*100,2)
+    ado1 = (bf/min(d1mumlar[:60])-1)*100
     
     ytablo.field_names = [str(bc), str("%="+str(bo) + " 24%=" + str(tdo24))]
     ytablo.add_row(["Coin Adedi", len(toplu)])
     ytablo.add_row(["Anlık Fiyat", bf])
     ytablo.add_row([d24f, t24f])
-   
-    ao = 3
+    print(ytablo)
     
-    do = (bf/min(d1mumlar[:120])-1)*100
-    if t24f / bf < 1.15 or do >= 5 or tdo2 < 10 or len(t1mumlar) < 900:
+    if ado1 >= 5 or tdo2 < 10 or len(t1mumlar) < 900:
         for i in toplu:
             if i[0] == bc:
                 toplu.remove(i)
                     
-    elif max(abs(bo), do) >= ao:
+    elif max(abs(bo), ado1) >= 3:
         bulunanlar.append(bc)
         if len(bulunanlar) > 5:
             bulunanlar.pop(0)
@@ -605,12 +605,13 @@ class coin_trader:
         T3.start()
         T4.start()
         T5.start()
-
+    
         T1.join()
         T2.join()
         T3.join()
         T4.join()
         T5.join()
+       
 
 
 # ***********************************************************************************************************************************************************
@@ -643,7 +644,7 @@ while True:
     print(bilanco)
 
     veri_sn = 10 * 60
-    if time.time() - t1 >= veri_sn:
+    if time.time() - t1 >= veri_sn or len(toplu) <=1:
         tc_fiyatlar()
         t1 = time.time()
 
@@ -667,7 +668,6 @@ while True:
             bulunanlar= ["abc"]
             while True:
                 tc_degisim()
-                print(ytablo)
                 if bulunanlar[-1] == bc:
                     tbot_ozel.send_message(telegram_chat_id, str(bc + str(" coine girildi...")))
                     ct = coin_trader(str(bc))
@@ -697,22 +697,22 @@ while True:
     if adk >= 1.15:
         bolge = "USYükseliş..."
         asi, afi, ma = 4, 7, 4
-        alk, slk = 5, 1
+        alk, slk = 5, 2
 
     elif 1.15 > adk >= 1.10:
         bolge = "SYükseliş..."
         asi, afi, ma = 3, 7, 3
-        alk, slk = 4, 2
+        alk, slk = 5, 3
 
     elif 1.10 > adk >= 1.05:
         bolge = "Yükseliş..."
-        asi, afi, ma = 2, 6, 2
+        asi, afi, ma = 2, 6, 3
         alk, slk = 4, 4
 
     elif 1.05 > adk:
         bolge = "Stabil"
-        asi, afi, ma = 1, 5, 2
-        alk, slk = 2, 5
+        asi, afi, ma = 2, 5, 2
+        alk, slk = 3, 5
         
     # ************- ZAF + ZSF BUL -*******************************#
 
@@ -792,11 +792,11 @@ while True:
         sonsort = 0
     
     p1 = usdt_to % (mulk / alk)
-    if p1 < 1:
+    if p1 < 2:
         p1 = mulk/alk
     
     m1 = ctm % (mulk / slk / cp)
-    if m1 * cp < 1:
+    if m1 * cp < 2:
         m1 = mulk / slk / cp
     
     p2 = usdt_to - p1
@@ -945,9 +945,7 @@ while True:
             
             if sf < max(hf, max(sonaort, songaort) * kms, mf) or sf * ctm + usdt_to < hp:
                 m1 = m1 - 4/sf
-            else:
-                m1 = ctm
-                m2 = 0
+
             sfiyat1 = round(max(sf * 1.1, fasks[10] - k, f2), digit)
             smiktar = m1
             smiktar1 = m2
