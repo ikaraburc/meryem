@@ -631,9 +631,6 @@ if ceder < 1:
 
 afiyat = cp * 0.98
 sfiyat = cp * 1.05
-msg_bilgi = "hayır"
-msg_pump = "hayır"
-msg_risk = "hayır"
 
 tc_fiyatlar()
 t1 = time.time()
@@ -694,6 +691,11 @@ while True:
     kms = round(max(1.03, min(1.05, max(zip_max / fasks[0], mf/fbids[0]))),2)
     zk = round(max(1.07, 1+(tdk-1)*0.33),2)
 
+    hf = 0
+    hp = anapara + harcanan * (km - 1)
+    if ceder >= 1:
+        hf = round(max((hp - usdt_to) / ctm, fbids[1]), digit)
+    
     if adk >= 1.15:
         bolge = "USYükseliş..."
         asi, afi, ma = 4, 7, 4
@@ -713,6 +715,9 @@ while True:
         bolge = "Stabil"
         asi, afi, ma = 2, 5, 2
         alk, slk = 4, 5
+   
+    if cp >= hf:
+        slk = 2
         
     # ************- ZAF + ZSF BUL -*******************************#
 
@@ -729,11 +734,6 @@ while True:
     zaf = zaf * 1.005
     zsf = zsf / 1.005
 
-    hf = 0
-    hp = anapara + harcanan * (km - 1)
-    if ceder >= 1:
-        hf = round(max((hp - usdt_to) / ctm, fbids[1]), digit)
-      
     # ************- AL SAT GEÇMİŞ BÖLÜMÜ -*******************************#
 
     sonort0, sonort1 = 0, 0
@@ -790,7 +790,7 @@ while True:
     else:
         sonaort = 0
         sonsort = 0
-    
+        
     p1 = usdt_to % (mulk / alk)
     if p1 < 2:
         p1 = mulk/alk
@@ -842,6 +842,8 @@ while True:
     if adk >= 1.07:
         af = min(af, zaf)  
     sf = hsf
+    if sf/mf <= km:
+        sf = mf * 1.01
 
     if usdt_to <= mulk/slk:
         if hsf/zsf <= kms:
@@ -880,7 +882,7 @@ while True:
     # ************- TSF -*******************************#
     ssi, sfi, ms = 0, 4, 2
     if sf < hsf:
-        ssi, sfi, ms = 2, 4, 2
+        ssi, sfi, ms = 1, 4, 2
     elif sf >= max(songaort * kms, hf, hsf):
         ssi, sfi, ms = 0, 3, 2
         
