@@ -842,8 +842,6 @@ while True:
     if adk >= 1.07:
         af = min(af, zaf)  
     sf = hsf
-    if sf/mf <= km:
-        sf = mf * 1.01
 
     if usdt_to <= mulk/slk:
         if hsf/zsf <= kms:
@@ -853,6 +851,9 @@ while True:
         m2 = ctm - m1
     if ceder <= mulk/alk:
         af = max(haf, zaf)
+        
+    if 1+abs(sf-mf)/sf <= km:
+        sf = mf * 1.01
     # ************- TAF -*******************************#
 
     for fa in range(0, 5):
@@ -881,9 +882,7 @@ while True:
     af = min(af, taf)
     # ************- TSF -*******************************#
     ssi, sfi, ms = 0, 4, 2
-    if sf < hsf:
-        ssi, sfi, ms = 1, 4, 2
-    elif sf >= max(songaort * kms, hf, hsf):
+    if sf >= max(songaort * kms, hf, hsf):
         ssi, sfi, ms = 0, 3, 2
         
     for fs in range(0, 5):
