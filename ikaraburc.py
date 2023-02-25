@@ -514,7 +514,7 @@ class coin_trader:
         tt = int(time.time() - 20 * 24 * 60 * 60)
         url = '/spot/my_trades'
         query_param = 'currency_pair=' + self.coin + "&from" + str(tt)
-        print(tt, query_param, time.time())
+       
         sign_headers = gen_sign('GET', prefix + url, query_param)
         headers.update(sign_headers)
 
