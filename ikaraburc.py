@@ -561,6 +561,9 @@ class coin_trader:
             else:
                 break
         print(sgelir, agider, miktar, len(r), limit)
+        a = (time.time() - float(r[0]["create_time"]))/(60*60*24)
+        b = (time.time() - float(r[-1]["create_time"]))/(60*60*24)
+        print(a, b)
         anapara = round(usdt_to + agider - sgelir, 2)
         kar_tutari = round(ceder - agider + sgelir, 2)
         harcanan = min(agider, anapara)
