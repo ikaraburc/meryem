@@ -511,9 +511,9 @@ class coin_trader:
         host = "https://api.gateio.ws"
         prefix = "/api/v4"
         headers = {'Accept': 'application/json', 'Content-Type': 'application/json'}
-
+        tt = int(time.time() - 30 * 24 * 60 * 60)
         url = '/spot/my_trades'
-        query_param = 'currency_pair=' + self.coin + "&" +"limit=1000"
+        query_param = 'currency_pair=' + self.coin + "&" +"from=tt"
 
         sign_headers = gen_sign('GET', prefix + url, query_param)
         headers.update(sign_headers)
