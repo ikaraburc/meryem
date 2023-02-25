@@ -555,6 +555,7 @@ class coin_trader:
                 if x["fee_currency"] == coin_adi:
                     miktar = miktar + float(x["fee"])
                 if miktar * float(x["price"]) < 1 :
+                    print(miktar, miktar * float(x["price"]))
                     break
             else:
                 miktar = miktar + float(x["amount"])
