@@ -559,7 +559,7 @@ class coin_trader:
             else:
                 miktar = miktar + float(x["amount"])
                 sgelir = sgelir + float(x["amount"]) * float(x["price"]) / 1.002
-            
+        print(agider, sgelir, len(r), miktar)
         anapara = round(usdt_to + agider - sgelir, 2)
         kar_tutari = round(ceder - agider + sgelir, 2)
         harcanan = min(agider, anapara)
