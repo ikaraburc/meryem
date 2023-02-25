@@ -548,18 +548,18 @@ class coin_trader:
         mf, mmf, kar_orani = 0, 0, 0
  
         for x in r:
-            if miktar * float(x["price"]) >= 1 :
+            if x["side"] == "buy":
                 limit = limit + 1
-                if x["side"] == "buy":
-                    miktar = miktar - float(x["amount"])
-                    agider = agider + float(x["amount"]) * float(x["price"])
-                    if x["fee_currency"] == coin_adi:
-                        miktar = miktar + float(x["fee"])
-                else:
-                    miktar = miktar + float(x["amount"])
-                    sgelir = sgelir + float(x["amount"]) * float(x["price"]) / 1.002
+                miktar = miktar - float(x["amount"])
+                agider = agider + float(x["amount"]) * float(x["price"])
+                if x["fee_currency"] == coin_adi:
+                    miktar = miktar + float(x["fee"])
+                if miktar * float(x["price"]) < 1 :
+                    break
             else:
-                break
+                miktar = miktar + float(x["amount"])
+                sgelir = sgelir + float(x["amount"]) * float(x["price"]) / 1.002
+            
         anapara = round(usdt_to + agider - sgelir, 2)
         kar_tutari = round(ceder - agider + sgelir, 2)
         harcanan = min(agider, anapara)
