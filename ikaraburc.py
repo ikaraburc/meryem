@@ -513,7 +513,7 @@ class coin_trader:
         headers = {'Accept': 'application/json', 'Content-Type': 'application/json'}
 
         url = '/spot/my_trades'
-        tt = int( time time() - 30 * 24 * 60 * 60 )
+        tt = int(time.time() - 20 * 24 * 60 * 60 )
         query_param = 'currency_pair=' + self.coin + "&from=" + str(tt)
 
         sign_headers = gen_sign('GET', prefix + url, query_param)
