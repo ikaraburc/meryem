@@ -852,7 +852,7 @@ while True:
     if ceder <= mulk/alk:
         af = max(haf, zaf)
         
-    if 1+abs(sf-mf)/sf <= km:
+    if sf > 0 and 1+abs(sf-mf)/sf <= km:
         sf = mf * 1.01
     # ************- TAF -*******************************#
 
@@ -908,7 +908,8 @@ while True:
             tsf = fasks[ysi] - k
       
     sf = max(sf, tsf)
-   
+    if harcanan <= mulk/alk:
+        af = taf
     # ************- AL SAT EMİRLERİNİ GÖNDER BÖLÜMÜ -*******************************#
     af = round(af, digit)
     sf = round(sf, digit)
