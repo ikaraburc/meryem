@@ -511,10 +511,10 @@ class coin_trader:
         host = "https://api.gateio.ws"
         prefix = "/api/v4"
         headers = {'Accept': 'application/json', 'Content-Type': 'application/json'}
-        tt = int(time.time() - 20 * 24 * 60 * 60)
+
         url = '/spot/my_trades'
         query_param = 'currency_pair=' + self.coin + "&limit=1000"
-       
+
         sign_headers = gen_sign('GET', prefix + url, query_param)
         headers.update(sign_headers)
 
@@ -548,17 +548,18 @@ class coin_trader:
         mf, mmf, kar_orani = 0, 0, 0
  
         for x in r:
-            if x["side"] == "buy":
+            if miktar * float(x["price"]) >= 1 :
                 limit = limit + 1
-                miktar = miktar - float(x["amount"])
-                agider = agider + float(x["amount"]) * float(x["price"])
-                if x["fee_currency"] == coin_adi:
-                    miktar = miktar + float(x["fee"])
-                if miktar * float(x["price"]) < 1 :
-                    break
+                if x["side"] == "buy":
+                    miktar = miktar - float(x["amount"])
+                    agider = agider + float(x["amount"]) * float(x["price"])
+                    if x["fee_currency"] == coin_adi:
+                        miktar = miktar + float(x["fee"])
+                else:
+                    miktar = miktar + float(x["amount"])
+                    sgelir = sgelir + float(x["amount"]) * float(x["price"]) / 1.002
             else:
-                miktar = miktar + float(x["amount"])
-                sgelir = sgelir + float(x["amount"]) * float(x["price"]) / 1.002
+                break
         
         anapara = round(usdt_to + agider - sgelir, 2)
         kar_tutari = round(ceder - agider + sgelir, 2)
