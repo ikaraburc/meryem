@@ -555,12 +555,11 @@ class coin_trader:
                 if x["fee_currency"] == coin_adi:
                     miktar = miktar + float(x["fee"])
                 if miktar * float(x["price"]) < 1 :
-                    print(miktar, miktar * float(x["price"]))
                     break
             else:
                 miktar = miktar + float(x["amount"])
                 sgelir = sgelir + float(x["amount"]) * float(x["price"]) / 1.002
-        print(agider, sgelir, len(r), miktar)
+        
         anapara = round(usdt_to + agider - sgelir, 2)
         kar_tutari = round(ceder - agider + sgelir, 2)
         harcanan = min(agider, anapara)
@@ -743,7 +742,7 @@ while True:
     mik0, mik1 = 0, 0
     tut0, tut1 = 0, 0
 
-    if harcanan >= 1:
+    if harcanan > 0:
         for i in range(0, len(sonislems)):
             if sonislems[i]["side"] == "buy":
                 gamik = gamik + float(sonislems[i]["amount"])
