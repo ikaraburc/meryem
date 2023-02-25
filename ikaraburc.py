@@ -513,8 +513,8 @@ class coin_trader:
         headers = {'Accept': 'application/json', 'Content-Type': 'application/json'}
         tt = int(time.time() - 20 * 24 * 60 * 60)
         url = '/spot/my_trades'
-        query_param = 'currency_pair=' + self.coin + "&from=" + tt
-
+        query_param = 'currency_pair=' + self.coin + "&from=" + str(tt)
+        print(tt, query_param, time.time())
         sign_headers = gen_sign('GET', prefix + url, query_param)
         headers.update(sign_headers)
 
@@ -560,10 +560,6 @@ class coin_trader:
                     sgelir = sgelir + float(x["amount"]) * float(x["price"]) / 1.002
             else:
                 break
-        print(sgelir, agider, miktar, len(r), limit)
-        a = (time.time() - float(r[0]["create_time"]))/(60*60*24)
-        b = (time.time() - float(r[-1]["create_time"]))/(60*60*24)
-        print(a, b)
         anapara = round(usdt_to + agider - sgelir, 2)
         kar_tutari = round(ceder - agider + sgelir, 2)
         harcanan = min(agider, anapara)
