@@ -105,7 +105,7 @@ def tc_fiyatlar():
                 and "3L" not in data[i]["currency_pair"] \
                 and "5S" not in data[i]["currency_pair"] \
                 and "5L" not in data[i]["currency_pair"] \
-                and float(data[i]["change_percentage"]) > 0 \
+                and float(data[i]["change_percentage"]) > 15 \
                 and float(data[i]["last"]) > 0 \
                 and float(data[i]["low_24h"]) > 0 \
                 and float(data[i]["high_24h"])/float(data[i]["last"]) >= 1.15 \
@@ -151,18 +151,18 @@ def tc_degisim():
     tdo2 = round((max(t1mumlar[:120])/min(d1mumlar[:120])-1)*100,2)
     ado1 = (bf/min(d1mumlar[:60])-1)*100
     
-    ytablo.field_names = [str(bc), str("%="+str(bo) + " 24%=" + str(tdo24))]
+    ytablo.field_names = [str(bc), str("an%="+str(bo) + " 24s%=" + str(tdo24))]
     ytablo.add_row(["Coin Adedi", len(toplu)])
     ytablo.add_row(["Anlık Fiyat", bf])
     ytablo.add_row([d24f, t24f])
     print(ytablo)
     
-    if ado1 >= 5 or tdo2 < 10 or len(t1mumlar) < 900:
+    if ado1 > 5 or tdo2 < 15 or len(t1mumlar) < 900:
         for i in toplu:
             if i[0] == bc:
                 toplu.remove(i)
                     
-    elif max(abs(bo), ado1) >= 3:
+    elif abs(bo) >= 2:
         bulunanlar.append(bc)
         if len(bulunanlar) > 5:
             bulunanlar.pop(0)
@@ -513,7 +513,6 @@ class coin_trader:
         headers = {'Accept': 'application/json', 'Content-Type': 'application/json'}
 
         url = '/spot/my_trades'
-        tt = int(time.time() - 20 * 24 * 60 * 60 )
         query_param = 'currency_pair=' + self.coin + "&limit=1000"
 
         sign_headers = gen_sign('GET', prefix + url, query_param)
@@ -715,11 +714,8 @@ while True:
     elif 1.05 > adk:
         bolge = "Stabil"
         asi, afi, ma = 2, 5, 2
-        alk, slk = 4, 5
+        alk, slk = 3, 5
    
-    if cp >= hf:
-        slk = 2
-        
     # ************- ZAF + ZSF BUL -*******************************#
 
     for x in range(1, 1000):
@@ -853,7 +849,7 @@ while True:
     if ceder <= mulk/alk:
         af = max(haf, zaf)
         
-    if sf > 0 and 1+abs(sf-mf)/sf <= km:
+    if 0 < sf < mf and mf <= sf * km:
         sf = mf * 1.01
     # ************- TAF -*******************************#
 
@@ -882,9 +878,9 @@ while True:
             
     af = min(af, taf)
     # ************- TSF -*******************************#
-    ssi, sfi, ms = 0, 4, 2
+    ssi, sfi, ms = 0, 3, 2
     if sf >= max(songaort * kms, hf, hsf):
-        ssi, sfi, ms = 0, 3, 2
+        ssi, sfi, ms = 0, 2, 2
         
     for fs in range(0, 5):
         if 50 <= mbids[fs] * fbids[fs]:
