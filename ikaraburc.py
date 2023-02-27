@@ -105,7 +105,7 @@ def tc_fiyatlar():
                 and "3L" not in data[i]["currency_pair"] \
                 and "5S" not in data[i]["currency_pair"] \
                 and "5L" not in data[i]["currency_pair"] \
-                and float(data[i]["change_percentage"]) > 15 \
+                and float(data[i]["change_percentage"]) > 0 \
                 and float(data[i]["last"]) > 0 \
                 and float(data[i]["low_24h"]) > 0 \
                 and float(data[i]["high_24h"])/float(data[i]["last"]) >= 1.15 \
@@ -147,19 +147,22 @@ def tc_degisim():
     bf = prices2[bti]
     bo = changes[bti]
     m1mumlar(bc)
-    tdo24 = round((t24f/d24f-1)*100,2)
-    tdo2 = round((max(t1mumlar[:120])/min(d1mumlar[:120])-1)*100,2)
-    ado1 = (bf/min(d1mumlar[:60])-1)*100
+    tao = round((max(t1mumlar[:120])/bf-1)*100,2)
+    tdo = round((max(t1mumlar[:120])/min(d1mumlar[:120])-1)*100,2)
     
-    ytablo.field_names = [str(bc), str("an%="+str(bo) + " 24s%=" + str(tdo24))]
+    ytablo.field_names = [str(bc), str("an%="+str(bo))]
     ytablo.add_row(["Coin Adedi", len(toplu)])
     ytablo.add_row(["Anlık Fiyat", bf])
-    ytablo.add_row([d24f, t24f])
+    ytablo.add_row(["24s tepe", t24f])
+    ytablo.add_row(["24s dip ", d24f])
+    ytablo.add_row(["tdo 2s %", tdo])
+    ytablo.add_row(["tao 2s %", tao])
     print(ytablo)
     
-    if ado1 > 5 or tdo2 < 15 or len(t1mumlar) < 900:
+    if tao < 10 or tdo < 15 or len(t1mumlar) < 900:
         for i in toplu:
             if i[0] == bc:
+                print(i, " çıkarıldı..")
                 toplu.remove(i)
                     
     elif abs(bo) >= 2:
@@ -713,7 +716,7 @@ while True:
 
     elif 1.05 > adk:
         bolge = "Stabil"
-        asi, afi, ma = 2, 5, 2
+        asi, afi, ma = 1, 5, 2
         alk, slk = 3, 5
    
     # ************- ZAF + ZSF BUL -*******************************#
@@ -849,7 +852,7 @@ while True:
     if ceder <= mulk/alk:
         af = max(haf, zaf)
         
-    if 0 < sf < mf and mf <= sf * km:
+    if 0 < sf < mf and mf/sf <= km:
         sf = mf * 1.01
     # ************- TAF -*******************************#
 
@@ -878,7 +881,7 @@ while True:
             
     af = min(af, taf)
     # ************- TSF -*******************************#
-    ssi, sfi, ms = 0, 3, 2
+    ssi, sfi, ms = 0, 4, 2
     if sf >= max(songaort * kms, hf, hsf):
         ssi, sfi, ms = 0, 2, 2
         
