@@ -718,7 +718,7 @@ while True:
         bolge = "Stabil"
         asi, afi, ma = 1, 5, 2
         alk, slk = 3, 5
-   
+    
     # ************- ZAF + ZSF BUL -*******************************#
 
     for x in range(1, 1000):
@@ -780,7 +780,8 @@ while True:
                     sonort1 = tut1 / mik1
             break
     # ************- ALIŞ SATIŞ MİKTAR -*******************************#
-
+    if cp >= songaort * 1.07:
+        slk = 1
     if sonislem == "buy":
         sonaort = sonort0
         sonsort = sonort1
