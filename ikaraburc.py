@@ -780,7 +780,7 @@ while True:
                     sonort1 = tut1 / mik1
             break
     # ************- ALIŞ SATIŞ MİKTAR -*******************************#
-    if cp >= songaort * 1.07:
+    if cp >= max(mf, songaort) * 1.07:
         slk = 1
     if sonislem == "buy":
         sonaort = sonort0
