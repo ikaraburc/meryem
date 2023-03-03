@@ -80,11 +80,16 @@ def m1mumlar(bc):
             print("Bağlantı bekleniyor...")
             continue
 
-    global t1mumlar, d1mumlar
+    global t1mumlar, d1mumlar, m1hacim
     t1mumlar = [float(i[3]) for i in r]
     d1mumlar = [float(i[4]) for i in r]
+    m1hacim = [float(i[1]) for i in r]
+    
     t1mumlar.reverse()
     d1mumlar.reverse()
+    m1hacim.reverse()
+    m1hacim = round(sum(m1hacim[:60]),2)
+    print(m1hacim)
 
 def tc_fiyatlar():
     host = "https://api.gateio.ws"
@@ -159,7 +164,7 @@ def tc_degisim():
     ytablo.add_row(["tao 2s %", tao])
     print(ytablo)
     
-    if tao < 10 or tdo < 15 or len(t1mumlar) < 900:
+    if tao < 10 or tdo < 15 or len(t1mumlar) < 900 or m1hacim < 1000:
         for i in toplu:
             if i[0] == bc:
                 print(i, " çıkarıldı..")
@@ -702,17 +707,17 @@ while True:
     if adk >= 1.15:
         bolge = "USYükseliş..."
         asi, afi, ma = 4, 7, 4
-        alk, slk = 5, 1
+        alk, slk = 5, 4
 
     elif 1.15 > adk >= 1.10:
         bolge = "SYükseliş..."
         asi, afi, ma = 3, 7, 3
-        alk, slk = 5, 3
+        alk, slk = 5, 5
 
     elif 1.10 > adk >= 1.05:
         bolge = "Yükseliş..."
         asi, afi, ma = 2, 6, 3
-        alk, slk = 4, 4
+        alk, slk = 4, 5
 
     elif 1.05 > adk:
         bolge = "Stabil"
