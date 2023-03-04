@@ -828,6 +828,8 @@ while True:
  
     # ************- HAF + HSF -*******************************#
     haf, hsf = zaf, zsf
+    if usdt_to <= mulk * 0.6:
+        km = 1.05
     if harcanan >= 1:
         if sonislem == "buy":
             haf = sonaort
@@ -842,7 +844,7 @@ while True:
             hsf = max(songaort, sonafiyat) * kms
             if max(m1 * cp, tut0) >= mulk/slk * 0.9:
                 haf = min(songsort, sonsfiyat) / km
-                hsf = max(songaort * kms, songsort * km)
+                hsf = max(songaort * kms, songsort * 1.03)
 
     af = haf
     if adk >= 1.07:
