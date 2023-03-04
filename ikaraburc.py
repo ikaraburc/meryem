@@ -53,7 +53,10 @@ def son_coin():
             print("Bağlantı bekleniyor...")
             continue
     global scoin
-    scoin = r[0]["currency_pair"]
+    if len(r) >= 1:        
+        scoin = r[0]["currency_pair"]
+    else:
+        scoin = "BTC_USDT"
 
 def m1mumlar(bc):
     
@@ -164,7 +167,7 @@ def tc_degisim():
     ytablo.add_row(["tao 2s %", tao])
     print(ytablo)
     
-    if tao < 10 or tdo < 15 or len(t1mumlar) < 900 or m1hacim < 1000:
+    if bf/min(d1mumlar[:30]) >= 1.05 or tao < 10 or tdo < 15 or len(t1mumlar) < 900 or m1hacim < 1000:
         for i in toplu:
             if i[0] == bc:
                 print(i, " çıkarıldı..")
@@ -296,8 +299,10 @@ class coin_trader:
             cam, clm = float(eldeki_mal[0]["available"]), float(eldeki_mal[0]["locked"])
         else:
             cam, clm = 0, 0
-
-        usdt_av, usdt_lo = float(eldeki_usdt[0]["available"]), float(eldeki_usdt[0]["locked"])
+        if len(eldeki_usdt) > 0:
+            usdt_av, usdt_lo = float(eldeki_usdt[0]["available"]), float(eldeki_usdt[0]["locked"])
+        else:
+            usdt_av, usdt_lo = 0, 0
 
         usdt_to = usdt_av + usdt_lo
         ctm = cam + clm
