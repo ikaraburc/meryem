@@ -166,14 +166,14 @@ def tc_degisim():
     ytablo.add_row(["tdo 2s %", tdo])
     ytablo.add_row(["tao 2s %", tao])
     print(ytablo)
-    
-    if bf/min(d1mumlar[:30]) >= 1.05 or tao < 10 or tdo < 15 or len(t1mumlar) < 900 or m1hacim < 1000:
+    bo30 = bf/min(d1mumlar[:30])
+    if  bo30 >= 1.05 or tao < 10 or tdo < 15 or len(t1mumlar) < 900 or m1hacim < 1000:
         for i in toplu:
             if i[0] == bc:
                 print(i, " çıkarıldı..")
                 toplu.remove(i)
                     
-    elif abs(bo) >= 2:
+    elif max(abs(bo),bo30)  >= 2:
         bulunanlar.append(bc)
         if len(bulunanlar) > 5:
             bulunanlar.pop(0)
@@ -728,7 +728,11 @@ while True:
         bolge = "Stabil"
         asi, afi, ma = 1, 5, 2
         alk, slk = 3, 5
-    
+    if tdk < 1.03:
+        bolge = "ölü"
+        kms = 1.02
+        km = 1.02
+        alk, slk = 2, 3
     # ************- ZAF + ZSF BUL -*******************************#
 
     for x in range(1, 1000):
