@@ -92,7 +92,7 @@ def m1mumlar(bc):
     d1mumlar.reverse()
     m1hacim.reverse()
     m1hacim = round(sum(m1hacim[:60]),2)
-    print(m1hacim)
+   
 
 def tc_fiyatlar():
     host = "https://api.gateio.ws"
@@ -113,10 +113,9 @@ def tc_fiyatlar():
                 and "3L" not in data[i]["currency_pair"] \
                 and "5S" not in data[i]["currency_pair"] \
                 and "5L" not in data[i]["currency_pair"] \
-                and float(data[i]["change_percentage"]) > 0 \
                 and float(data[i]["last"]) > 0 \
                 and float(data[i]["low_24h"]) > 0 \
-                and float(data[i]["high_24h"])/float(data[i]["last"]) >= 1.15 \
+                and float(data[i]["high_24h"])/float(data[i]["last"]) >= 1.10 \
                 and float(data[i]["high_24h"])/float(data[i]["low_24h"]) >= 1.20 \
                 and float(data[i]["quote_volume"]) > 80000:
             toplu.append([data[i]["currency_pair"], float(data[i]["last"]), float(data[i]["low_24h"]), float(data[i]["high_24h"])])
@@ -143,7 +142,6 @@ def tc_degisim():
             if toplu[x][0] == y['currency_pair']:
                 prices2.append(float(y['last']))
 
-    
     for i in range(len(toplu)):
         changes.append(round(((prices2[i] / toplu[i][1]) - 1) * 100, 2))
 
@@ -155,25 +153,23 @@ def tc_degisim():
     bf = prices2[bti]
     bo = changes[bti]
     m1mumlar(bc)
-    tao = round((max(t1mumlar[:60])/bf-1)*100,2)
-    tdo = round((max(t1mumlar[:60])/min(d1mumlar[:120])-1)*100,2)
+    tdo = round((max(t1mumlar[:60])/min(d1mumlar[:60])-1)*100,2)
     
-    ytablo.field_names = [str(bc), str("an%="+str(bo))]
+    ytablo.field_names = [str(bc), str("bo%="+str(bo))]
     ytablo.add_row(["Coin Adedi", len(toplu)])
     ytablo.add_row(["Anlık Fiyat", bf])
     ytablo.add_row(["24s tepe", t24f])
     ytablo.add_row(["24s dip ", d24f])
-    ytablo.add_row(["tdo 2s %", tdo])
-    ytablo.add_row(["tao 2s %", tao])
+    ytablo.add_row(["Saatlik %", tdo])
     print(ytablo)
-    bo30 = bf/min(d1mumlar[:30])
-    if  bo30 >= 1.05 or tao < 5 or tdo < 10 or len(t1mumlar) < 900 or m1hacim < 1000:
+    
+    if bf/min(d1mumlar[:60]) >= 1.05 or tdo < 10 or len(t1mumlar) < 900 or m1hacim < 1000:
         for i in toplu:
             if i[0] == bc:
                 print(i, " çıkarıldı..")
                 toplu.remove(i)
                     
-    elif max(abs(bo),bo30)  >= 2:
+    elif bo >= 2:
         bulunanlar.append(bc)
         if len(bulunanlar) > 5:
             bulunanlar.pop(0)
@@ -732,7 +728,7 @@ while True:
         bolge = "ölü"
         kms = 1.02
         km = 1.02
-        alk, slk = 2, 3
+        alk, slk = 1, 3
     # ************- ZAF + ZSF BUL -*******************************#
 
     for x in range(1, 1000):
@@ -794,8 +790,7 @@ while True:
                     sonort1 = tut1 / mik1
             break
     # ************- ALIŞ SATIŞ MİKTAR -*******************************#
-    if cp >= max(mf, songaort) * 1.07:
-        slk = 1
+    
     if sonislem == "buy":
         sonaort = sonort0
         sonsort = sonort1
@@ -842,11 +837,11 @@ while True:
     if harcanan >= 1:
         if sonislem == "buy":
             haf = sonaort
-            if gstut >= mulk/slk:
-                haf = min(songsort, sonsort) / km
+            if gstut > 0:
+                haf = min(songsort, sonsort)/km
             if max(tut0, p1)>= mulk / alk * 0.95:
                 haf = songaort / km
-            hsf = max(songaort, sonaort) * kms
+            hsf = max(songaort, sonaort, sonafiyat) * kms
 
         elif sonislem == "sell":
             haf = min(max(songaort,sonaort), sonsort/km)
@@ -858,19 +853,18 @@ while True:
     af = haf
     if adk >= 1.07:
         af = min(af, zaf)  
+    elif ceder <= mulk/alk and harcanan >= mulk/alk:
+        af = max(haf, zaf)
+    
     sf = hsf
-
     if usdt_to <= mulk/slk:
         if hsf/zsf <= kms:
             zsf = hsf
-        sf = min(max(sonaort, songaort) * km, zsf)
+        sf = min(hsf, zsf)
         m1 = max(mulk/slk - usdt_to, 10) / cp
         m2 = ctm - m1
-    if ceder <= mulk/alk:
-        af = max(haf, zaf)
-        
-    if 0 < sf < mf and mf/sf <= km:
-        sf = mf * 1.01
+    elif 0 < sf <= mf and mf/sf <= km:
+        sf = mf * 1.02
     # ************- TAF -*******************************#
 
     for fa in range(0, 5):
@@ -961,10 +955,10 @@ while True:
             f2 = 0
             if m2 > 0:
                 f2 = (hp - sf * m1 - usdt_to) / m2
-            
-            if sf < max(hf, max(sonaort, songaort) * kms, mf) or sf * ctm + usdt_to < hp:
-                m1 = m1 - 4/sf
-
+            else:
+                if sf < max(hf, mf * kms) or sf * ctm + usdt_to < hp:
+                    m1 = m1 - 4/sf
+      
             sfiyat1 = round(max(sf * 1.1, fasks[10] - k, f2), digit)
             smiktar = m1
             smiktar1 = m2
