@@ -1,4 +1,5 @@
 import requests
+import time
 from prettytable import PrettyTable
 from requests.exceptions import ConnectionError
 import threading
@@ -700,11 +701,6 @@ while True:
     kms = round(max(1.03, min(1.05, max(zip_max / fasks[0], mf/fbids[0]))),2)
     zk = round(max(1.07, 1+(tdk-1)*0.33),2)
 
-    hf = 0
-    hp = anapara + harcanan * (km - 1)
-    if ceder >= 1:
-        hf = round(max((hp - usdt_to) / ctm, fbids[1]), digit)
-    
     if adk >= 1.15:
         bolge = "USYükseliş..."
         asi, afi, ma = 4, 7, 4
@@ -713,7 +709,7 @@ while True:
     elif 1.15 > adk >= 1.10:
         bolge = "SYükseliş..."
         asi, afi, ma = 3, 7, 3
-        alk, slk = 5, 2
+        alk, slk = 5, 1
 
     elif 1.10 > adk >= 1.05:
         bolge = "Yükseliş..."
@@ -731,6 +727,13 @@ while True:
         km = 1.02
         alk, slk = 1, 3
     
+    hf = 0
+    hp = anapara + harcanan * (km - 1)
+    if ceder >= 1:
+        hf = round(max((hp - usdt_to) / ctm, fbids[1]), digit)
+    
+    if kar_orani >= 1.07:
+        slk = 1
     # ************- ZAF + ZSF BUL -*******************************#
 
     for x in range(1, 1000):
@@ -959,7 +962,7 @@ while True:
             if m2 > 0:
                 f2 = (hp - sf * m1 - usdt_to) / m2
             else:
-                if sf < max(sonaort,songaort) * kms:
+                if slk > 1:
                     m1 = m1 - 4/sf
       
             sfiyat1 = round(max(sf * 1.1, fasks[10] - k, f2), digit)
