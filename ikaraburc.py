@@ -722,7 +722,7 @@ while True:
 
     elif 1.05 > adk:
         bolge = "Stabil"
-        asi, afi, ma = 1, 5, 2
+        asi, afi, ma = 0, 5, 2
         alk, slk = 3, 4
     if tdk < 1.03:
         bolge = "ölü"
@@ -920,7 +920,7 @@ while True:
       
     sf = max(sf, tsf)
     if harcanan <= mulk/alk:
-        af = taf
+        af = taf + k
     # ************- AL SAT EMİRLERİNİ GÖNDER BÖLÜMÜ -*******************************#
     af = round(af, digit)
     sf = round(sf, digit)
