@@ -724,11 +724,13 @@ while True:
         bolge = "Stabil"
         asi, afi, ma = 0, 5, 2
         alk, slk = 3, 4
+    
     if tdk < 1.03:
         bolge = "ölü"
         kms = 1.02
         km = 1.02
         alk, slk = 1, 3
+    
     # ************- ZAF + ZSF BUL -*******************************#
 
     for x in range(1, 1000):
@@ -921,6 +923,7 @@ while True:
     sf = max(sf, tsf)
     if harcanan <= mulk/alk:
         af = taf + k
+    
     # ************- AL SAT EMİRLERİNİ GÖNDER BÖLÜMÜ -*******************************#
     af = round(af, digit)
     sf = round(sf, digit)
@@ -956,7 +959,7 @@ while True:
             if m2 > 0:
                 f2 = (hp - sf * m1 - usdt_to) / m2
             else:
-                if sf < max(hf, mf * kms) or sf * ctm + usdt_to < hp:
+                if sf < max(sonaort,songaort) * kms:
                     m1 = m1 - 4/sf
       
             sfiyat1 = round(max(sf * 1.1, fasks[10] - k, f2), digit)
