@@ -701,25 +701,27 @@ while True:
     kms = round(max(1.03, min(1.05, max(zip_max / fasks[0], mf/fbids[0]))),2)
     zk = round(max(1.07, 1+(tdk-1)*0.33),2)
 
+    
+    
     if adk >= 1.15:
         bolge = "USYükseliş..."
         asi, afi, ma = 4, 7, 4
-        alk, slk = 5, 1
+        alk, slk = 5, 2
 
     elif 1.15 > adk >= 1.10:
         bolge = "SYükseliş..."
         asi, afi, ma = 3, 7, 3
-        alk, slk = 5, 2
+        alk, slk = 5, 3
 
     elif 1.10 > adk >= 1.05:
         bolge = "Yükseliş..."
         asi, afi, ma = 2, 6, 3
-        alk, slk = 4, 3
+        alk, slk = 4, 4
 
     elif 1.05 > adk:
         bolge = "Stabil"
         asi, afi, ma = 0, 5, 2
-        alk, slk = 3, 4
+        alk, slk = 3, 5
     
     if tdk < 1.03:
         bolge = "ölü"
@@ -732,7 +734,8 @@ while True:
     if ceder >= 1:
         hf = round(max((hp - usdt_to) / ctm, fbids[1]), digit)
     
-    
+    if kar_orani >= 1.07:
+        slk = 1
     # ************- ZAF + ZSF BUL -*******************************#
 
     for x in range(1, 1000):
@@ -960,12 +963,10 @@ while True:
             f2 = 0
             if m2 > 0:
                 f2 = (hp - sf * m1 - usdt_to) / m2
-            if kar_orani >= 1.07 or anapara+harcanan < ceder:
-                m1 = ctm
-                m2 = 0
             else:
-                m1 = m1 - 5/sf
-       
+                if sf < hf:
+                    m1 = m1 - 4/sf
+      
             sfiyat1 = round(max(sf * 1.1, fasks[10] - k, f2), digit)
             smiktar = m1
             smiktar1 = m2
