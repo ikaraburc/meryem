@@ -734,7 +734,7 @@ while True:
     if ceder >= 1:
         hf = round(max((hp - usdt_to) / ctm, fbids[1]), digit)
     
-    if kar_orani >= 1.07:
+    if kar_orani >= kms:
         slk = 1
     # ************- ZAF + ZSF BUL -*******************************#
 
