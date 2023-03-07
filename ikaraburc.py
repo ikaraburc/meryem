@@ -698,10 +698,8 @@ while True:
     adk = round(fbids[0] / zip_min, 2)
         
     km = 1.03
-    kms = round(max(1.03, min(1.05, max(zip_max / fasks[0], mf/fbids[0]))),2)
+    kms = 1.05
     zk = round(max(1.07, 1+(tdk-1)*0.33),2)
-
-    
     
     if adk >= 1.15:
         bolge = "USYükseliş..."
@@ -864,7 +862,7 @@ while True:
         af = max(haf, zaf)
     
     sf = hsf
-    if usdt_to <= mulk/slk:
+    if harcanan >= anapara and usdt_to <= mulk/slk:
         if hsf/zsf <= kms:
             zsf = hsf
         sf = min(hsf, zsf)
