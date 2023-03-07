@@ -154,7 +154,7 @@ def tc_degisim():
     bf = prices2[bti]
     bo = changes[bti]
     m1mumlar(bc)
-    tdo = round((max(t1mumlar[:60])/min(d1mumlar[:60])-1)*100,2)
+    tdo = round((max(t1mumlar[:120])/min(d1mumlar[:120])-1)*100,2)
     
     ytablo.field_names = [str(bc), str("bo%="+str(bo))]
     ytablo.add_row(["Coin Adedi", len(toplu)])
@@ -164,7 +164,7 @@ def tc_degisim():
     ytablo.add_row(["Saatlik %", tdo])
     print(ytablo)
     
-    if bf/min(d1mumlar[:60]) >= 1.05 or tdo < 10 or len(t1mumlar) < 900 or m1hacim < 1000:
+    if bf/min(d1mumlar[:120]) >= 1.05 or tdo < 10 or len(t1mumlar) < 900 or m1hacim < 1000:
         for i in toplu:
             if i[0] == bc:
                 print(i, " çıkarıldı..")
