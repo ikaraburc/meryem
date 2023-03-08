@@ -731,12 +731,11 @@ while True:
         alk, slk = 1, 3
     
     hf = 0
-    hp = anapara + harcanan * (km - 1)
+    hp = anapara + harcanan * (kms - 1)
     if ceder >= 1:
         hf = round(max((hp - usdt_to) / ctm, fbids[1]), digit)
     
-    if kar_orani >= kms:
-        slk = 1
+    
     # ************- ZAF + ZSF BUL -*******************************#
 
     for x in range(1, 1000):
@@ -856,7 +855,7 @@ while True:
             hsf = max(songaort, sonafiyat) * kms
             if max(m1 * cp, tut0) >= mulk/slk * 0.9:
                 haf = min(songsort, sonsfiyat) / km
-                hsf = max(songaort * kms, songsort * 1.02)
+                hsf = max(songaort * kms, songsort * km)
 
     af = haf
     if adk >= 1.07:
@@ -965,7 +964,10 @@ while True:
             else:
                 if sf < hf:
                     m1 = m1 - 4/sf
-      
+                elif kar_orani >= kms:
+                    m1 = ctm
+                    m2 = 0
+            
             sfiyat1 = round(max(sf * 1.1, fasks[10] - k, f2), digit)
             smiktar = m1
             smiktar1 = m2
