@@ -92,7 +92,7 @@ def m1mumlar(bc):
     t1mumlar.reverse()
     d1mumlar.reverse()
     m1hacim.reverse()
-    m1hacim = round(sum(m1hacim[:60]),2)
+    m1hacim = round(sum(m1hacim[:30]),2)
    
 
 def tc_fiyatlar():
@@ -154,17 +154,18 @@ def tc_degisim():
     bf = prices2[bti]
     bo = changes[bti]
     m1mumlar(bc)
-    tdo = round((max(t1mumlar[:120])/min(d1mumlar[:120])-1)*100,2)
+    t = 60
+    tdo = round((max(t1mumlar[:t])/min(d1mumlar[:t])-1)*100,2)
     
     ytablo.field_names = [str(bc), str("bo%="+str(bo))]
     ytablo.add_row(["Coin Adedi", len(toplu)])
-    ytablo.add_row(["Anlık Fiyat", bf])
     ytablo.add_row(["24s tepe", t24f])
     ytablo.add_row(["24s dip ", d24f])
-    ytablo.add_row(["Saatlik %", tdo])
+    ytablo.add_row(["Anlık Fiyat", bf])
+    ytablo.add_row([str(t)+" dk %", tdo])
     print(ytablo)
     
-    if bf/min(d1mumlar[:120]) >= 1.05 or tdo < 10 or len(t1mumlar) < 900 or m1hacim < 1000:
+    if bf/min(d1mumlar[:t]) >= 1.05 or tdo < 15 or len(t1mumlar) < 900 or m1hacim < 1000:
         for i in toplu:
             if i[0] == bc:
                 print(i, " çıkarıldı..")
@@ -651,7 +652,7 @@ while True:
     print(bilanco)
 
     veri_sn = 10 * 60
-    if time.time() - t1 >= veri_sn or len(toplu) <=1:
+    if time.time() - t1 >= veri_sn:
         tc_fiyatlar()
         t1 = time.time()
 
@@ -675,6 +676,8 @@ while True:
             bulunanlar= ["abc"]
             while True:
                 tc_degisim()
+                if len(toplu) <=1:
+                    bulunanlar.append(bc)
                 if bulunanlar[-1] == bc:
                     tbot_ozel.send_message(telegram_chat_id, str(bc + str(" coine girildi...")))
                     ct = coin_trader(str(bc))
@@ -862,14 +865,12 @@ while True:
         af = max(haf, zaf)
     
     sf = hsf
-    if harcanan >= anapara and usdt_to <= mulk/slk:
+    if harcanan >= anapara * 0.95 and usdt_to <= mulk/slk:
         if hsf/zsf <= kms:
             zsf = hsf
         sf = min(hsf, zsf)
         m1 = max(mulk/slk - usdt_to, 10) / cp
         m2 = ctm - m1
-    elif 0 < sf <= mf and mf/sf <= km:
-        sf = mf * 1.02
     # ************- TAF -*******************************#
 
     for fa in range(0, 5):
