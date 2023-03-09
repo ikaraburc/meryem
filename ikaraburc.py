@@ -116,8 +116,7 @@ def tc_fiyatlar():
                 and "5L" not in data[i]["currency_pair"] \
                 and float(data[i]["last"]) > 0 \
                 and float(data[i]["low_24h"]) > 0 \
-                and float(data[i]["high_24h"])/float(data[i]["low_24h"]) >= 1.20 \
-                and float(data[i]["high_24h"])/float(data[i]["last"]) >= 1.10 \
+                and 1.15 <= float(data[i]["high_24h"])/float(data[i]["low_24h"]) <= 1.40 \
                 and float(data[i]["last"])/float(data[i]["low_24h"]) >= 1.05 \
                 and float(data[i]["quote_volume"]) > 80000:
             toplu.append([data[i]["currency_pair"], float(data[i]["last"]), float(data[i]["low_24h"]), float(data[i]["high_24h"])])
@@ -163,8 +162,8 @@ def tc_degisim():
     tdo = round((max(t1mumlar[:t])/min(d1mumlar[:t])-1)*100,2)
     ado = round((bf/min(d1mumlar[:t])-1)*100,2)
     
-    ytablo.field_names = [str(bc) + str(" of " + str(len(toplu))), str("a%="+str(ay))]
-    ytablo.add_row([str("g%="+str(gy))])
+    ytablo.field_names = [str(bc), str(" of " + str(len(toplu)))]
+    ytablo.add_row([str("g%="+str(gy)),str("a%="+str(ay))])
     ytablo.add_row(["24s tepe", t24f])
     ytablo.add_row(["24s dip ", d24f])
     ytablo.add_row(["Anlık Fiyat", bf])
@@ -172,13 +171,13 @@ def tc_degisim():
     ytablo.add_row([str(t)+" dk ado %", ado])
     print(ytablo)
     
-    if ado >= 1.07 or len(t1mumlar) < 900 or m1hacim < 1000:
+    if ado >= 5 or len(t1mumlar) < 900 or m1hacim < 1000:
         for i in toplu:
             if i[0] == bc:
                 print(i, " çıkarıldı..")
                 toplu.remove(i)
                     
-    elif bo >= 3:
+    elif ay >= 2:
         bulunanlar.append(bc)
         if len(bulunanlar) > 5:
             bulunanlar.pop(0)
@@ -736,8 +735,8 @@ while True:
     if tdk < 1.03:
         bolge = "ölü"
         asi, afi, ma = 0, 5, 2
-        km, kms = 1.02, 1.02
-        alk, slk = 1, 3
+        km, kms = 1.02, 1.025
+        alk, slk = 1, 4
     
     hf = 0
     hp = anapara + harcanan * (kms - 1)
