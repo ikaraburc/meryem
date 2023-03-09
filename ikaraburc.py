@@ -154,7 +154,7 @@ def tc_degisim():
     bf = prices2[bti]
     bo = changes[bti]
     m1mumlar(bc)
-    t = 60
+    t = 120
     tdo = round((max(t1mumlar[:t])/min(d1mumlar[:t])-1)*100,2)
     
     ytablo.field_names = [str(bc), str("bo%="+str(bo))]
@@ -801,12 +801,19 @@ while True:
     if sonislem == "buy":
         sonaort = sonort0
         sonsort = sonort1
+        sonatut = tut0
+        sonstut = tut1
+        
     elif sonislem == "sell":
         sonsort = sonort0
         sonaort = sonort1
+        sonatut = tut0
+        sonstut = tut1
     else:
         sonaort = 0
         sonsort = 0
+        sonatut = 0
+        sonstut = 0
         
     p1 = usdt_to % (mulk / alk)
     if p1 < 2:
@@ -844,7 +851,7 @@ while True:
     if harcanan >= 1:
         if sonislem == "buy":
             haf = sonaort
-            if gstut > 0:
+            if sonstut >= mulk/slk * 0.9:
                 haf = min(songsort, sonsort)/km
             if max(tut0, p1)>= mulk / alk * 0.95:
                 haf = songaort / km
