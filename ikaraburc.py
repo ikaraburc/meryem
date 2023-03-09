@@ -116,20 +116,22 @@ def tc_fiyatlar():
                 and "5L" not in data[i]["currency_pair"] \
                 and float(data[i]["last"]) > 0 \
                 and float(data[i]["low_24h"]) > 0 \
-                and float(data[i]["high_24h"])/float(data[i]["last"]) >= 1.10 \
                 and float(data[i]["high_24h"])/float(data[i]["low_24h"]) >= 1.20 \
+                and float(data[i]["high_24h"])/float(data[i]["last"]) >= 1.10 \
+                and float(data[i]["last"])/float(data[i]["low_24h"]) >= 1.05 \               
                 and float(data[i]["quote_volume"]) > 80000:
             toplu.append([data[i]["currency_pair"], float(data[i]["last"]), float(data[i]["low_24h"]), float(data[i]["high_24h"])])
     
     print("coin sayısı ", len(toplu))
 def tc_degisim():
-    global bc, bo, bf, ytablo, bti
+    global bc, ay, bf, ytablo, bti
 
     ytablo = PrettyTable()
     ytablo.clear()
 
     prices2 = []
     changes = []
+    gys = []
 
     host = "https://api.gateio.ws"
     prefix = "/api/v4"
@@ -142,6 +144,7 @@ def tc_degisim():
         for y in data:
             if toplu[x][0] == y['currency_pair']:
                 prices2.append(float(y['last']))
+                gys.append(float(y['change_percentage']))
 
     for i in range(len(toplu)):
         changes.append(round(((prices2[i] / toplu[i][1]) - 1) * 100, 2))
@@ -152,26 +155,30 @@ def tc_degisim():
     t24f = toplu[bti][3]
     
     bf = prices2[bti]
-    bo = changes[bti]
-    m1mumlar(bc)
-    t = 120
-    tdo = round((max(t1mumlar[:t])/min(d1mumlar[:t])-1)*100,2)
+    ay = changes[bti]
+    gy = gys[bti]
     
-    ytablo.field_names = [str(bc), str("bo%="+str(bo))]
-    ytablo.add_row(["Coin Adedi", len(toplu)])
+    m1mumlar(bc)
+    t = 60
+    tdo = round((max(t1mumlar[:t])/min(d1mumlar[:t])-1)*100,2)
+    ado = round(bf/min(d1mumlar[:t])-1)*100,2)
+    
+    ytablo.field_names = [str(bc) + str(" of " + str(len(toplu))), str("a%="+str(ay))]
+    ytablo.add_row([str("g%="+str(gy))])
     ytablo.add_row(["24s tepe", t24f])
     ytablo.add_row(["24s dip ", d24f])
     ytablo.add_row(["Anlık Fiyat", bf])
-    ytablo.add_row([str(t)+" dk %", tdo])
+    ytablo.add_row([str(t)+" dk tdo %", tdo])
+    ytablo.add_row([str(t)+" dk ado %", ado])
     print(ytablo)
     
-    if bf/min(d1mumlar[:t]) >= 1.05 or tdo < 15 or len(t1mumlar) < 900 or m1hacim < 1000:
+    if ado >= 1.07 or len(t1mumlar) < 900 or m1hacim < 1000:
         for i in toplu:
             if i[0] == bc:
                 print(i, " çıkarıldı..")
                 toplu.remove(i)
                     
-    elif bo >= 2:
+    elif bo >= 3:
         bulunanlar.append(bc)
         if len(bulunanlar) > 5:
             bulunanlar.pop(0)
@@ -702,7 +709,9 @@ while True:
         
     km = 1.03
     kms = 1.05
-    zk = round(max(1.07, 1+(tdk-1)*0.33),2)
+    if usdt_to <= mulk * 0.6:
+        km = 1.05
+    zk = round(max(1.05, 1+(tdk-1)*0.33),2)
     
     if adk >= 1.15:
         bolge = "USYükseliş..."
@@ -719,23 +728,22 @@ while True:
         asi, afi, ma = 2, 6, 3
         alk, slk = 4, 4
 
-    elif 1.05 > adk:
+    else:
         bolge = "Stabil"
         asi, afi, ma = 0, 5, 2
         alk, slk = 3, 5
-    
+        
     if tdk < 1.03:
         bolge = "ölü"
-        kms = 1.02
-        km = 1.02
+        asi, afi, ma = 0, 5, 2
+        km, kms = 1.02, 1.02
         alk, slk = 1, 3
     
     hf = 0
     hp = anapara + harcanan * (kms - 1)
     if ceder >= 1:
         hf = round(max((hp - usdt_to) / ctm, fbids[1]), digit)
-    
-    
+ 
     # ************- ZAF + ZSF BUL -*******************************#
 
     for x in range(1, 1000):
@@ -846,8 +854,6 @@ while True:
  
     # ************- HAF + HSF -*******************************#
     haf, hsf = zaf, zsf
-    if usdt_to <= mulk * 0.6:
-        km = 1.05
     if harcanan >= 1:
         if sonislem == "buy":
             haf = sonaort
