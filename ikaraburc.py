@@ -118,7 +118,7 @@ def tc_fiyatlar():
                 and float(data[i]["low_24h"]) > 0 \
                 and float(data[i]["high_24h"])/float(data[i]["low_24h"]) >= 1.20 \
                 and float(data[i]["high_24h"])/float(data[i]["last"]) >= 1.10 \
-                and float(data[i]["last"])/float(data[i]["low_24h"]) >= 1.05 \               
+                and float(data[i]["last"])/float(data[i]["low_24h"]) >= 1.05 \
                 and float(data[i]["quote_volume"]) > 80000:
             toplu.append([data[i]["currency_pair"], float(data[i]["last"]), float(data[i]["low_24h"]), float(data[i]["high_24h"])])
     
@@ -161,7 +161,7 @@ def tc_degisim():
     m1mumlar(bc)
     t = 60
     tdo = round((max(t1mumlar[:t])/min(d1mumlar[:t])-1)*100,2)
-    ado = round(bf/min(d1mumlar[:t])-1)*100,2)
+    ado = round((bf/min(d1mumlar[:t])-1)*100,2)
     
     ytablo.field_names = [str(bc) + str(" of " + str(len(toplu))), str("a%="+str(ay))]
     ytablo.add_row([str("g%="+str(gy))])
