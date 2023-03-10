@@ -117,7 +117,7 @@ def tc_fiyatlar():
                 and float(data[i]["last"]) > 0 \
                 and float(data[i]["low_24h"]) > 0 \
                 and 1.15 <= float(data[i]["high_24h"])/float(data[i]["low_24h"]) <= 1.40 \
-                and float(data[i]["last"])/float(data[i]["low_24h"]) >= 1.05 \
+                and float(data[i]["last"])/float(data[i]["low_24h"]) >= 1.1 \
                 and float(data[i]["quote_volume"]) > 80000:
             toplu.append([data[i]["currency_pair"], float(data[i]["last"]), float(data[i]["low_24h"]), float(data[i]["high_24h"])])
     
@@ -708,8 +708,8 @@ while True:
         
     km = 1.03
     kms = 1.05
-    if usdt_to <= mulk * 0.6:
-        km = 1.05
+    
+      
     zk = round(max(1.05, 1+(tdk-1)*0.33),2)
     
     if adk >= 1.15:
@@ -736,7 +736,7 @@ while True:
         bolge = "ölü"
         asi, afi, ma = 0, 5, 2
         km, kms = 1.02, 1.025
-        alk, slk = 1, 4
+        alk, slk = 3, 3
     
     hf = 0
     hp = anapara + harcanan * (kms - 1)
@@ -853,7 +853,7 @@ while True:
  
     # ************- HAF + HSF -*******************************#
     haf, hsf = zaf, zsf
-    if harcanan >= 1:
+    if harcanan > 0:
         if sonislem == "buy":
             haf = sonaort
             if sonstut >= mulk/slk * 0.9:
@@ -869,7 +869,10 @@ while True:
                 haf = min(songsort, sonsfiyat) / km
                 hsf = max(songaort * kms, songsort * km)
 
-    af = haf
+    
+    if usdt_to <= mulk * 0.6:
+        haf = haf / 1.02
+    af = haf 
     if adk >= 1.07:
         af = min(af, zaf)  
     elif ceder <= mulk/alk and harcanan >= mulk/alk:
