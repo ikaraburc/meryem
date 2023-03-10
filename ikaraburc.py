@@ -116,7 +116,8 @@ def tc_fiyatlar():
                 and "5L" not in data[i]["currency_pair"] \
                 and float(data[i]["last"]) > 0 \
                 and float(data[i]["low_24h"]) > 0 \
-                and 1.15 <= float(data[i]["high_24h"])/float(data[i]["low_24h"]) <= 1.40 \
+                and 1.15 <= float(data[i]["high_24h"])/float(data[i]["low_24h"]) \
+                and float(data[i]["high_24h"])/float(data[i]["last"]) >= 1.1 \
                 and float(data[i]["last"])/float(data[i]["low_24h"]) >= 1.1 \
                 and float(data[i]["quote_volume"]) > 80000:
             toplu.append([data[i]["currency_pair"], float(data[i]["last"]), float(data[i]["low_24h"]), float(data[i]["high_24h"])])
@@ -159,25 +160,27 @@ def tc_degisim():
     
     m1mumlar(bc)
     t = 60
-    tdo = round((max(t1mumlar[:t])/min(d1mumlar[:t])-1)*100,2)
+    tdo3 = round((max(t1mumlar[:t*3])/min(d1mumlar[:t*3])-1)*100,2)
+    tdo1 = round((max(t1mumlar[:t])/min(d1mumlar[:t])-1)*100,2)
     ado = round((bf/min(d1mumlar[:t])-1)*100,2)
+    ado30 = round((bf/min(d1mumlar[:30])-1)*100,2)
     
     ytablo.field_names = [str(bc), str(" of " + str(len(toplu)))]
     ytablo.add_row([str("g%="+str(gy)),str("a%="+str(ay))])
     ytablo.add_row(["24s tepe", t24f])
     ytablo.add_row(["24s dip ", d24f])
     ytablo.add_row(["Anlık Fiyat", bf])
-    ytablo.add_row([str(t)+" dk tdo %", tdo])
-    ytablo.add_row([str(t)+" dk ado %", ado])
+    ytablo.add_row([str(t*3)+" dk tdo %", tdo3])
+    ytablo.add_row([str(t)+" dk tdo %", tdo1])
     print(ytablo)
     
-    if ado >= 5 or len(t1mumlar) < 900 or m1hacim < 1000:
+    if tdo3 < 15 or tdo1 > 5 or ado30 > 5 or len(t1mumlar) < 900 or m1hacim < 1000:
         for i in toplu:
             if i[0] == bc:
                 print(i, " çıkarıldı..")
                 toplu.remove(i)
                     
-    elif ay >= 2:
+    elif max(ay, ado30) > 2:
         bulunanlar.append(bc)
         if len(bulunanlar) > 5:
             bulunanlar.pop(0)
@@ -708,8 +711,6 @@ while True:
         
     km = 1.03
     kms = 1.05
-    
-      
     zk = round(max(1.05, 1+(tdk-1)*0.33),2)
     
     if adk >= 1.15:
@@ -736,7 +737,7 @@ while True:
         bolge = "ölü"
         asi, afi, ma = 0, 5, 2
         km, kms = 1.02, 1.025
-        alk, slk = 3, 3
+        alk, slk = 3, 5
     
     hf = 0
     hp = anapara + harcanan * (kms - 1)
