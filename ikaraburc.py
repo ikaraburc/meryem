@@ -116,9 +116,9 @@ def tc_fiyatlar():
                 and "5L" not in data[i]["currency_pair"] \
                 and float(data[i]["last"]) > 0 \
                 and float(data[i]["low_24h"]) > 0 \
-                and 1.15 <= float(data[i]["high_24h"])/float(data[i]["low_24h"]) \
+                and 1.15 <= float(data[i]["high_24h"])/float(data[i]["low_24h"]) < 1.50 \
                 and float(data[i]["high_24h"])/float(data[i]["last"]) >= 1.1 \
-                and float(data[i]["last"])/float(data[i]["low_24h"]) >= 1.1 \
+                and float(data[i]["last"])/float(data[i]["low_24h"]) >= 1.05 \
                 and float(data[i]["quote_volume"]) > 80000:
             toplu.append([data[i]["currency_pair"], float(data[i]["last"]), float(data[i]["low_24h"]), float(data[i]["high_24h"])])
     
@@ -162,7 +162,6 @@ def tc_degisim():
     t = 60
     tdo3 = round((max(t1mumlar[:t*3])/min(d1mumlar[:t*3])-1)*100,2)
     tdo1 = round((max(t1mumlar[:t])/min(d1mumlar[:t])-1)*100,2)
-    ado = round((bf/min(d1mumlar[:t])-1)*100,2)
     ado30 = round((bf/min(d1mumlar[:30])-1)*100,2)
     
     ytablo.field_names = [str(bc), str(" of " + str(len(toplu)))]
@@ -174,13 +173,13 @@ def tc_degisim():
     ytablo.add_row([str(t)+" dk tdo %", tdo1])
     print(ytablo)
     
-    if tdo3 < 15 or tdo1 > 5 or ado30 > 5 or len(t1mumlar) < 900 or m1hacim < 1000:
+    if tdo3 < 15 or tdo1 > 5 or ado30 >= 5 or len(t1mumlar) < 900 or m1hacim < 1000:
         for i in toplu:
             if i[0] == bc:
                 print(i, " çıkarıldı..")
                 toplu.remove(i)
                     
-    elif max(ay, ado30) > 2:
+    elif max(ay, ado30) > 2.5:
         bulunanlar.append(bc)
         if len(bulunanlar) > 5:
             bulunanlar.pop(0)
@@ -581,15 +580,15 @@ class coin_trader:
             else:
                 break
         
-        anapara = round(usdt_to + agider - sgelir, 2)
+        anapara = round(max(ceder, usdt_to + agider - sgelir), 2)
         kar_tutari = round(ceder - agider + sgelir, 2)
-        harcanan = min(agider, anapara)
+        harcanan = max(min(agider, anapara), ceder)
         if ceder >= 1:
             mf = round((agider - sgelir) / ctm * 1.002, digit)
             mmf = round(anapara / (usdt_to / cp + ctm) * 1.002, digit)
-        if harcanan > 1:
+        if harcanan > 0:
             kar_orani = round(kar_tutari / harcanan * 100, 2)
-       
+        
         bilanco = PrettyTable()
         bilanco.field_names = [str(self.coin).upper(), cp]
         bilanco.add_row([str("Ceder= " + str(round(ceder, 2))), str("mf = " + str(max(mf, 0)))])
@@ -685,8 +684,6 @@ while True:
             bulunanlar= ["abc"]
             while True:
                 tc_degisim()
-                if len(toplu) <=1:
-                    bulunanlar.append(bc)
                 if bulunanlar[-1] == bc:
                     tbot_ozel.send_message(telegram_chat_id, str(bc + str(" coine girildi...")))
                     ct = coin_trader(str(bc))
@@ -706,24 +703,24 @@ while True:
     at = 6 * 60
     zip_max = max(tmumlar[:at])
     zip_min = min(dmumlar[:at])
-    tdk = round(zip_max / zip_min, 2)
-    adk = round(fbids[0] / zip_min, 2)
+    tdk = round((zip_max / zip_min-1)*100, 2)
+    adk = round((fbids[0] / zip_min-1)*100, 2)
         
     km = 1.03
-    kms = 1.05
-    zk = round(max(1.05, 1+(tdk-1)*0.33),2)
+    kms = 1.03
+    zk = round(max(1.05, 1+(tdk/100)*0.7),2)
     
-    if adk >= 1.15:
+    if adk >= 15:
         bolge = "USYükseliş..."
         asi, afi, ma = 4, 7, 4
         alk, slk = 5, 2
 
-    elif 1.15 > adk >= 1.10:
+    elif 15 > adk >= 10:
         bolge = "SYükseliş..."
         asi, afi, ma = 3, 7, 3
         alk, slk = 5, 3
 
-    elif 1.10 > adk >= 1.05:
+    elif 10 > adk >= 5:
         bolge = "Yükseliş..."
         asi, afi, ma = 2, 6, 3
         alk, slk = 4, 4
@@ -733,7 +730,7 @@ while True:
         asi, afi, ma = 0, 5, 2
         alk, slk = 3, 5
         
-    if tdk < 1.03:
+    if tdk < 3:
         bolge = "ölü"
         asi, afi, ma = 0, 5, 2
         km, kms = 1.02, 1.025
@@ -743,7 +740,8 @@ while True:
     hp = anapara + harcanan * (kms - 1)
     if ceder >= 1:
         hf = round(max((hp - usdt_to) / ctm, fbids[1]), digit)
- 
+   
+        
     # ************- ZAF + ZSF BUL -*******************************#
 
     for x in range(1, 1000):
@@ -874,7 +872,7 @@ while True:
     if usdt_to <= mulk * 0.6:
         haf = haf / 1.02
     af = haf 
-    if adk >= 1.07:
+    if adk >= 8:
         af = min(af, zaf)  
     elif ceder <= mulk/alk and harcanan >= mulk/alk:
         af = max(haf, zaf)
@@ -902,7 +900,7 @@ while True:
 
     if af >= taf * 1.003:
         for yai in range(eai, - 1, -1):
-            if abs(taf - fbids[yai]) / fbids[yai] >= 3 / 1000:
+            if abs(taf - fbids[yai]) / fbids[yai] >= 5 / 1000:
                 yai = yai + 1
                 break
         if fbids[yai] == afiyat:
@@ -914,7 +912,7 @@ while True:
     af = min(af, taf)
     # ************- TSF -*******************************#
     ssi, sfi, ms = 0, 4, 2
-    if sf >= max(songaort * kms, hf, hsf):
+    if sf >= max(hsf, songaort * 1.05):
         ssi, sfi, ms = 0, 2, 2
         
     for fs in range(0, 5):
@@ -980,9 +978,9 @@ while True:
             else:
                 if sf < hf:
                     m1 = m1 - 4/sf
-                elif kar_orani >= kms:
-                    m1 = ctm
-                    m2 = 0
+            if kar_orani >= 7:
+                m1 = max(ctm,ctm%(mulk/2/sf))
+                m2 = ctm-m1
             
             sfiyat1 = round(max(sf * 1.1, fasks[10] - k, f2), digit)
             smiktar = m1
@@ -1003,8 +1001,6 @@ while True:
     fiyatlar.add_row([str("taf, tsf " + str(round(tsf / taf, 2))), round(taf, digit), round(tsf, digit)])
     fiyatlar.add_row([str("zaf, zsf zk=" + str(round(zk, 2))), round(zaf, digit), round(zsf, digit)])
     fiyatlar.add_row([str("zmin, zmax tdk=" + str(tdk)), round(zip_min, digit), round(zip_max, digit)])
-    fiyatlar.add_row([str(str(round(ctm, mdigit))+"#"), round(mulk / alk, 2), round(mulk / slk / cp, mdigit)])
-    fiyatlar.add_row([str("alk, slk=" + str(alk) +"-"+str(slk)), round(p1, 2), round(m1, mdigit)])
 
     print(fiyatlar)
 
