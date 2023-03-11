@@ -116,9 +116,9 @@ def tc_fiyatlar():
                 and "5L" not in data[i]["currency_pair"] \
                 and float(data[i]["last"]) > 0 \
                 and float(data[i]["low_24h"]) > 0 \
-                and 1.2 <= float(data[i]["high_24h"])/float(data[i]["low_24h"]) < 1.50 \
+                and 1.2 <= float(data[i]["high_24h"])/float(data[i]["low_24h"])\
                 and float(data[i]["high_24h"])/float(data[i]["last"]) >= 1.1 \
-                and float(data[i]["last"])/float(data[i]["low_24h"]) >= 1.1 \
+                and float(data[i]["last"])/float(data[i]["low_24h"]) >= 1.05\
                 and float(data[i]["quote_volume"]) > 80000:
             toplu.append([data[i]["currency_pair"], float(data[i]["last"]), float(data[i]["low_24h"]), float(data[i]["high_24h"])])
     
