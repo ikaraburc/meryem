@@ -685,6 +685,8 @@ while True:
                     toplu.remove(i)
             bulunanlar= ["abc"]
             while True:
+                if len(toplu) <= 1:
+                    tc_fiyatlar()
                 tc_degisim()
                 if bulunanlar[-1] == bc:
                     tbot_ozel.send_message(telegram_chat_id, str(bc + str(" coine girildi...")))
