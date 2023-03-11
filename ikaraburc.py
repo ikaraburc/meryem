@@ -162,7 +162,7 @@ def tc_degisim():
     t = 60
     tdo3 = round((max(t1mumlar[:t*3])/min(d1mumlar[:t*3])-1)*100,2)
     tdo1 = round((max(t1mumlar[:t])/min(d1mumlar[:t])-1)*100,2)
-    ado30 = round((bf/min(d1mumlar[:30])-1)*100,2)
+    ado30 = round((bf/min(d1mumlar[:t])-1)*100,2)
    
     
     ytablo.field_names = [str(bc), str(" of " + str(len(toplu)))]
@@ -175,7 +175,7 @@ def tc_degisim():
     ytablo.add_row([str(30)+" dk ado %", ado30])
     print(ytablo)
     
-    if tdo3 < 11 or tdo1 > 5 or ado30 > 4 or len(t1mumlar) < 900 or m1hacim < 1000:
+    if tdo3 < 15 or ado30 > 5 or len(t1mumlar) < 900 or m1hacim < 1000:
         for i in toplu:
             if i[0] == bc:
                 print(i, " çıkarıldı..")
