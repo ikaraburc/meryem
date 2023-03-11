@@ -589,7 +589,7 @@ class coin_trader:
             mmf = round(anapara / (usdt_to / cp + ctm) * 1.002, digit)
         if harcanan > 0:
             kar_orani = round(kar_tutari / harcanan * 100, 2)
-        if mulk < anapara + kar_tutari:
+        if mulk * 1.02 < (anapara + kar_tutari):
             kar_orani = -100
         bilanco = PrettyTable()
         bilanco.field_names = [str(self.coin).upper(), cp]
