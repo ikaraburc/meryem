@@ -116,9 +116,9 @@ def tc_fiyatlar():
                 and "5L" not in data[i]["currency_pair"] \
                 and float(data[i]["last"]) > 0 \
                 and float(data[i]["low_24h"]) > 0 \
-                and 1.50 > float(data[i]["high_24h"])/float(data[i]["low_24h"]) >= 1.15 \
+                and 1.2 <= float(data[i]["high_24h"])/float(data[i]["low_24h"]) < 1.50 \
                 and float(data[i]["high_24h"])/float(data[i]["last"]) >= 1.1 \
-                and float(data[i]["last"])/float(data[i]["low_24h"]) >= 1.05 \
+                and float(data[i]["last"])/float(data[i]["low_24h"]) >= 1.1 \
                 and float(data[i]["quote_volume"]) > 80000:
             toplu.append([data[i]["currency_pair"], float(data[i]["last"]), float(data[i]["low_24h"]), float(data[i]["high_24h"])])
     
@@ -163,6 +163,7 @@ def tc_degisim():
     tdo3 = round((max(t1mumlar[:t*3])/min(d1mumlar[:t*3])-1)*100,2)
     tdo1 = round((max(t1mumlar[:t])/min(d1mumlar[:t])-1)*100,2)
     ado30 = round((bf/min(d1mumlar[:30])-1)*100,2)
+   
     
     ytablo.field_names = [str(bc), str(" of " + str(len(toplu)))]
     ytablo.add_row([str("g%="+str(gy)),str("a%="+str(ay))])
@@ -588,7 +589,8 @@ class coin_trader:
             mmf = round(anapara / (usdt_to / cp + ctm) * 1.002, digit)
         if harcanan > 0:
             kar_orani = round(kar_tutari / harcanan * 100, 2)
-        
+        if mulk < anapara + kar_tutari:
+            kar_orani = -100
         bilanco = PrettyTable()
         bilanco.field_names = [str(self.coin).upper(), cp]
         bilanco.add_row([str("Ceder= " + str(round(ceder, 2))), str("mf = " + str(max(mf, 0)))])
@@ -684,9 +686,6 @@ while True:
             bulunanlar= ["abc"]
             while True:
                 tc_degisim()
-                if len(toplu) == 1:
-                    tc_fiyatlar()
-                
                 if bulunanlar[-1] == bc:
                     tbot_ozel.send_message(telegram_chat_id, str(bc + str(" coine girildi...")))
                     ct = coin_trader(str(bc))
@@ -982,9 +981,11 @@ while True:
                 if sf < hf:
                     m1 = m1 - 4/sf
             if kar_orani >= 7:
-                m1 = max(ctm,ctm%(mulk/2/sf))
-                m2 = ctm-m1
-            
+                m1 = ctm
+                m2 = 0
+            elif kar_orani == -100 and sf > songaort * 1.05:
+                m1= ctm
+                m2 = 0
             sfiyat1 = round(max(sf * 1.1, fasks[10] - k, f2), digit)
             smiktar = m1
             smiktar1 = m2
