@@ -174,7 +174,7 @@ def tc_degisim():
     ytablo.add_row([str(t)+" dk tdo %", tdo1])
     print(ytablo)
     
-    if tdo3 < 15 or tdo1 > 5 or ado30 > 4 or len(t1mumlar) < 900 or m1hacim < 1000:
+    if tdo3 < 15 or tdo1 > 7 or ado30 > 4 or len(t1mumlar) < 900 or m1hacim < 1000:
         for i in toplu:
             if i[0] == bc:
                 print(i, " çıkarıldı..")
