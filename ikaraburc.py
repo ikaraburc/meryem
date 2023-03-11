@@ -730,7 +730,7 @@ while True:
     else:
         bolge = "Stabil"
         asi, afi, ma = 0, 5, 2
-        alk, slk = 2, 3
+        alk, slk = 4, 4
         
     if tdk < 3:
         bolge = "ölü"
@@ -913,7 +913,7 @@ while True:
             
     af = min(af, taf)
     # ************- TSF -*******************************#
-    ssi, sfi, ms = 0, 2, 2
+    ssi, sfi, ms = 0, 3, 2
     if sf >= max(hsf, songaort * 1.05):
         ssi, sfi, ms = 0, 2, 2
         
@@ -997,7 +997,7 @@ while True:
     fiyatlar.field_names = [str(str(bolge) + " adk=" + str(adk)),
                             str("  hp " + str(round(hp, 0))),str("hf " + str(round(hf,digit)))]
     fiyatlar.add_row([str("km= " + str(km) + " kms= " + str(kms)),str("Mulk " + str(round(mulk, 0))), str("cp " + str(cp))])
-    fiyatlar.add_row([str("af,sf"), round(af, digit), round(sf, digit)])
+    fiyatlar.add_row([str("af,sf ")+str(round(sf/af,2)), round(af, digit), round(sf, digit)])
     fiyatlar.add_row(
         [str(str(sonislem) + " haf,hsf " + str(round(hsf / haf, 2))), round(haf, digit), round(hsf, digit)])
     fiyatlar.add_row(["son aort, sort ", round(sonaort, digit), round(sonsort, digit)])
