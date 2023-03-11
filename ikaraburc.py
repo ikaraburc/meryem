@@ -116,7 +116,7 @@ def tc_fiyatlar():
                 and "5L" not in data[i]["currency_pair"] \
                 and float(data[i]["last"]) > 0 \
                 and float(data[i]["low_24h"]) > 0 \
-                and 1.15 <= float(data[i]["high_24h"])/float(data[i]["low_24h"]) < 1.50 \
+                and 1.50 > float(data[i]["high_24h"])/float(data[i]["low_24h"]) >= 1.15 \
                 and float(data[i]["high_24h"])/float(data[i]["last"]) >= 1.1 \
                 and float(data[i]["last"])/float(data[i]["low_24h"]) >= 1.05 \
                 and float(data[i]["quote_volume"]) > 80000:
@@ -173,13 +173,13 @@ def tc_degisim():
     ytablo.add_row([str(t)+" dk tdo %", tdo1])
     print(ytablo)
     
-    if tdo3 < 15 or tdo1 > 5 or ado30 >= 5 or len(t1mumlar) < 900 or m1hacim < 1000:
+    if tdo3 < 15 or tdo1 > 5 or ado30 > 4 or len(t1mumlar) < 900 or m1hacim < 1000:
         for i in toplu:
             if i[0] == bc:
                 print(i, " çıkarıldı..")
                 toplu.remove(i)
                     
-    elif max(ay, ado30) > 2.5:
+    elif max(ay, ado30) > 2:
         bulunanlar.append(bc)
         if len(bulunanlar) > 5:
             bulunanlar.pop(0)
@@ -684,6 +684,9 @@ while True:
             bulunanlar= ["abc"]
             while True:
                 tc_degisim()
+                if len(toplu) == 1:
+                    tc_fiyatlar()
+                
                 if bulunanlar[-1] == bc:
                     tbot_ozel.send_message(telegram_chat_id, str(bc + str(" coine girildi...")))
                     ct = coin_trader(str(bc))
