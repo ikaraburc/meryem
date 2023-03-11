@@ -116,7 +116,7 @@ def tc_fiyatlar():
                 and "5L" not in data[i]["currency_pair"] \
                 and float(data[i]["last"]) > 0 \
                 and float(data[i]["low_24h"]) > 0 \
-                and 1.2 <= float(data[i]["high_24h"])/float(data[i]["low_24h"])\
+                and 1.15 <= float(data[i]["high_24h"])/float(data[i]["low_24h"])\
                 and float(data[i]["high_24h"])/float(data[i]["last"]) >= 1.1 \
                 and float(data[i]["last"])/float(data[i]["low_24h"]) >= 1.05\
                 and float(data[i]["quote_volume"]) > 80000:
@@ -172,6 +172,7 @@ def tc_degisim():
     ytablo.add_row(["Anlık Fiyat", bf])
     ytablo.add_row([str(t*3)+" dk tdo %", tdo3])
     ytablo.add_row([str(t)+" dk tdo %", tdo1])
+    ytablo.add_row([str(30)+" dk ado %", ado30])
     print(ytablo)
     
     if tdo3 < 11 or tdo1 > 5 or ado30 > 4 or len(t1mumlar) < 900 or m1hacim < 1000:
