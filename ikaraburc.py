@@ -715,28 +715,28 @@ while True:
     if adk >= 15:
         bolge = "USYükseliş..."
         asi, afi, ma = 4, 7, 4
-        alk, slk = 5, 2
+        alk, slk = 5, 1
 
     elif 15 > adk >= 10:
         bolge = "SYükseliş..."
         asi, afi, ma = 3, 7, 3
-        alk, slk = 5, 3
+        alk, slk = 5, 2
 
     elif 10 > adk >= 5:
         bolge = "Yükseliş..."
         asi, afi, ma = 2, 6, 3
-        alk, slk = 4, 4
+        alk, slk = 4, 3
 
     else:
         bolge = "Stabil"
         asi, afi, ma = 0, 5, 2
-        alk, slk = 3, 5
+        alk, slk = 2, 3
         
     if tdk < 3:
         bolge = "ölü"
         asi, afi, ma = 0, 5, 2
         km, kms = 1.02, 1.025
-        alk, slk = 3, 5
+        alk, slk = 2, 2
     
     hf = 0
     hp = anapara + harcanan * (kms - 1)
@@ -913,7 +913,7 @@ while True:
             
     af = min(af, taf)
     # ************- TSF -*******************************#
-    ssi, sfi, ms = 0, 4, 2
+    ssi, sfi, ms = 0, 2, 2
     if sf >= max(hsf, songaort * 1.05):
         ssi, sfi, ms = 0, 2, 2
         
