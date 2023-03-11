@@ -161,7 +161,7 @@ def tc_degisim():
     m1mumlar(bc)
     t = 60
     tdo3 = round((max(t1mumlar[:t*3])/min(d1mumlar[:t*3])-1)*100,2)
-    tdo1 = round((max(t1mumlar[:t/2])/min(d1mumlar[:t/2])-1)*100,2)
+    tdo1 = round((max(t1mumlar[:30])/min(d1mumlar[:30])-1)*100,2)
     ado30 = round((bf/min(d1mumlar[:])-1)*100,2)
    
     
