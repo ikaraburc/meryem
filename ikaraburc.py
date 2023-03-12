@@ -594,14 +594,15 @@ class coin_trader:
             else:
                 break
 
+        agider = round(agider, 2)
         anapara = round(usdt_to + agider - sgelir, 2)
         kar_tutari = round(ceder - agider + sgelir, 2)
-        harcanan = max(min(agider, anapara), ceder)
+        harcanan = min(agider, anapara)
         if harcanan > 0:
             mf = round((agider - sgelir) / ctm * 1.002, digit)
             mmf = round(anapara / (usdt_to / cp + ctm) * 1.002, digit)
             kar_orani = round(kar_tutari / harcanan * 100, 2)
-        if mulk * 1.02 < (anapara + kar_tutari) or mulk * 1.02 > (anapara + kar_tutari):
+        if abs(mulk - (anapara + kar_tutari))/mulk > 1/100:
             kar_orani = -100
         bilanco = PrettyTable()
         bilanco.field_names = [str(self.coin).upper(), cp]
