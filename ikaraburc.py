@@ -114,6 +114,7 @@ def tc_fiyatlar():
                 and "3L" not in data[i]["currency_pair"] \
                 and "5S" not in data[i]["currency_pair"] \
                 and "5L" not in data[i]["currency_pair"] \
+                and float(data[i]["change_percentage"]) > 0 \
                 and float(data[i]["last"]) > 0 \
                 and float(data[i]["low_24h"]) > 0 \
                 and 1.15 <= float(data[i]["high_24h"])/float(data[i]["low_24h"]) < 1.50\
