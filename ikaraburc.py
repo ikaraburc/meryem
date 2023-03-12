@@ -594,8 +594,8 @@ class coin_trader:
             else:
                 break
 
-        agider = round(agider, 2)
-        anapara = round(usdt_to + agider - sgelir, 2)
+        agider = round(abs(agider), 2)
+        anapara = round(abs(usdt_to + agider - sgelir), 2)
         kar_tutari = round(ceder - agider + sgelir, 2)
         harcanan = min(agider, anapara)
         if harcanan > 0:
@@ -981,10 +981,10 @@ while True:
             if kar_orani >= 7:
                 m1 = ctm
                 m2 = 0
-            elif kar_orani == -100 and sf >= songaort * 1.05:
+            elif kar_orani == -100 and sf >= songaort * 1.1:
                 m1 = ctm
                 m2 = 0
-            sfiyat1 = round(max(sf * 1.1, fasks[7] - k, f2), digit)
+            sfiyat1 = round(max(sf * 1.1, fasks[10] - k, f2), digit)
             smiktar = m1
             smiktar1 = m2
 
