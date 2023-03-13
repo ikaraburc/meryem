@@ -117,10 +117,10 @@ def tc_fiyatlar():
                 and float(data[i]["last"]) > 0 \
                 and float(data[i]["low_24h"]) > 0 \
                 and float(data[i]["change_percentage"]) > 0 \
-                and 1.15 < float(data[i]["high_24h"]) / float(data[i]["low_24h"]) \
+                and 1.10 < float(data[i]["high_24h"]) / float(data[i]["low_24h"]) < 1.50\
                 and 1.10 < float(data[i]["high_24h"]) / float(data[i]["last"]) \
-                and 1.05 < float(data[i]["last"]) / float(data[i]["low_24h"]) \
-                and float(data[i]["quote_volume"]) > 70000:
+                and 1.10 < float(data[i]["last"]) / float(data[i]["low_24h"]) \
+                and float(data[i]["quote_volume"]) > 80000:
             toplu.append([data[i]["currency_pair"], float(data[i]["last"]), float(data[i]["low_24h"]),
                           float(data[i]["high_24h"])])
 
@@ -166,8 +166,9 @@ def tc_degisim():
 
     m1mumlar(bc)
     t = 12
+    tdo1 = round((max(d1mumlar[:t]) / min(d1mumlar[:t]) - 1) * 100, 2)
     ado1 = round((bf / min(d1mumlar[:t]) - 1) * 100, 2)
-    ado2 = round((bf / min(d1mumlar[:6]) - 1) * 100, 2)
+    ado30 = round((bf / min(d1mumlar[:6]) - 1) * 100, 2)
 
     ytablo.field_names = [str(bc), str(" of " + str(len(toplu)))]
     ytablo.add_row([str("24s %=" + str(gy)), str("anlık %=" + str(ay))])
@@ -180,6 +181,9 @@ def tc_degisim():
 
     if ado1 > 5:
         print("Son saatte fazla yükselmiş", ado1)
+        sil = "evet"
+    if tdo1 > 5:
+        print("yataya binmemiş", tdo1)
         sil = "evet"
     if len(t1mumlar) < 280:
         print("Yeni çıkan coin")
@@ -194,7 +198,7 @@ def tc_degisim():
                 print(i, " çıkarıldı..")
                 toplu.remove(i)
 
-    elif max(ay, ado2) >= 3:
+    elif max(ay, ado30) >= 3:
         bulunanlar.append(bc)
         if len(bulunanlar) > 5:
             bulunanlar.pop(0)
