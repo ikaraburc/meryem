@@ -167,6 +167,7 @@ def tc_degisim():
     m1mumlar(bc)
     t = 12
     ado1 = round((bf / min(d1mumlar[:t]) - 1) * 100, 2)
+    ado2 = round((bf / min(d1mumlar[:6]) - 1) * 100, 2)
 
     ytablo.field_names = [str(bc), str(" of " + str(len(toplu)))]
     ytablo.add_row([str("24s %=" + str(gy)), str("anlık %=" + str(ay))])
@@ -193,7 +194,7 @@ def tc_degisim():
                 print(i, " çıkarıldı..")
                 toplu.remove(i)
 
-    elif ay >= 3:
+    elif max(ay, ado2) >= 3:
         bulunanlar.append(bc)
         if len(bulunanlar) > 5:
             bulunanlar.pop(0)
