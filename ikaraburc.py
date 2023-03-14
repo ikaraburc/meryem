@@ -739,13 +739,14 @@ while True:
 
     else:
         bolge = "Dibe yakın..."
-        asi, afi, ma = 1, 6, 3
+        asi, afi, ma = 1, 6, 2
         alk, slk = 4, 4
 
     if tdo < 3:
         bolge = "Ölü..."
         asi, afi, ma = 0, 5, 2
         alk, slk = 4, 4
+        km = 1.02
 
     hf = 0
     hp = anapara + harcanan * (km - 1)
