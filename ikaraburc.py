@@ -719,7 +719,7 @@ while True:
     tdo = round((zmax / zmin - 1) * 100, 2)
     ado = round((fbids[0] / zmin - 1) * 100, 2)
 
-    km = 1.03
+    km = 1.05
     zk = round(max(1.05, 1 + (tdo / 100) * 0.7), 2)
 
     if ado >= 11:
