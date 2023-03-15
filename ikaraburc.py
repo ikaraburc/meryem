@@ -744,8 +744,6 @@ while True:
 
     if tdo <= 5:
         bolge = "Ölü..."
-        asi, afi, ma = 0, 5, 2
-        alk, slk = 4, 4
         km = 1.02
 
     hf = 0
@@ -783,7 +781,7 @@ while True:
                 gamik = gamik + float(sonislems[i]["amount"])
                 gatut = gatut + float(sonislems[i]["price"]) * float(sonislems[i]["amount"])
                 songaort = gatut / gamik
-                if gatut >= mulk / alk * 0.9:
+                if gatut >= mulk / slk * 0.9:
                     break
 
         for i in range(0, len(sonislems)):
@@ -791,7 +789,7 @@ while True:
                 gsmik = gsmik + float(sonislems[i]["amount"])
                 gstut = gstut + float(sonislems[i]["price"]) * float(sonislems[i]["amount"])
                 songsort = gstut / gsmik
-                if gstut >= mulk / slk * 0.9:
+                if gstut >= mulk / alk * 0.9:
                     break
 
         for i in range(len(sonislems)):
@@ -867,14 +865,14 @@ while True:
         if sonislem == "buy":
             haf = sonaort
             if sonstut >= mulk / slk * 0.9:
-                haf = min(songsort, sonsort) / km
+                haf = min(min(songsort, sonsort) / km, sonaort)
             if max(tut0, p1) >= mulk / alk * 0.95:
                 haf = songaort / km
             hsf = max(songaort, sonaort, sonafiyat) * km
 
         elif sonislem == "sell":
             haf = min(max(songaort, sonaort), sonsort / km)
-            hsf = max(songaort, sonafiyat) * km
+            hsf = max(max(songaort, sonafiyat) * km, sonsort)
             if max(m1 * cp, tut0) >= mulk / slk * 0.9:
                 haf = min(songsort, sonsfiyat) / km
                 hsf = max(songaort, songsort) * km
@@ -983,7 +981,7 @@ while True:
             sfiyat = sf            
             if sf < hf:
                 m1 = m1 - 4 / sf
-            if kar_orani >= 7:
+            if kar_orani >= km:
                 m1 = ctm
                 m2 = 0
             elif kar_orani == -100 and sf >= songaort * 1.1:
