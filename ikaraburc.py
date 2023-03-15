@@ -719,30 +719,30 @@ while True:
     tdo = round((zmax / zmin - 1) * 100, 2)
     ado = round((fbids[0] / zmin - 1) * 100, 2)
 
-    km = 1.05
+    km = 1.03
     zk = round(max(1.05, 1 + (tdo / 100) * 0.7), 2)
 
-    if ado >= 11:
+    if ado >= 15:
         bolge = "USYükseliş..."
         asi, afi, ma = 4, 10, 4
-        alk, slk = 5, 2
+        alk, slk = 5, 1
 
-    elif 11 > ado >= 7:
+    elif 15 > ado >= 10:
         bolge = "SYükseliş..."
         asi, afi, ma = 3, 7, 3
-        alk, slk = 5, 3
+        alk, slk = 5, 2
 
-    elif 7 > ado >= 3:
+    elif 10 > ado >= 5:
         bolge = "Yükseliş..."
         asi, afi, ma = 2, 6, 3
-        alk, slk = 5, 4
+        alk, slk = 5, 3
 
     else:
         bolge = "Dibe yakın..."
         asi, afi, ma = 1, 6, 2
         alk, slk = 4, 4
 
-    if tdo < 3:
+    if tdo <= 5:
         bolge = "Ölü..."
         asi, afi, ma = 0, 5, 2
         alk, slk = 4, 4
@@ -880,6 +880,9 @@ while True:
                 hsf = max(songaort, songsort) * km
 
     af = haf
+    if usdt_to < mulk * 0.60 and harcanan < mulk * 0.5:
+        af = songaort * 0.9
+    
     if ado >= 8:
         af = min(af, zaf)
     if ceder <= mulk / alk and harcanan >= mulk / alk:
@@ -977,20 +980,16 @@ while True:
             T1.join()
             T2.join()
 
-            sfiyat = sf
-            f2 = 0
-            if m2 > 0:
-                f2 = (hp - sf * m1 - usdt_to) / m2
-            else:
-                if sf < hf:
-                    m1 = m1 - 4 / sf
+            sfiyat = sf            
+            if sf < hf:
+                m1 = m1 - 4 / sf
             if kar_orani >= 7:
                 m1 = ctm
                 m2 = 0
             elif kar_orani == -100 and sf >= songaort * 1.1:
                 m1 = ctm
                 m2 = 0
-            sfiyat1 = round(max(sf * 1.1, fasks[10] - k, f2), digit)
+            sfiyat1 = round(max(sf * 1.1, fasks[10] - k), digit)
             smiktar = m1
             smiktar1 = m2
 
