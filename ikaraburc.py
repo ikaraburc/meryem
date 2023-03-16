@@ -767,6 +767,8 @@ while True:
     zsf = zsf / 1.005
 
     # ************- AL SAT GEÇMİŞ BÖLÜMÜ -*******************************#
+    if kar_orani >= 7:
+        slk = 1
 
     sonort0, sonort1 = 0, 0
     songaort, songsort = 0, 0
@@ -979,14 +981,6 @@ while True:
             T2.join()
 
             sfiyat = sf            
-            if sf < hf:
-                m1 = m1 - 4 / sf
-            if kar_orani >= (km-1)*100:
-                m1 = ctm
-                m2 = 0
-            elif kar_orani == -100 and sf >= songaort * 1.1:
-                m1 = ctm
-                m2 = 0
             sfiyat1 = round(max(sf * 1.1, fasks[10] - k), digit)
             smiktar = m1
             smiktar1 = m2
