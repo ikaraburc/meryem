@@ -831,11 +831,11 @@ while True:
         sonstut = 0
 
     p1 = usdt_to % (mulk / alk)
-    if p1 < 2:
+    if p1 < 5:
         p1 = mulk / alk
 
     m1 = ctm % (mulk / slk / cp)
-    if m1 * cp < 2:
+    if m1 * cp < 5:
         m1 = mulk / slk / cp
 
     p2 = usdt_to - p1
@@ -981,7 +981,7 @@ while True:
             sfiyat = sf            
             if sf < hf:
                 m1 = m1 - 4 / sf
-            if kar_orani >= km:
+            if kar_orani >= (km-1)*100:
                 m1 = ctm
                 m2 = 0
             elif kar_orani == -100 and sf >= songaort * 1.1:
