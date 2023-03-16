@@ -65,7 +65,7 @@ def m1mumlar(bc):
     prefix = "/api/v4"
     headers = {'Accept': 'application/json', 'Content-Type': 'application/json'}
     url = '/spot/candlesticks'
-    query_param = 'currency_pair=' + bc + '&interval=5m' + '&limit=300'
+    query_param = 'currency_pair=' + bc + '&interval=5m' + '&limit=700'
     while True:
         try:
             r = requests.request('GET', host + prefix + url + "?" + query_param, headers=headers).json()
@@ -117,9 +117,8 @@ def tc_fiyatlar():
                 and float(data[i]["last"]) > 0 \
                 and float(data[i]["low_24h"]) > 0 \
                 and float(data[i]["change_percentage"]) > 0 \
-                and 1.10 < float(data[i]["high_24h"]) / float(data[i]["low_24h"]) < 1.50\
+                and 1.15 < float(data[i]["high_24h"]) / float(data[i]["low_24h"])\
                 and 1.10 < float(data[i]["high_24h"]) / float(data[i]["last"]) \
-                and 1.10 < float(data[i]["last"]) / float(data[i]["low_24h"]) \
                 and float(data[i]["quote_volume"]) > 80000:
             toplu.append([data[i]["currency_pair"], float(data[i]["last"]), float(data[i]["low_24h"]),
                           float(data[i]["high_24h"])])
@@ -165,8 +164,9 @@ def tc_degisim():
     gy = gys[bti]
 
     m1mumlar(bc)
+    
     t = 12
-    tdo1 = round((max(d1mumlar[:6]) / min(d1mumlar[:t]) - 1) * 100, 2)
+    tao = round((max(t1mumlar[:t*5]) / bf - 1) * 100, 2)
     ado1 = round((bf / min(d1mumlar[:t]) - 1) * 100, 2)
     ado30 = round((bf / min(d1mumlar[:6]) - 1) * 100, 2)
 
@@ -179,15 +179,15 @@ def tc_degisim():
 
     sil = "hayır"
 
-    if ado1 > 5:
-        print("Son saatte fazla yükselmiş", ado1)
-        sil = "evet"
-    if tdo1 > 5:
-        print("yataya binmemiş", tdo1)
-        sil = "evet"
-    if len(t1mumlar) < 280:
+    if len(t1mumlar) < 600:
         print("Yeni çıkan coin")
         sil = "evet"
+    if tao < 10:
+        print("son düşüş az, % eksi", tao)
+        sil = "evet"     
+    if ado1 > 5:
+        print("Son saatte fazla yükselmiş", ado1)
+        sil = "evet"        
     if m1hacim < 1000:
         print("hacim düşük", m1hacim)
         sil = "evet"
@@ -746,11 +746,6 @@ while True:
         bolge = "Ölü..."
         km = 1.02
 
-    hf = 0
-    hp = anapara + harcanan * (km - 1)
-    if ceder >= 1:
-        hf = round(max((hp - usdt_to) / ctm, fbids[1]), digit)
-
     # ************- ZAF + ZSF BUL -*******************************#
 
     for x in range(1, 1000):
@@ -919,6 +914,9 @@ while True:
         af = taf
 
     af = min(af, taf)
+    if harcanan <= mulk / alk:
+        af = min(haf, taf + k)
+    
     # ************- TSF -*******************************#
     ssi, sfi, ms = 0, 3, 2
     if sf >= max(hsf, songaort * 1.05):
@@ -947,9 +945,6 @@ while True:
             tsf = fasks[ysi] - k
 
     sf = max(sf, tsf)
-    if harcanan <= mulk / alk:
-        af = taf + k
-
     # ************- AL SAT EMİRLERİNİ GÖNDER BÖLÜMÜ -*******************************#
     af = round(af, digit)
     sf = round(sf, digit)
@@ -980,8 +975,10 @@ while True:
             T1.join()
             T2.join()
 
-            sfiyat = sf            
-            sfiyat1 = round(max(sf * 1.1, fasks[10] - k), digit)
+            sfiyat = sf
+            if slk > 1:
+                m1 = m1 - 4/sf
+            sfiyat1 = round(max(sf * 1.15, fasks[10] - k), digit)
             smiktar = m1
             smiktar1 = m2
 
@@ -990,8 +987,6 @@ while True:
     # ************- EKRANA PRİNT BÖLÜMÜ -*******************************#
     fiyatlar = PrettyTable()
     fiyatlar.field_names = [str(bolge) + "ado% " + str(ado), str("Mülk " + str(round(mulk, 2))), str("cp " + str(cp))]
-    fiyatlar.add_row(
-        [str("alk, slk= " + str(alk) + "," + str(slk)), str(sonislem), str("hf " + str(round(hf, digit)))])
     fiyatlar.add_row([str("af,sf ") + str(round(sf / af, 2)), round(af, digit), round(sf, digit)])
     fiyatlar.add_row(
         [str(" haf,hsf " + str(round(hsf / haf, 2))), round(haf, digit), round(hsf, digit)])
