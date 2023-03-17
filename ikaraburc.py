@@ -885,6 +885,8 @@ while True:
     sf = hsf
     if harcanan >= anapara * 0.95 and usdt_to <= mulk / slk:
         sf = min(hsf, zsf)
+        if (hsf-zsf)/zsf <= 1.02:
+            sf = hsf
         m1 = max(mulk / slk - usdt_to, 3) / cp
         m2 = ctm - m1
     # ************- TAF -*******************************#
