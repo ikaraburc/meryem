@@ -198,7 +198,7 @@ def tc_degisim():
                 print(i, " çıkarıldı..")
                 toplu.remove(i)
 
-    elif max(ay, ado30) >= 3:
+    elif ay > 2 or ado30 >= 3:
         bulunanlar.append(bc)
         if len(bulunanlar) > 5:
             bulunanlar.pop(0)
@@ -730,12 +730,12 @@ while True:
     elif 15 > ado >= 10:
         bolge = "SYükseliş..."
         asi, afi, ma = 3, 7, 3
-        alk, slk = 5, 2
+        alk, slk = 5, 4
 
     elif 10 > ado >= 5:
         bolge = "Yükseliş..."
         asi, afi, ma = 2, 6, 3
-        alk, slk = 5, 3
+        alk, slk = 5, 4
 
     else:
         bolge = "Dibe yakın..."
@@ -762,8 +762,6 @@ while True:
     zsf = zsf / 1.005
 
     # ************- AL SAT GEÇMİŞ BÖLÜMÜ -*******************************#
-    if kar_orani >= 7:
-        slk = 1
 
     sonort0, sonort1 = 0, 0
     songaort, songsort = 0, 0
@@ -808,6 +806,7 @@ while True:
                     tut1 = tut1 + float(sonislems[i]["amount"]) * float(sonislems[i]["price"])
                     sonort1 = tut1 / mik1
             break
+    
     # ************- ALIŞ SATIŞ MİKTAR -*******************************#
     
     if sonislem == "buy":
@@ -875,8 +874,8 @@ while True:
                 hsf = max(songaort, songsort) * km
 
     af = haf
-    if usdt_to < mulk * 0.60 and harcanan < mulk * 0.5:
-        af = songaort * 0.9
+    if usdt_to < mulk * 0.60:
+        af = songaort / 1.02
     
     if ado >= 8:
         af = min(af, zaf)
@@ -915,7 +914,13 @@ while True:
 
     af = min(af, taf)
     if harcanan <= mulk / alk:
-        af = min(haf, taf + k)
+        if ado < 10:
+            af = min(haf, taf + k)
+        else:
+            if ceder > 1:
+                sf = fbids[1]
+            else:
+                break
     
     # ************- TSF -*******************************#
     ssi, sfi, ms = 0, 3, 2
