@@ -178,20 +178,21 @@ def tc_degisim():
     print(ytablo)
 
     sil = "hayır"
-
-    if len(t1mumlar) < 600:
-        print("Yeni çıkan coin")
-        sil = "evet"
+    
     if tao < 10:
         print("son düşüş az, % eksi", tao)
         sil = "evet"     
     if ado1 > 5:
         print("Son saatte fazla yükselmiş", ado1)
         sil = "evet"        
+    
     if m1hacim < 1000:
         print("hacim düşük", m1hacim)
         sil = "evet"
-
+    if len(t1mumlar) < 600:
+        print("Yeni çıkan coin")
+        sil = "evet"
+        
     if sil == "evet":
         for i in toplu:
             if i[0] == bc:
@@ -681,7 +682,7 @@ while True:
         t1 = time.time()
 
     if ceder < 1:
-        if harcanan >= mulk / 5:
+        if harcanan > 0:
             ct.alsat_gecmisi()
             tbot_ozel.send_message(telegram_chat_id, str("Eldeki son mal satıldı. Yeni mal taranıyor..."))
             tbot_ozel.send_message(telegram_chat_id, str(bilanco))
@@ -739,11 +740,13 @@ while True:
 
     else:
         bolge = "Dibe yakın..."
-        asi, afi, ma = 1, 6, 2
+        asi, afi, ma = 2, 6, 2
         alk, slk = 4, 4
 
     if tdo <= 5:
         bolge = "Ölü..."
+        asi, afi, ma = 0, 6, 2
+        alk, slk = 4, 4
         km = 1.02
 
     # ************- ZAF + ZSF BUL -*******************************#
@@ -863,7 +866,7 @@ while True:
             if sonstut >= mulk / slk * 0.9:
                 haf = min(min(songsort, sonsort) / km, sonaort)
             if max(tut0, p1) >= mulk / alk * 0.95:
-                haf = songaort / km
+                haf = min(songaort, sonafiyat) / km
             hsf = max(songaort, sonaort, sonafiyat) * km
 
         elif sonislem == "sell":
@@ -871,7 +874,7 @@ while True:
             hsf = max(max(songaort, sonafiyat) * km, sonsort)
             if max(m1 * cp, tut0) >= mulk / slk * 0.9:
                 haf = min(songsort, sonsfiyat) / km
-                hsf = max(songaort, songsort) * km
+                hsf = max(songaort, songsort, sonsfiyat) * km
 
     af = haf
     if usdt_to < mulk * 0.60:
@@ -994,7 +997,7 @@ while True:
     # ************- EKRANA PRİNT BÖLÜMÜ -*******************************#
     fiyatlar = PrettyTable()
     fiyatlar.field_names = [str(bolge) + "ado% " + str(ado), str("Mülk " + str(round(mulk, 2))), str("cp " + str(cp))]
-    fiyatlar.add_row([str("af,sf ") + str(round(sf / af, 2)), round(af, digit), round(sf, digit)])
+    fiyatlar.add_row([str(sonislem) + str(" af,sf ") + str(round(sf / af, 2)), round(af, digit), round(sf, digit)])
     fiyatlar.add_row(
         [str(" haf,hsf " + str(round(hsf / haf, 2))), round(haf, digit), round(hsf, digit)])
     fiyatlar.add_row(["son aort, sort ", round(sonaort, digit), round(sonsort, digit)])
@@ -1002,7 +1005,7 @@ while True:
     fiyatlar.add_row([str("taf, tsf " + str(round(tsf / taf, 2))), round(taf, digit), round(tsf, digit)])
     fiyatlar.add_row([str("zaf, zsf zk=" + str(round(zk, 2))), round(zaf, digit), round(zsf, digit)])
     fiyatlar.add_row([str("zmin, zmax tdo=" + str(tdo)), round(zmin, digit), round(zmax, digit)])
-
+    fiyatlar.add_row(["alk, slk=" + str(alk) +"-"+str(slk), str(str("alk=")+ str(round(mulk/alk, 2))), str(str("slk=")+ str(round(mulk/slk, 2)))])
     print(fiyatlar)
 
     continue
