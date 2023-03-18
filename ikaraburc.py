@@ -487,7 +487,7 @@ class coin_trader:
             else:
                 print("Bağlantı bekleniyor...")
                 continue
-        # print(r)
+        #print(r)
 
     def alimlar_sil(self):
 
@@ -866,6 +866,7 @@ while True:
         m2 = sm2
 
     # ************- HAF + HSF -*******************************#
+    
     haf, hsf = zaf, zsf
     if harcanan > 0:
         if sonislem == "buy":
@@ -889,7 +890,7 @@ while True:
 
     if ceder <= mulk / alk:
         af = max(af, zaf)
-    elif ado >= 8:
+    elif ado >= 7:
         if ceder <= 1:
             break
         af = min(af, zaf)
@@ -897,11 +898,11 @@ while True:
     sf = hsf
     if mf/sf < 1.01:
         sf = mf * 1.01
-    if usdt_to <= mulk / slk and harcanan >= anapara * 0.95  :
+    if usdt_to <= (mulk / slk - 5) and harcanan >= anapara * 0.95  :
         sf = min(hsf, zsf)
         if hsf/zsf <= 1.02:
             sf = hsf
-        m1 = max(mulk / slk - usdt_to, 3) / cp
+        m1 = (mulk / slk - usdt_to) / cp
         m2 = ctm - m1
     
     # ************- TAF -*******************************#
@@ -984,7 +985,7 @@ while True:
 
             ct.coklu_al()
 
-    if ceder >= 1:
+    if ceder > 1:
         if sf > sfiyat * 1.002 or sf < sfiyat or cam * cp >= 5:
             T1 = threading.Thread(target=ct.satimlar_sil)
             T2 = threading.Thread(target=ct.bakiye_getir)
@@ -995,7 +996,7 @@ while True:
 
             sfiyat = sf
             if -100 < kar_orani < km:
-                m1 = m1 - 4/sf
+                m1 = m1 - 2/cp
             sfiyat1 = round(max(sf * 1.15, fasks[10] - k), digit)
             smiktar = m1
             smiktar1 = m2
@@ -1013,7 +1014,7 @@ while True:
     fiyatlar.add_row([str("taf, tsf " + str(round(tsf / taf, 2))), round(taf, digit), round(tsf, digit)])
     fiyatlar.add_row([str("zaf, zsf zk=" + str(round(zk, 2))), round(zaf, digit), round(zsf, digit)])
     fiyatlar.add_row([str("zmin, zmax tdo=" + str(tdo)), round(zmin, digit), round(zmax, digit)])
-    fiyatlar.add_row(["alk, slk=" + str(alk) +"-"+str(slk), str(str("alk=")+ str(round(mulk/alk, 2))), str(str("slk=")+ str(round(mulk/slk, 2)))])
+    fiyatlar.add_row(["alk, slk=" + str(alk) +"-"+str(slk), str(str("alk$=")+ str(round(mulk/alk, 2))), str(str("slk#=")+ str(round(m1, mdigit)))])
     print(fiyatlar)
 
     continue
