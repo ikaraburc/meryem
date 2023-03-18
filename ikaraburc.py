@@ -723,21 +723,21 @@ while True:
     ado = round((fbids[0] / zmin - 1) * 100, 2)
 
     km = 1.03
-    zk = round(max(1.05, 1 + (tdo / 100) * 0.7), 2)
+    zk = 1.05
 
     if ado >= 20:
         bolge = "Pumpa girdi..."
-        asi, afi, ma = 5, 10, 5
+        asi, afi, ma = 6, 10, 5
         alk, slk = 5, 1
     
     elif 20 > ado >= 15:
         bolge = "USYükseliş..."
-        asi, afi, ma = 4, 10, 4
+        asi, afi, ma = 5, 10, 4
         alk, slk = 5, 3
         
     elif 15 > ado >= 10:
         bolge = "SYükseliş..."
-        asi, afi, ma = 3, 7, 3
+        asi, afi, ma = 4, 7, 3
         alk, slk = 5, 4
 
     elif 10 > ado >= 5:
@@ -884,7 +884,7 @@ while True:
                 hsf = max(songaort, songsort) * km
 
     af = haf
-    if usdt_to < mulk * 0.60:
+    if usdt_to < mulk * 0.60 and tdo > 10:
         af = songaort / 1.02    
 
     if ceder <= mulk / alk:
@@ -918,7 +918,7 @@ while True:
 
     if af >= taf * 1.003:
         for yai in range(eai, - 1, -1):
-            if abs(taf - fbids[yai]) / fbids[yai] >= 5 / 1000:
+            if abs(taf - fbids[yai]) / fbids[yai] >= 0.5 / 100:
                 yai = yai + 1
                 break
         if fbids[yai] == afiyat:
@@ -956,7 +956,7 @@ while True:
         else:
             tsf = fasks[ysi] - k
 
-    if fbids[0] >= hsf and sf / fbids[0] < 1.01:
+    if fbids[0] >= max(hsf, songaort * km) and sf / fbids[0] < 1.01:
         sf = fbids[0]
     else:
         sf = max(sf, tsf)
