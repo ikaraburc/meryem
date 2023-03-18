@@ -884,7 +884,7 @@ while True:
                 hsf = max(songaort, songsort) * km
 
     af = haf
-    if usdt_to < mulk * 0.60 and tdo > 10:
+    if usdt_to < mulk * 0.60:
         af = haf / 1.02    
 
     if ceder <= mulk / alk:
@@ -895,6 +895,8 @@ while True:
         af = min(af, zaf)
         
     sf = hsf
+    if mf/sf < 1.01:
+        sf = mf * 1.01
     if usdt_to <= mulk / slk and harcanan >= anapara * 0.95  :
         sf = min(hsf, zsf)
         if hsf/zsf <= 1.02:
@@ -992,7 +994,7 @@ while True:
             T2.join()
 
             sfiyat = sf
-            if kar_orani < km:
+            if -100 < kar_orani < km:
                 m1 = m1 - 4/sf
             sfiyat1 = round(max(sf * 1.15, fasks[10] - k), digit)
             smiktar = m1
