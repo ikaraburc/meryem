@@ -890,12 +890,14 @@ while True:
     if ceder <= mulk / alk:
         af = max(af, zaf)
     elif ado >= 8:
+        if ceder <= 1:
+            break
         af = min(af, zaf)
         
     sf = hsf
     if usdt_to <= mulk / slk and harcanan >= anapara * 0.95  :
         sf = min(hsf, zsf)
-        if (hsf-zsf)/zsf <= 1.02:
+        if hsf/zsf <= 1.02:
             sf = hsf
         m1 = max(mulk / slk - usdt_to, 3) / cp
         m2 = ctm - m1
@@ -954,7 +956,11 @@ while True:
         else:
             tsf = fasks[ysi] - k
 
-    sf = max(sf, tsf)
+    if fbids[0] >= hsf and sf / fbids[0] < 1.01:
+        sf = fbids[0]
+    else:
+        sf = max(sf, tsf)
+        
     # ************- AL SAT EMİRLERİNİ GÖNDER BÖLÜMÜ -*******************************#
     af = round(af, digit)
     sf = round(sf, digit)
