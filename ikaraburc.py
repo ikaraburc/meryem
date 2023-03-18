@@ -885,7 +885,7 @@ while True:
 
     af = haf
     if usdt_to < mulk * 0.60 and tdo > 10:
-        af = songaort / 1.02    
+        af = haf / 1.02    
 
     if ceder <= mulk / alk:
         af = max(af, zaf)
