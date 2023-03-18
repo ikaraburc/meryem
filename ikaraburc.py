@@ -584,7 +584,7 @@ class coin_trader:
         miktar = ctm
         anapara = mulk
         agider, sgelir, limit = 0, 0, 0
-        mf, mmf, kar_orani = 0, 0, 0
+        mf, mmf, kar_orani, tsiftah = 0, 0, 0, time.time()
 
         for x in r:
             if miktar * float(x["price"]) >= 1:
@@ -592,6 +592,7 @@ class coin_trader:
                 if x["side"] == "buy":
                     miktar = miktar - float(x["amount"])
                     agider = agider + float(x["amount"]) * float(x["price"])
+                    tsiftah = float(x["create_time"])
                     if x["fee_currency"] == coin_adi:
                         miktar = miktar + float(x["fee"])
                 else:
@@ -608,7 +609,8 @@ class coin_trader:
             mf = round((agider - sgelir) / ctm * 1.002, digit)
             mmf = round(anapara / (usdt_to / cp + ctm) * 1.002, digit)
             kar_orani = round(kar_tutari / harcanan * 100, 2)
-        if abs(mulk - (anapara + kar_tutari))/mulk > 1/100:
+        
+        if time.time() - tsiftah >= 6*24*60*60:
             kar_orani = -100
         bilanco = PrettyTable()
         bilanco.field_names = [str(self.coin).upper(), cp]
@@ -723,11 +725,16 @@ while True:
     km = 1.03
     zk = round(max(1.05, 1 + (tdo / 100) * 0.7), 2)
 
-    if ado >= 15:
+    if ado >= 20:
+        bolge = "Pumpa girdi..."
+        asi, afi, ma = 5, 10, 5
+        alk, slk = 5, 1
+    
+    elif 20 > ado >= 15:
         bolge = "USYükseliş..."
         asi, afi, ma = 4, 10, 4
-        alk, slk = 5, 1
-
+        alk, slk = 5, 3
+        
     elif 15 > ado >= 10:
         bolge = "SYükseliş..."
         asi, afi, ma = 3, 7, 3
@@ -878,20 +885,21 @@ while True:
 
     af = haf
     if usdt_to < mulk * 0.60:
-        af = songaort / 1.02
-    
-    if ado >= 8:
-        af = min(af, zaf)
-    if ceder <= mulk / alk and harcanan >= mulk / alk:
-        af = max(haf, zaf)
+        af = songaort / 1.02    
 
+    if ceder <= mulk / alk:
+        af = max(af, zaf)
+    elif ado >= 8:
+        af = min(af, zaf)
+        
     sf = hsf
-    if harcanan >= anapara * 0.95 and usdt_to <= mulk / slk:
+    if usdt_to <= mulk / slk and harcanan >= anapara * 0.95  :
         sf = min(hsf, zsf)
         if (hsf-zsf)/zsf <= 1.02:
             sf = hsf
         m1 = max(mulk / slk - usdt_to, 3) / cp
         m2 = ctm - m1
+    
     # ************- TAF -*******************************#
 
     for fa in range(0, 5):
@@ -918,14 +926,6 @@ while True:
         af = taf
 
     af = min(af, taf)
-    if harcanan <= mulk / alk:
-        if ado < 10:
-            af = min(haf, taf + k)
-        else:
-            if ceder > 1:
-                sf = fbids[1]
-            else:
-                break
     
     # ************- TSF -*******************************#
     ssi, sfi, ms = 0, 3, 2
@@ -986,7 +986,7 @@ while True:
             T2.join()
 
             sfiyat = sf
-            if slk > 1:
+            if kar_orani < km:
                 m1 = m1 - 4/sf
             sfiyat1 = round(max(sf * 1.15, fasks[10] - k), digit)
             smiktar = m1
