@@ -870,18 +870,18 @@ while True:
     if harcanan > 0:
         if sonislem == "buy":
             haf = sonaort
-            if sonstut >= mulk / slk * 0.9:
-                haf = min(min(songsort, sonsort) / km, sonaort)
-            if max(tut0, p1) >= mulk / alk * 0.95:
+            if sonstut >= mulk / alk * 0.9:
+                haf = min(songsort, sonsort) / km
+            if tut0 >= mulk / alk * 0.9:
                 haf = min(songaort, sonafiyat) / km
-            hsf = max(songaort, sonaort, sonafiyat) * km
+            hsf = max(songaort, sonaort) * km
 
         elif sonislem == "sell":
             haf = min(max(songaort, sonaort), sonsort / km)
             hsf = max(max(songaort, sonafiyat) * km, sonsort)
-            if max(m1 * cp, tut0) >= mulk / slk * 0.9:
+            if tut0 >= mulk / slk * 0.9:
                 haf = min(songsort, sonsfiyat) / km
-                hsf = max(songaort, songsort, sonsfiyat) * km
+                hsf = max(songaort, songsort) * km
 
     af = haf
     if usdt_to < mulk * 0.60:
@@ -946,7 +946,7 @@ while True:
 
     if sf <= tsf * 1.003:
         for ysi in range(esi, ssi - 1, -1):
-            if abs(tsf - fasks[ysi]) / fasks[ysi] >= 0.5 / 100:
+            if abs(tsf - fasks[ysi]) / fasks[ysi] >= 1 / 100:
                 ysi = ysi + 1
                 break
         if fasks[ysi] == sfiyat:
