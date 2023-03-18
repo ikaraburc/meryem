@@ -786,7 +786,7 @@ while True:
                 gamik = gamik + float(sonislems[i]["amount"])
                 gatut = gatut + float(sonislems[i]["price"]) * float(sonislems[i]["amount"])
                 songaort = gatut / gamik
-                if gatut >= mulk / slk * 0.9:
+                if gatut >= mulk / alk * 0.8:
                     break
 
         for i in range(0, len(sonislems)):
@@ -794,7 +794,7 @@ while True:
                 gsmik = gsmik + float(sonislems[i]["amount"])
                 gstut = gstut + float(sonislems[i]["price"]) * float(sonislems[i]["amount"])
                 songsort = gstut / gsmik
-                if gstut >= mulk / alk * 0.9:
+                if gstut >= mulk / slk * 0.8:
                     break
 
         for i in range(len(sonislems)):
@@ -873,14 +873,14 @@ while True:
             haf = sonaort
             if sonstut >= mulk / alk * 0.9:
                 haf = min(songsort, sonsort) / km
-            if tut0 >= mulk / alk * 0.9:
+            if tut0 >= mulk / alk * 0.8:
                 haf = min(songaort, sonafiyat) / km
             hsf = max(songaort, sonaort) * km
 
         elif sonislem == "sell":
             haf = min(max(songaort, sonaort), sonsort / km)
             hsf = max(max(songaort, sonafiyat) * km, sonsort)
-            if tut0 >= mulk / slk * 0.9:
+            if tut0 >= mulk / slk * 0.8:
                 haf = min(songsort, sonsfiyat) / km
                 hsf = max(songaort, songsort) * km
 
