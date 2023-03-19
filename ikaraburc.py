@@ -664,9 +664,10 @@ ct.coin_digit()
 ct.coin_fiyat()
 ct.bakiye_getir()
 ct.alsat_gecmisi()
-
+alim_tamam = "hayır"
 if ceder < 1:
     yeni_tara = "evet"
+    alim_tamam = "evet"
 
 afiyat = cp * 0.98
 sfiyat = cp * 1.05
@@ -682,9 +683,10 @@ while True:
     if time.time() - t1 >= veri_sn:
         tc_fiyatlar()
         t1 = time.time()
-
+    if harcanan > 5:
+        alim_tamam = "evet"
     if ceder < 1:
-        if harcanan > 0:
+        if alim_tamam == "evet":
             ct.alsat_gecmisi()
             tbot_ozel.send_message(telegram_chat_id, str("Eldeki son mal satıldı. Yeni mal taranıyor..."))
             tbot_ozel.send_message(telegram_chat_id, str(bilanco))
