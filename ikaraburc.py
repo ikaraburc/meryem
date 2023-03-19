@@ -6,14 +6,13 @@ from requests.exceptions import ConnectionError
 
 from sifreler import *
 
-
 def emirleri_sil():
     host = "https://api.gateio.ws"
     prefix = "/api/v4"
     headers = {'Accept': 'application/json', 'Content-Type': 'application/json'}
 
     url = '/spot/orders'
-    query_param = 'side=buy'
+    query_param = ''
     # for `gen_sign` implementation, refer to section `Authentication` above
     sign_headers = gen_sign('DELETE', prefix + url, query_param)
     headers.update(sign_headers)
@@ -117,9 +116,8 @@ def tc_fiyatlar():
                 and float(data[i]["last"]) > 0 \
                 and float(data[i]["low_24h"]) > 0 \
                 and float(data[i]["change_percentage"]) > 0 \
-                and 1.15 < float(data[i]["high_24h"]) / float(data[i]["low_24h"])\
-                and 1.10 < float(data[i]["high_24h"]) / float(data[i]["last"]) \
-                and float(data[i]["quote_volume"]) > 80000:
+                and 1.15 < float(data[i]["high_24h"]) / float(data[i]["low_24h"]) \
+                and float(data[i]["quote_volume"]) > 50000:
             toplu.append([data[i]["currency_pair"], float(data[i]["last"]), float(data[i]["low_24h"]),
                           float(data[i]["high_24h"])])
 
@@ -164,42 +162,36 @@ def tc_degisim():
     gy = gys[bti]
 
     m1mumlar(bc)
-    
-    t = 12
-    tao = round((max(t1mumlar[:t*5]) / bf - 1) * 100, 2)
+
+    t = 5
+    tao = round((max(t1mumlar[:t]) / bf - 1) * 100, 2)
     ado1 = round((bf / min(d1mumlar[:t]) - 1) * 100, 2)
-    ado30 = round((bf / min(d1mumlar[:6]) - 1) * 100, 2)
+    ado30 = round((bf / min(d1mumlar[:5]) - 1) * 100, 2)
 
     ytablo.field_names = [str(bc), str(" of " + str(len(toplu)))]
-    ytablo.add_row([str("24s %=" + str(gy)), str("anlık %=" + str(ay))])
+    ytablo.add_row([str("24s %=" + str(gy)), str("anlık %=" + str(max(ay, ado30)))])
     ytablo.add_row(["24s tepe", t24f])
     ytablo.add_row(["24s dip ", d24f])
     ytablo.add_row(["Anlık Fiyat", bf])
     print(ytablo)
 
     sil = "hayır"
-    
-    if tao < 10:
-        print("son düşüş az, % eksi", tao)
-        sil = "evet"     
-    if ado1 > 5:
-        print("Son saatte fazla yükselmiş", ado1)
-        sil = "evet"        
-    
-    if m1hacim < 1000:
-        print("hacim düşük", m1hacim)
-        sil = "evet"
+
     if len(t1mumlar) < 600:
         print("Yeni çıkan coin")
         sil = "evet"
-        
+
+    if m1hacim < 1000:
+        print("hacim düşük", m1hacim)
+        sil = "evet"
+
     if sil == "evet":
         for i in toplu:
             if i[0] == bc:
                 print(i, " çıkarıldı..")
                 toplu.remove(i)
 
-    elif ay > 2 or ado30 >= 3:
+    elif max(ay, ado30) >= 10:
         bulunanlar.append(bc)
         if len(bulunanlar) > 5:
             bulunanlar.pop(0)
@@ -611,6 +603,7 @@ class coin_trader:
             kar_orani = round(kar_tutari / harcanan * 100, 2)
         
         if time.time() - tsiftah >= 6*24*60*60:
+            mf = -100
             kar_orani = -100
         bilanco = PrettyTable()
         bilanco.field_names = [str(self.coin).upper(), cp]
@@ -727,20 +720,21 @@ while True:
     km = 1.02
     if tdo > 15:
         km = 1.03
-    zk = 1.05
+    
+    zk = 1.07
     alk, slk = 5, 5
     
     if ado >= 20:
         bolge = "Pumpa girdi..."
-        asi, afi, ma = 6, 10, 5
+        asi, afi, ma = 6, 13, 6
             
     elif 20 > ado >= 15:
         bolge = "USYükseliş..."
-        asi, afi, ma = 5, 10, 4
+        asi, afi, ma = 5, 13, 5
         
     elif 15 > ado >= 10:
         bolge = "SYükseliş..."
-        asi, afi, ma = 4, 7, 3
+        asi, afi, ma = 4, 10, 4
 
     elif 10 > ado >= 5:
         bolge = "Yükseliş..."
@@ -894,8 +888,11 @@ while True:
         af = min(af, zaf)
         
     sf = hsf
-    if sf <= mf:
+    
+    if sf < mf * 0.97 or mf == -100:
         sf = sf * 1.01
+    else:
+        sf = max(sf, mf * km)
     if usdt_to <= (mulk / slk - 5) and harcanan >= anapara * 0.95  :
         sf = min(hsf, zsf)
         if hsf/zsf <= 1.02:
