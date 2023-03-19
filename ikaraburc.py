@@ -724,39 +724,35 @@ while True:
     tdo = round((zmax / zmin - 1) * 100, 2)
     ado = round((fbids[0] / zmin - 1) * 100, 2)
 
-    km = 1.03
+    km = 1.02
+    if tdo > 15:
+        km = 1.03
     zk = 1.05
-
+    alk, slk = 5, 5
+    
     if ado >= 20:
         bolge = "Pumpa girdi..."
         asi, afi, ma = 6, 10, 5
-        alk, slk = 5, 1
-    
+            
     elif 20 > ado >= 15:
         bolge = "USYükseliş..."
         asi, afi, ma = 5, 10, 4
-        alk, slk = 5, 3
         
     elif 15 > ado >= 10:
         bolge = "SYükseliş..."
         asi, afi, ma = 4, 7, 3
-        alk, slk = 5, 4
 
     elif 10 > ado >= 5:
         bolge = "Yükseliş..."
         asi, afi, ma = 2, 6, 3
-        alk, slk = 5, 4
 
     else:
         bolge = "Dibe yakın..."
         asi, afi, ma = 2, 6, 2
-        alk, slk = 4, 4
 
     if tdo <= 5:
         bolge = "Ölü..."
         asi, afi, ma = 0, 6, 2
-        alk, slk = 4, 4
-        km = 1.02
 
     # ************- ZAF + ZSF BUL -*******************************#
 
@@ -889,7 +885,7 @@ while True:
     af = haf
     if usdt_to < mulk * 0.60:
         af = haf / 1.02    
-
+    
     if ceder <= mulk / alk:
         af = max(af, zaf)
     elif ado >= 7:
@@ -898,8 +894,8 @@ while True:
         af = min(af, zaf)
         
     sf = hsf
-    if mf/sf < 1.01:
-        sf = mf * 1.01
+    if sf <= mf:
+        sf = sf * 1.01
     if usdt_to <= (mulk / slk - 5) and harcanan >= anapara * 0.95  :
         sf = min(hsf, zsf)
         if hsf/zsf <= 1.02:
@@ -935,7 +931,7 @@ while True:
     af = min(af, taf)
     
     # ************- TSF -*******************************#
-    ssi, sfi, ms = 0, 3, 2
+    ssi, sfi, ms = 1, 3, 2
     if sf >= max(hsf, songaort * 1.05):
         ssi, sfi, ms = 0, 2, 2
 
