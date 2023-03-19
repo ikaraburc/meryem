@@ -889,7 +889,7 @@ while True:
         
     sf = hsf
     
-    if sf < mf * 0.97 or mf == -100:
+    if sf <= mf or mf == -100:
         sf = sf * 1.01
     else:
         sf = max(sf, mf * km)
