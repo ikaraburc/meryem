@@ -664,10 +664,10 @@ ct.coin_digit()
 ct.coin_fiyat()
 ct.bakiye_getir()
 ct.alsat_gecmisi()
-alim_tamam = "hayır"
+alim_tamam = "evet"
 if ceder < 1:
     yeni_tara = "evet"
-    alim_tamam = "evet"
+    alim_tamam = "hayır"
 
 afiyat = cp * 0.98
 sfiyat = cp * 1.05
