@@ -717,12 +717,18 @@ while True:
     tdo = round((zmax / zmin - 1) * 100, 2)
     ado = round((fbids[0] / zmin - 1) * 100, 2)
 
-    km = 1.02
+    km = 1.03
+    zk = 1.05
+    alk, slk = 3, 3
+    
     if tdo > 15:
         km = 1.03
+        zk = 1.07
+        alk, slk = 5, 5
     
-    zk = 1.07
-    alk, slk = 5, 5
+    
+    
+    
     
     if ado >= 20:
         bolge = "Pumpa girdi..."
@@ -913,7 +919,7 @@ while True:
         taf = fbids[eai] + k
 
     if af >= taf * 1.003:
-        for yai in range(eai, - 1, -1):
+        for yai in range(eai,- 1, -1):
             if abs(taf - fbids[yai]) / fbids[yai] >= 0.5 / 100:
                 yai = yai + 1
                 break
@@ -943,8 +949,8 @@ while True:
         tsf = fasks[esi] - k
 
     if sf <= tsf * 1.003:
-        for ysi in range(esi, ssi - 1, -1):
-            if abs(tsf - fasks[ysi]) / fasks[ysi] >= 1 / 100:
+        for ysi in range(esi,- 1, -1):
+            if abs(tsf - fasks[ysi]) / fasks[ysi] >= 0.5 / 100:
                 ysi = ysi + 1
                 break
         if fasks[ysi] == sfiyat:
