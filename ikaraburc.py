@@ -676,7 +676,7 @@ while True:
     if time.time() - t1 >= veri_sn:
         tc_fiyatlar()
         t1 = time.time()
-    if harcanan > 5:
+    if harcanan >= mulk/5:
         alim_tamam = "evet"
     if ceder < 1:
         if alim_tamam == "evet":
@@ -887,7 +887,7 @@ while True:
         
     sf = hsf
     
-    if sf <= mf or mf == -100:
+    if sf < mf or mf == -100:
         sf = sf * 1.01
     else:
         sf = max(sf, mf * km)
