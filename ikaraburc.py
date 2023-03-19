@@ -883,8 +883,6 @@ while True:
     if ceder <= mulk / alk:
         af = max(af, zaf)
     elif ado >= 7:
-        if ceder <= 1:
-            break
         af = min(af, zaf)
         
     sf = hsf
