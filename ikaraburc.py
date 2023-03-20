@@ -732,23 +732,23 @@ while True:
     
     if ado >= 20:
         bolge = "Pumpa girdi..."
-        asi, afi, ma = 6, 13, 6
+        asi, afi, ma = 5, 13, 5
             
     elif 20 > ado >= 15:
         bolge = "USYükseliş..."
-        asi, afi, ma = 5, 13, 5
+        asi, afi, ma = 4, 13, 4
         
     elif 15 > ado >= 10:
         bolge = "SYükseliş..."
-        asi, afi, ma = 4, 10, 4
+        asi, afi, ma = 3, 10, 3
 
     elif 10 > ado >= 5:
         bolge = "Yükseliş..."
-        asi, afi, ma = 2, 6, 3
+        asi, afi, ma = 2, 6, 2
 
     else:
         bolge = "Dibe yakın..."
-        asi, afi, ma = 2, 6, 2
+        asi, afi, ma = 1, 6, 3
 
     if tdo <= 5:
         bolge = "Ölü..."
@@ -894,11 +894,11 @@ while True:
     sf = hsf
     
     if sf < mf or mf == -100:
-        sf = sf * 1.01
+        sf = sf * 1.02
     else:
         sf = max(sf, mf * km)
-    if usdt_to <= (mulk / slk - 5) and harcanan >= anapara * 0.95  :
-        sf = min(hsf, zsf)
+    if usdt_to <= (mulk / slk - 5) and fasks[0] < sonafiyat / km:
+        sf = min(hsf, zsf) 
         if hsf/zsf <= 1.02:
             sf = hsf
         m1 = (mulk / slk - usdt_to) / cp
@@ -932,7 +932,7 @@ while True:
     af = min(af, taf)
     
     # ************- TSF -*******************************#
-    ssi, sfi, ms = 1, 3, 2
+    ssi, sfi, ms = 1, 4, 2
     if sf >= max(hsf, songaort * 1.05):
         ssi, sfi, ms = 0, 2, 2
 
