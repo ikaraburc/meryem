@@ -542,7 +542,6 @@ class coin_trader:
         host = "https://api.gateio.ws"
         prefix = "/api/v4"
         headers = {'Accept': 'application/json', 'Content-Type': 'application/json'}
-
         url = '/spot/my_trades'
         query_param = 'currency_pair=' + self.coin + "&limit=1000"
 
@@ -706,6 +705,7 @@ while True:
                     t2 = time.time()
 
                     yeni_tara = "hayır"
+                    alim_tamam = "hayır"
                     tbot_ozel.send_message(telegram_chat_id, str(bilanco))
                     break
                 continue
@@ -725,11 +725,7 @@ while True:
         km = 1.03
         zk = 1.07
         alk, slk = 5, 5
-    
-    
-    
-    
-    
+       
     if ado >= 20:
         bolge = "Pumpa girdi..."
         asi, afi, ma = 5, 13, 5
@@ -893,8 +889,8 @@ while True:
         
     sf = hsf
     
-    if sf < mf or mf == -100:
-        sf = sf * 1.02
+    if sf*1.01 < mf*km or mf == -100:
+        sf = sf * 1.01
     else:
         sf = max(sf, mf * km)
     if usdt_to <= (mulk / slk - 5) and fasks[0] < sonafiyat / km:
