@@ -724,11 +724,12 @@ while True:
     if tdo > 15:
         km = 1.03
         zk = 1.07
-        alk, slk = 5, 5
+        alk, slk = 5, 3
        
     if ado >= 20:
         bolge = "Pumpa girdi..."
         asi, afi, ma = 5, 13, 5
+        alk, slk = 5, 1
             
     elif 20 > ado >= 15:
         bolge = "USYükseliş..."
