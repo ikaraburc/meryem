@@ -162,13 +162,16 @@ def tc_degisim():
 
         if ado > 5:
             sil = "evet"
-
-        if sil == "evet":
-            for x in toplu:
-                if x[0] == bc:
-                    toplu.remove(x)
-        else:
+            
+        if m1hacim < 750:
+            sil = "evet"
+            
+        if sil != "evet":
             ytoplu.append([bc, tao])
+        
+        toplu.remove(i)
+        
+            
     import pprint
 
     if len(ytoplu) > 0:
@@ -675,8 +678,7 @@ while True:
                     yeni_tara = "hayır"
                     alim_tamam = "hayır"
                     tbot_ozel.send_message(telegram_chat_id, str(bilanco))
-                    tbot_genel.send_message(telegram_chat_id, str(ytablo))
-                    tbot_genel.send_message(telegram_chat_id, str("https://www.gate.io/tr/trade-old/" + str(bc)))
+                    tbot_ozel.send_message(telegram_chat_id, str("https://www.gate.io/tr/trade-old/" + str(bc)))
                     break
                 else:
                     continue
