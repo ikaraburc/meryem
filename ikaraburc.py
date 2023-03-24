@@ -140,6 +140,7 @@ def tc_degisim():
 
         t = 60
         tao = round((max(t1mumlar[:t]) / min(d1mumlar[:t]) - 1) * 100, 2)
+        tdo30 = round((max(t1mumlar[:6]) / min(d1mumlar[:6]) - 1) * 100, 2)
         ado = round((d1mumlar[0] / min(d1mumlar[:t]) - 1) * 100, 2)
 
         ytablo.field_names = [str(bc), str(" of " + str(len(toplu)))]
@@ -161,6 +162,9 @@ def tc_degisim():
             sil = "evet"
 
         if ado > 5:
+            sil = "evet"
+        
+        if tdo30 > 5:
             sil = "evet"
             
         if m1hacim < 750:
@@ -863,8 +867,8 @@ while True:
 
     sf = hsf
 
-    if sf * 1.01 < mf * km or mf == -100:
-        sf = sf * 1.01
+    if sf * 1.02 < mf * km or mf == -100:
+        sf = sf * 1.02
     else:
         sf = max(sf, mf * km)
     if usdt_to <= (mulk / slk - 5) and fasks[0] < sonafiyat / km:
