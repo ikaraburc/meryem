@@ -1,4 +1,6 @@
 import threading
+
+import numpy as np
 import requests
 from prettytable import PrettyTable
 from requests.exceptions import ConnectionError
@@ -83,7 +85,8 @@ def m1mumlar(bc):
             print("Bağlantı bekleniyor...")
             continue
 
-    global t1mumlar, d1mumlar, m1hacim
+    global t1mumlar, d1mumlar, m1hacim, ema
+
     t1mumlar = [float(i[3]) for i in r]
     d1mumlar = [float(i[4]) for i in r]
     m1hacim = [float(i[1]) for i in r]
@@ -92,6 +95,13 @@ def m1mumlar(bc):
     d1mumlar.reverse()
     m1hacim.reverse()
     m1hacim = round(sum(m1hacim[:7]), 2)
+
+    t_ema = 12
+    np_tmumlar = np.array(tmumlar[:t_ema])
+    np_dmumlar = np.array(dmumlar[:t_ema])
+    tma = round(np.mean(np_tmumlar), digit)
+    dma = round(np.mean(np_dmumlar), digit)
+    ema = round((tma + dma) / 2, digit)
 
 
 def tc_fiyatlar():
@@ -136,24 +146,34 @@ def tc_degisim():
     for i in toplu:
         ytablo.clear()
         bc = i[0]
+        ct = coin_trader(bc)
+        ct.coin_digit()
+        ct.toplu_islem()
+
         m1mumlar(bc)
 
-        t = 60
-        tao = round((max(t1mumlar[:t]) / min(d1mumlar[:t]) - 1) * 100, 2)
-        tdo30 = round((max(t1mumlar[:6]) / min(d1mumlar[:6]) - 1) * 100, 2)
-        ado = round((d1mumlar[0] / min(d1mumlar[:t]) - 1) * 100, 2)
+        t = int(2 * (60 / 5))
+        tao = round((max(t1mumlar[:t]) / cp - 1) * 100, 2)
+        ado = round((cp / min(d1mumlar[:t]) - 1) * 100, 2)
+
+        ecp = (fbids[0] + fasks[0]) / 2
+        if ema > ecp * 1.03 or ema < ecp / 1.05:
+            ema_ok = "ema uygun değil"
+            sil = "evet"
+        else:
+            ema_ok = "ema uygun"
 
         ytablo.field_names = [str(bc), str(" of " + str(len(toplu)))]
         ytablo.add_row(["tao", tao])
         ytablo.add_row(["ado", ado])
+        ytablo.add_row(["cp", cp])
+        ytablo.add_row(["ema", round(ema, digit)])
+        ytablo.add_row(["ema", ema_ok])
         ytablo.add_row(["m1hacim", m1hacim])
 
         print(ytablo)
 
         sil = "hayır"
-        print("tao", tao)
-        print("ado", ado)
-
         if len(t1mumlar) < 800:
             print("Yeni çıkan coin")
             sil = "evet"
@@ -163,19 +183,15 @@ def tc_degisim():
 
         if ado > 5:
             sil = "evet"
-        
-        if tdo30 > 5:
-            sil = "evet"
-            
+
         if m1hacim < 750:
             sil = "evet"
-            
+
         if sil != "evet":
             ytoplu.append([bc, tao])
-        
+
         toplu.remove(i)
-        
-            
+
     import pprint
 
     if len(ytoplu) > 0:
@@ -185,6 +201,7 @@ def tc_degisim():
         bc = ytoplu[0][0]
     else:
         print("COİN BULUNAMADI....")
+
         tc_fiyatlar()
 
 
@@ -843,16 +860,14 @@ while True:
     if harcanan > 0:
         if sonislem == "buy":
             haf = sonaort
-            if sonstut >= mulk / alk * 0.9:
-                haf = min(songsort, sonsort) / km
-            if tut0 >= mulk / alk * 0.8:
+            if max(tut0, p1) >= mulk / alk * 0.8:
                 haf = min(songaort, sonafiyat) / km
             hsf = max(songaort, sonaort) * km
 
         elif sonislem == "sell":
-            haf = min(max(songaort, sonaort), sonsort / km)
+            haf = songsort / km
             hsf = max(max(songaort, sonafiyat) * km, sonsort)
-            if tut0 >= mulk / slk * 0.8:
+            if max(tut0, m1*cp) >= mulk / slk * 0.8:
                 haf = min(songsort, sonsfiyat) / km
                 hsf = max(songaort, songsort) * km
 
@@ -923,7 +938,7 @@ while True:
         tsf = fasks[esi] - k
 
     if sf <= tsf * 1.003:
-        for ysi in range(esi, - 1, -1):
+        for ysi in range(esi,ssi, -1):
             if abs(tsf - fasks[ysi]) / fasks[ysi] >= 0.5 / 100:
                 ysi = ysi + 1
                 break
