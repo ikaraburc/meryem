@@ -201,6 +201,7 @@ def tc_degisim():
         bc = ytoplu[0][0]
     else:
         print("COİN BULUNAMADI....")
+        bc = "boş"
 
         tc_fiyatlar()
 
@@ -712,12 +713,11 @@ while True:
     ado = round((fbids[0] / zmin - 1) * 100, 2)
 
     km = 1.03
-    zk = 1.05
+    zk = 1.07
     alk, slk = 3, 3
 
     if tdo > 15:
         km = 1.03
-        zk = 1.07
         alk, slk = 5, 3
 
     if ado >= 20:
