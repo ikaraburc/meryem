@@ -739,11 +739,11 @@ while True:
 
     else:
         bolge = "Dibe yakın..."
-        asi, afi, ma = 1, 6, 3
+        asi, afi, ma = 2, 6, 2
 
     if tdo <= 5:
         bolge = "Ölü..."
-        asi, afi, ma = 0, 6, 2
+        asi, afi, ma = 1, 6, 2
 
     # ************- ZAF + ZSF BUL -*******************************#
 
