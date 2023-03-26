@@ -97,10 +97,10 @@ def m1mumlar(bc):
     m1hacim = round(sum(m1hacim[:7]), 2)
 
     t_ema = 12
-    np_tmumlar = np.array(tmumlar[:t_ema])
-    np_dmumlar = np.array(dmumlar[:t_ema])
-    tma = round(np.mean(np_tmumlar), digit)
-    dma = round(np.mean(np_dmumlar), digit)
+    np_t = np.array(t1mumlar[:t_ema])
+    np_d = np.array(d1mumlar[:t_ema])
+    tma = round(np.mean(np_t), digit)
+    dma = round(np.mean(np_d), digit)
     ema = round((tma + dma) / 2, digit)
 
 
@@ -395,11 +395,21 @@ class coin_trader:
 
                 continue
 
-        global tmumlar, dmumlar
+        global tmumlar, dmumlar, ema
+        kmumlar = [float(i[2]) for i in r]
         tmumlar = [float(i[3]) for i in r]
         dmumlar = [float(i[4]) for i in r]
+
+        kmumlar.reverse()
         tmumlar.reverse()
         dmumlar.reverse()
+
+        t_ema10s = int(6 * 5 * 12)
+        emas = []
+        for i in range(1, t_ema10s):
+            emas.append(sum(kmumlar[:i]) / len(kmumlar[:i]))
+
+        ema = round(emas[-1], digit)
 
     def coklu_al(self):
         # Alış emri girilmesi.........
@@ -713,8 +723,10 @@ while True:
     ado = round((fbids[0] / zmin - 1) * 100, 2)
 
     km = 1.03
-    zk = 1.07
+    zk = 1.06
     alk, slk = 4, 4
+    if kar_orani < 0:
+        slk = 5
 
     if ado >= 20:
         bolge = "Pumpa girdi..."
@@ -735,6 +747,7 @@ while True:
     else:
         bolge = "Dibe yakın..."
         asi, afi, ma = 2, 6, 2
+        alk = 3
 
     # ************- ZAF + ZSF BUL -*******************************#
 
@@ -852,31 +865,27 @@ while True:
         if sonislem == "buy":
             haf = sonaort
             if max(tut0, p1) >= mulk / alk * 0.8:
-                haf = min(songaort, sonafiyat) / km
-            hsf = max(songaort, sonaort) * km
+                haf = songaort / km
+            hsf = max(songaort, sonafiyat) * km
 
         elif sonislem == "sell":
-            haf = songsort / km
+            haf = min(songsort, sonsort) / km
             hsf = max(max(songaort, sonafiyat) * km, sonsort)
-            if max(tut0, m1*cp) >= mulk / slk * 0.8:
+            if tut0 >= mulk / slk * 0.8:
                 haf = min(songsort, sonsfiyat) / km
                 hsf = max(songaort, songsort) * km
 
     af = haf
     if usdt_to < mulk * 0.60:
         af = haf / 1.02
-
     if ceder <= mulk / alk:
         af = max(af, zaf)
     if ado >= 10:
         af = min(af, zaf)
 
     sf = hsf
-
-    if sf * 1.02 < mf * km or mf == -100:
-        sf = sf * 1.02
-    else:
-        sf = max(sf, mf * km)
+    if kar_orani < 0:
+        hsf = hsf * 1.02
     if usdt_to <= (mulk / slk - 5) and fasks[0] < sonafiyat / km:
         sf = min(hsf, zsf)
         if hsf / zsf <= 1.02:
@@ -913,8 +922,8 @@ while True:
 
     # ************- TSF -*******************************#
     ssi, sfi, ms = 2, 4, 2
-    if sf >= max(hsf, songaort * 1.05):
-        ssi, sfi, ms = 0, 2, 2
+    if sf >= max(hsf, songaort * 1.05) and kar_orani > 0:
+        ssi, sfi, ms = 1, 2, 2
 
     for fs in range(0, 5):
         if 50 <= mbids[fs] * fbids[fs]:
@@ -929,7 +938,7 @@ while True:
         tsf = fasks[esi] - k
 
     if sf <= tsf * 1.003:
-        for ysi in range(esi,ssi, -1):
+        for ysi in range(esi, ssi, -1):
             if abs(tsf - fasks[ysi]) / fasks[ysi] >= 0.5 / 100:
                 ysi = ysi + 1
                 break
@@ -938,7 +947,7 @@ while True:
         else:
             tsf = fasks[ysi] - k
 
-    if fbids[0] >= max(hsf, songaort * km) and sf / fbids[0] < 1.01:
+    if fbids[0] >= max(sf, songaort * km) and sf / fbids[0] < 1.01:
         sf = fbids[0]
     else:
         sf = max(sf, tsf)
@@ -976,7 +985,7 @@ while True:
             sfiyat = sf
             if -100 < kar_orani < km:
                 m1 = m1 - 2 / cp
-            sfiyat1 = round(max(sf * 1.15, fasks[10] - k), digit)
+            sfiyat1 = round(max(sf * 1.1, fasks[10] - k), digit)
             smiktar = m1
             smiktar1 = m2
 
@@ -984,7 +993,7 @@ while True:
 
     # ************- EKRANA PRİNT BÖLÜMÜ -*******************************#
     fiyatlar = PrettyTable()
-    fiyatlar.field_names = [str(bolge) + "ado% " + str(ado), str("Mülk " + str(round(mulk, 2))), str("cp " + str(cp))]
+    fiyatlar.field_names = [str(bolge) + "ado% " + str(ado), str("ema " + str(ema)), str("cp " + str(cp))]
     fiyatlar.add_row([str(sonislem) + str(" af,sf ") + str(round(sf / af, 2)), round(af, digit), round(sf, digit)])
     fiyatlar.add_row(
         [str(" haf,hsf " + str(round(hsf / haf, 2))), round(haf, digit), round(hsf, digit)])
