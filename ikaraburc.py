@@ -615,7 +615,7 @@ class coin_trader:
             mmf = round(anapara / (usdt_to / cp + ctm) * 1.002, digit)
             kar_orani = round(kar_tutari / harcanan * 100, 2)
 
-        if time.time() - tsiftah >= 6 * 24 * 60 * 60:
+        if time.time() - tsiftah >= 6 * 24 * 60 * 60 or kar_orani > 20:
             mf = -100
             kar_orani = -100
         bilanco = PrettyTable()
@@ -750,7 +750,8 @@ while True:
     else:
         bolge = "Dibe yakın..."
         asi, afi, ma = 2, 6, 2
-        alk = 3
+        if abs(ema-cp)/cp < 1.02:
+            alk = 2
 
     # ************- ZAF + ZSF BUL -*******************************#
 
