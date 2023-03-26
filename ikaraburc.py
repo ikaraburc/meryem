@@ -714,16 +714,11 @@ while True:
 
     km = 1.03
     zk = 1.07
-    alk, slk = 3, 3
-
-    if tdo > 15:
-        km = 1.03
-        alk, slk = 5, 3
+    alk, slk = 4, 4
 
     if ado >= 20:
         bolge = "Pumpa girdi..."
         asi, afi, ma = 5, 13, 5
-        alk, slk = 5, 1
 
     elif 20 > ado >= 15:
         bolge = "USYükseliş..."
@@ -740,10 +735,6 @@ while True:
     else:
         bolge = "Dibe yakın..."
         asi, afi, ma = 2, 6, 2
-
-    if tdo <= 5:
-        bolge = "Ölü..."
-        asi, afi, ma = 1, 6, 2
 
     # ************- ZAF + ZSF BUL -*******************************#
 
@@ -877,7 +868,7 @@ while True:
 
     if ceder <= mulk / alk:
         af = max(af, zaf)
-    elif ado >= 7:
+    if ado >= 10:
         af = min(af, zaf)
 
     sf = hsf
@@ -921,7 +912,7 @@ while True:
     af = min(af, taf)
 
     # ************- TSF -*******************************#
-    ssi, sfi, ms = 1, 4, 2
+    ssi, sfi, ms = 2, 4, 2
     if sf >= max(hsf, songaort * 1.05):
         ssi, sfi, ms = 0, 2, 2
 
