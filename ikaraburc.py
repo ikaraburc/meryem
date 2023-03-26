@@ -922,9 +922,7 @@ while True:
 
     # ************- TSF -*******************************#
     ssi, sfi, ms = 2, 4, 2
-    if kar_orani > 0:
-        ssi, sfi, ms = 0, 2, 2
-    if ado > 20:
+    if kar_orani > 0 or ado >= 15:
         ssi, sfi, ms = 0, 2, 2
 
     for fs in range(0, 5):
@@ -948,11 +946,6 @@ while True:
             tsf = fasks[ysi + 1] - k
         else:
             tsf = fasks[ysi] - k
-
-    if fbids[0] >= max(sf, songaort * km) and sf / fbids[0] < 1.01:
-        sf = fbids[0]
-    else:
-        sf = max(sf, tsf)
 
     # ************- AL SAT EMİRLERİNİ GÖNDER BÖLÜMÜ -*******************************#
     af = round(af, digit)
