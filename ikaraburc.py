@@ -158,7 +158,7 @@ def tc_degisim():
 
         t = int(60 / 5 * 2)
         tao = round((max(t1mumlar[:t]) / cp - 1) * 100, 2)
-        ado = round((cp / min(d1mumlar[:6]) - 1) * 100, 2)
+        ado = round((cp / min(d1mumlar[:t]) - 1) * 100, 2)
 
         ecp = (fbids[0] + fasks[0]) / 2
 
