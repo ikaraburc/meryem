@@ -922,8 +922,10 @@ while True:
 
     # ************- TSF -*******************************#
     ssi, sfi, ms = 2, 4, 2
-    if sf >= max(hsf, songaort * 1.05) and kar_orani > 0:
-        ssi, sfi, ms = 1, 2, 2
+    if kar_orani > 0:
+        ssi, sfi, ms = 0, 2, 2
+    if ado > 20:
+        ssi, sfi, ms = 0, 2, 2
 
     for fs in range(0, 5):
         if 50 <= mbids[fs] * fbids[fs]:
