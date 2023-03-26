@@ -85,23 +85,25 @@ def m1mumlar(bc):
             print("Bağlantı bekleniyor...")
             continue
 
-    global t1mumlar, d1mumlar, m1hacim, ema
+    global t1mumlar, d1mumlar, m1hacim, ema5dk
 
     t1mumlar = [float(i[3]) for i in r]
     d1mumlar = [float(i[4]) for i in r]
+    k1mumlar = [float(i[2]) for i in r]
     m1hacim = [float(i[1]) for i in r]
 
     t1mumlar.reverse()
     d1mumlar.reverse()
+    k1mumlar.reverse()
     m1hacim.reverse()
     m1hacim = round(sum(m1hacim[:7]), 2)
 
-    t_ema = 12
-    np_t = np.array(t1mumlar[:t_ema])
-    np_d = np.array(d1mumlar[:t_ema])
-    tma = round(np.mean(np_t), digit)
-    dma = round(np.mean(np_d), digit)
-    ema = round((tma + dma) / 2, digit)
+    t_ema10s = 12
+    emas = []
+    for i in range(1, t_ema10s):
+        emas.append(sum(k1mumlar[:i]) / len(k1mumlar[:i]))
+
+    ema5dk = round(emas[-1], digit)
 
 
 def tc_fiyatlar():
@@ -144,7 +146,9 @@ def tc_degisim():
     ytoplu = []
     bc = "boş"
     for i in toplu:
+        sil = "hayır"
         ytablo.clear()
+
         bc = i[0]
         ct = coin_trader(bc)
         ct.coin_digit()
@@ -152,12 +156,13 @@ def tc_degisim():
 
         m1mumlar(bc)
 
-        t = int(2 * (60 / 5))
+        t = int(60 / 5 * 2)
         tao = round((max(t1mumlar[:t]) / cp - 1) * 100, 2)
-        ado = round((cp / min(d1mumlar[:t]) - 1) * 100, 2)
+        ado = round((cp / min(d1mumlar[:6]) - 1) * 100, 2)
 
         ecp = (fbids[0] + fasks[0]) / 2
-        if ema > ecp * 1.03 or ema < ecp / 1.05:
+
+        if abs(ecp - ema5dk) / ecp >= 1.03:
             ema_ok = "ema uygun değil"
             sil = "evet"
         else:
@@ -167,13 +172,12 @@ def tc_degisim():
         ytablo.add_row(["tao", tao])
         ytablo.add_row(["ado", ado])
         ytablo.add_row(["cp", cp])
-        ytablo.add_row(["ema", round(ema, digit)])
+        ytablo.add_row(["ema", round(ema5dk, digit)])
         ytablo.add_row(["ema", ema_ok])
         ytablo.add_row(["m1hacim", m1hacim])
 
         print(ytablo)
 
-        sil = "hayır"
         if len(t1mumlar) < 800:
             print("Yeni çıkan coin")
             sil = "evet"
@@ -197,14 +201,12 @@ def tc_degisim():
     if len(ytoplu) > 0:
         ytoplu.sort(key=lambda x: x[1])
         ytoplu.reverse()
+        print("tarama bitti....")
         pprint.pp(ytoplu)
         bc = ytoplu[0][0]
     else:
         print("COİN BULUNAMADI....")
         bc = "boş"
-
-        tc_fiyatlar()
-
 
 class coin_trader:
     def __init__(self, coin):
@@ -713,6 +715,7 @@ while True:
                     tbot_ozel.send_message(telegram_chat_id, str("https://www.gate.io/tr/trade-old/" + str(bc)))
                     break
                 else:
+                    tc_fiyatlar()
                     continue
     # ************- STABİL - PUMP - DUMP BÖLGESİ -*******************************#
 
