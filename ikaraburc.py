@@ -162,7 +162,7 @@ def tc_degisim():
 
         ecp = (fbids[0] + fasks[0]) / 2
 
-        if abs(ecp - ema5dk) / ecp >= 1.03:
+        if abs(ecp - ema5dk) / ecp * 100 >= 2.5:
             ema_ok = "ema uygun değil"
             sil = "evet"
         else:
@@ -750,7 +750,7 @@ while True:
     else:
         bolge = "Dibe yakın..."
         asi, afi, ma = 2, 6, 2
-        if abs(ema-cp)/cp < 1.02:
+        if abs(ema-cp)/cp *100 < 2:
             alk = 2
 
     # ************- ZAF + ZSF BUL -*******************************#
