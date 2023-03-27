@@ -877,7 +877,7 @@ while True:
         taf = fbids[eai] + k
 
     if af >= taf * 1.003:
-        for yai in range(eai, asi, -1):
+        for yai in range(eai, asi, -1) and eai > asi:
             if abs(taf - fbids[yai]) / fbids[yai] >= 0.5 / 100:
                 yai = yai + 1
                 break
