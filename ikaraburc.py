@@ -36,9 +36,9 @@ class coin_trader:
 
                 continue
 
-        global digit, mdigit, coin_adi, coin_birimi
+        global digit, mdigit, coin_adi, coin_birimi, mal
         coin_adi, coin_birimi = str(self.coin).split("_")
-
+        mal = self.coin
         if "label" in r:
             print("Böyle bir coin yok....")
         else:
@@ -988,8 +988,8 @@ while True:
 
     # ************- EKRANA PRİNT BÖLÜMÜ -*******************************#
     fiyatlar = PrettyTable()
-    fiyatlar.field_names = [str(bolge), str("ado% " + str(ado)), str("tdo% " + str(tdo))]
-    fiyatlar.add_row([str("cp " + str(cp)), str("ema " + str(ema)), str("kema " + str(kema))])
+    fiyatlar.field_names = [str(bolge) + str("ado% " + str(ado)), str("ema " + str(ema)), mal]
+    fiyatlar.add_row([str("tdo% " + str(tdo)), str("kema " + str(kema)), str("cp " + str(cp))])
     fiyatlar.add_row([str(sonislem) + str(" af,sf ") + str(round(sf / af, 2)), round(af, digit), round(sf, digit)])
     fiyatlar.add_row(
         [str(" haf,hsf " + str(round(hsf / haf, 2))), round(haf, digit), round(hsf, digit)])
