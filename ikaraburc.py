@@ -876,7 +876,7 @@ while True:
     else:
         taf = fbids[eai] + k
 
-    if af >= taf * 1.003  and eai > asi:
+    if af >= taf * 1.003 and eai > asi:
         for yai in range(eai, asi, -1):
             if abs(taf - fbids[yai]) / fbids[yai] >= 0.5 / 100:
                 yai = yai + 1
@@ -888,9 +888,9 @@ while True:
         af = taf
 
     af = min(af, taf)
-    
+
     # ************- TSF -*******************************#
-    
+
     ssi, sfi, ms = 2, 4, 2
     if kar_orani > 0 or ado >= 15:
         ssi, sfi, ms = 0, 2, 2
@@ -921,28 +921,36 @@ while True:
             tsf = fasks[ysi + 1] - k
         else:
             tsf = fasks[ysi] - k
-    
+
     sf = max(sf, tsf)
-    
+
     # ************- AL SAT EMİRLERİNİ GÖNDER BÖLÜMÜ -*******************************#
 
     if max(cp, ema) > kema:
         if kar_orani > -100:
-            if max(cp, sf) >= mf * km:
+            if fasks[0] >= mf * 1.10:
                 m1 = ctm
                 m2 = 0
+                sf = fasks[0]
+
+            elif fasks[0] >= mf * km:
                 sf = max(sf, tsf)
+
             else:
-                sf = max(hsf * 1.05, tsf)
-                
+                sf = max(sf * 1.05, tsf)
+
         elif cp >= songaort * 1.20:
             m1 = mulk / slk / cp
             m2 = ctm - m1
             sf = max(hsf, tsf)
 
+    elif min(cp, ema) < kema:
+        if kar_orani > km:
+            sf = tsf
+
     af = round(af, digit)
     sf = round(sf, digit)
-    
+
     if usdt_to >= 1:
         if af > afiyat or af < afiyat / 1.002 or usdt_av >= 2:
             T1 = threading.Thread(target=ct.alimlar_sil)
