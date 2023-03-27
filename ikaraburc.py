@@ -98,10 +98,10 @@ def m1mumlar(bc):
     m1hacim.reverse()
     m1hacim = round(sum(m1hacim[:7]), 2)
 
-    t_ema10s = 12
+    t_ema10s = 50
     emas = []
-    for i in range(1, t_ema10s):
-        emas.append(sum(k1mumlar[:i]) / len(k1mumlar[:i]))
+    for i in range(t_ema10s):
+        emas.append(sum(k1mumlar[i:i+12]) / 12)
 
     ema5dk = round(emas[-1], digit)
 
@@ -749,9 +749,7 @@ while True:
 
     else:
         bolge = "Dibe yakın..."
-        asi, afi, ma = 2, 6, 2
-        if abs(ema-cp)/cp *100 < 2:
-            alk = 2
+        asi, afi, ma = 1, 6, 2
 
     # ************- ZAF + ZSF BUL -*******************************#
 
