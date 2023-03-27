@@ -1,212 +1,11 @@
 import threading
 
-import numpy as np
 import requests
 from prettytable import PrettyTable
 from requests.exceptions import ConnectionError
 
 from sifreler import *
 
-
-def emirleri_sil():
-    host = "https://api.gateio.ws"
-    prefix = "/api/v4"
-    headers = {'Accept': 'application/json', 'Content-Type': 'application/json'}
-
-    url = '/spot/orders'
-    query_param = ''
-    # for `gen_sign` implementation, refer to section `Authentication` above
-    sign_headers = gen_sign('DELETE', prefix + url, query_param)
-    headers.update(sign_headers)
-    r = requests.request('DELETE', host + prefix + url + "?" + query_param, headers=headers)
-
-
-def son_coin():
-    # emirleri listele
-    host = "https://api.gateio.ws"
-    prefix = "/api/v4"
-    headers = {'Accept': 'application/json', 'Content-Type': 'application/json'}
-
-    url = '/spot/my_trades'
-    query_param = ""
-
-    sign_headers = gen_sign('GET', prefix + url, query_param)
-    headers.update(sign_headers)
-
-    while True:
-        try:
-            r = requests.request('GET', host + prefix + url + "?" + query_param, headers=headers).json()
-        except ConnectionError as e:  # This is the correct syntax
-            print(e)
-            time.sleep(1)
-            r = "Nothing"
-            continue
-        except ValueError:
-            print("Gelen Dosya Json değil...")
-            r = "Nothing"
-            continue
-        except KeyError:
-            print("Key error hatası veriyor")
-            r = "Nothing"
-            continue
-        if r != "Nothing":
-            break
-        else:
-            print("Bağlantı bekleniyor...")
-            continue
-    global scoin
-    if len(r) >= 1:
-        scoin = r[0]["currency_pair"]
-    else:
-        scoin = "BTC_USDT"
-
-
-def m1mumlar(bc):
-    host = "https://api.gateio.ws"
-    prefix = "/api/v4"
-    headers = {'Accept': 'application/json', 'Content-Type': 'application/json'}
-    url = '/spot/candlesticks'
-    query_param = 'currency_pair=' + bc + '&interval=5m' + '&limit=1000'
-    while True:
-        try:
-            r = requests.request('GET', host + prefix + url + "?" + query_param, headers=headers).json()
-        except ConnectionError as e:  # This is the correct syntax
-            print(e)
-            time.sleep(1)
-            r = "Nothing"
-
-        except ValueError:
-            print("Gelen Dosya Json değil...")
-            r = "Nothing"
-
-        if r != "Nothing":
-            break
-        else:
-            print("Bağlantı bekleniyor...")
-            continue
-
-    global t1mumlar, d1mumlar, m1hacim, ema5dk
-
-    t1mumlar = [float(i[3]) for i in r]
-    d1mumlar = [float(i[4]) for i in r]
-    k1mumlar = [float(i[2]) for i in r]
-    m1hacim = [float(i[1]) for i in r]
-
-    t1mumlar.reverse()
-    d1mumlar.reverse()
-    k1mumlar.reverse()
-    m1hacim.reverse()
-    m1hacim = round(sum(m1hacim[:7]), 2)
-
-    t_ema10s = 50
-    emas = []
-    for i in range(t_ema10s):
-        emas.append(sum(k1mumlar[i:i+12]) / 12)
-
-    ema5dk = round(emas[-1], digit)
-
-
-def tc_fiyatlar():
-    host = "https://api.gateio.ws"
-    prefix = "/api/v4"
-    headers = {'Accept': 'application/json', 'Content-Type': 'application/json'}
-
-    url = '/spot/tickers'
-    data = requests.request('GET', host + prefix + url, headers=headers).json()
-
-    global bulunanlar, toplu
-
-    toplu = []
-    bulunanlar = ["abc", "abcd"]
-
-    for i in range(len(data)):
-        if "_USDT" in data[i]["currency_pair"] \
-                and "3S" not in data[i]["currency_pair"] \
-                and "3L" not in data[i]["currency_pair"] \
-                and "5S" not in data[i]["currency_pair"] \
-                and "5L" not in data[i]["currency_pair"] \
-                and float(data[i]["last"]) > 0 \
-                and float(data[i]["low_24h"]) > 0 \
-                and float(data[i]["high_24h"]) / float(data[i]["low_24h"]) > 1.15 \
-                and float(data[i]["high_24h"]) / float(data[i]["last"]) > 1.10 \
-                and float(data[i]["quote_volume"]) > 80000:
-            toplu.append([data[i]["currency_pair"], float(data[i]["last"]), float(data[i]["low_24h"]),
-                          float(data[i]["high_24h"])])
-
-    print("coin sayısı ", len(toplu))
-    import pprint
-    pprint.pp(toplu)
-
-
-def tc_degisim():
-    global bc, ytablo, ytoplu
-
-    ytablo = PrettyTable()
-    ytablo.clear()
-    ytoplu = []
-    bc = "boş"
-    for i in toplu:
-        sil = "hayır"
-        ytablo.clear()
-
-        bc = i[0]
-        ct = coin_trader(bc)
-        ct.coin_digit()
-        ct.toplu_islem()
-
-        m1mumlar(bc)
-
-        t = int(60 / 5 * 2)
-        tao = round((max(t1mumlar[:t]) / cp - 1) * 100, 2)
-        ado = round((cp / min(d1mumlar[:t]) - 1) * 100, 2)
-
-        ecp = (fbids[0] + fasks[0]) / 2
-
-        if abs(ecp - ema5dk) / ecp * 100 >= 2.5:
-            ema_ok = "ema uygun değil"
-            sil = "evet"
-        else:
-            ema_ok = "ema uygun"
-
-        ytablo.field_names = [str(bc), str(" of " + str(len(toplu)))]
-        ytablo.add_row(["tao", tao])
-        ytablo.add_row(["ado", ado])
-        ytablo.add_row(["cp", cp])
-        ytablo.add_row(["ema", round(ema5dk, digit)])
-        ytablo.add_row(["ema", ema_ok])
-        ytablo.add_row(["m1hacim", m1hacim])
-
-        print(ytablo)
-
-        if len(t1mumlar) < 800:
-            print("Yeni çıkan coin")
-            sil = "evet"
-
-        if tao < 10:
-            sil = "evet"
-
-        if ado > 5:
-            sil = "evet"
-
-        if m1hacim < 750:
-            sil = "evet"
-
-        if sil != "evet":
-            ytoplu.append([bc, tao])
-
-        toplu.remove(i)
-
-    import pprint
-
-    if len(ytoplu) > 0:
-        ytoplu.sort(key=lambda x: x[1])
-        ytoplu.reverse()
-        print("tarama bitti....")
-        pprint.pp(ytoplu)
-        bc = ytoplu[0][0]
-    else:
-        print("COİN BULUNAMADI....")
-        bc = "boş"
 
 class coin_trader:
     def __init__(self, coin):
@@ -371,15 +170,12 @@ class coin_trader:
         fbids = [float(x[0]) for x in r["bids"]]
         fasks = [float(x[0]) for x in r["asks"]]
 
-    def mumlar_10s(self):
-
+    def mumlar(self):
         host = "https://api.gateio.ws"
         prefix = "/api/v4"
         headers = {'Accept': 'application/json', 'Content-Type': 'application/json'}
-
         url = '/spot/candlesticks'
-        query_param = 'currency_pair=' + self.coin + '&interval=10s' + '&limit=1000'
-
+        query_param = 'currency_pair=' + self.coin + '&interval=5m' + '&limit=1000'
         while True:
             try:
                 r = requests.request('GET', host + prefix + url + "?" + query_param, headers=headers).json()
@@ -387,31 +183,51 @@ class coin_trader:
                 print(e)
                 time.sleep(1)
                 r = "Nothing"
+
             except ValueError:
                 print("Gelen Dosya Json değil...")
                 r = "Nothing"
+
             if r != "Nothing":
                 break
             else:
                 print("Bağlantı bekleniyor...")
-
                 continue
 
-        global tmumlar, dmumlar, ema
-        kmumlar = [float(i[2]) for i in r]
+        global tmumlar, dmumlar, m1hacim, ema, kema, emas, kemas
+
         tmumlar = [float(i[3]) for i in r]
         dmumlar = [float(i[4]) for i in r]
+        kmumlar = [float(i[2]) for i in r]
+        m1hacim = [float(i[1]) for i in r]
 
-        kmumlar.reverse()
         tmumlar.reverse()
         dmumlar.reverse()
+        kmumlar.reverse()
+        m1hacim.reverse()
+        m1hacim = round(sum(m1hacim[:7]), 2)
 
-        t_ema10s = int(6 * 5 * 12)
         emas = []
-        for i in range(1, t_ema10s):
-            emas.append(sum(kmumlar[:i]) / len(kmumlar[:i]))
+        ema_periyot = 12
+        for i in range(len(kmumlar[:100])):
+            emas.append([round(sum(kmumlar[i:i + ema_periyot]) / ema_periyot, digit), kmumlar[i]])
 
-        ema = round(emas[-1], digit)
+        kemas = []
+        if emas[0][0] < emas[0][1]:
+            yer = -1
+        else:
+            yer = 1
+        for i in range(len(emas)):
+            if emas[i][0] < emas[i][1]:
+                if yer == 1:
+                    kemas.append(emas[i][0])
+                yer = -1
+            else:
+                if yer == -1:
+                    kemas.append(emas[i][0])
+                yer = 1
+        ema = emas[0][0]
+        kema = kemas[0]
 
     def coklu_al(self):
         # Alış emri girilmesi.........
@@ -645,7 +461,7 @@ class coin_trader:
         T1 = threading.Thread(target=self.coin_fiyat)
         T2 = threading.Thread(target=self.bakiye_getir)
         T3 = threading.Thread(target=self.tahta_getir)
-        T4 = threading.Thread(target=self.mumlar_10s)
+        T4 = threading.Thread(target=self.mumlar)
 
         T1.start()
         T2.start()
@@ -658,6 +474,159 @@ class coin_trader:
         T4.join()
 
         self.alsat_gecmisi()
+
+
+def emirleri_sil():
+    host = "https://api.gateio.ws"
+    prefix = "/api/v4"
+    headers = {'Accept': 'application/json', 'Content-Type': 'application/json'}
+
+    url = '/spot/orders'
+    query_param = ''
+    # for `gen_sign` implementation, refer to section `Authentication` above
+    sign_headers = gen_sign('DELETE', prefix + url, query_param)
+    headers.update(sign_headers)
+    r = requests.request('DELETE', host + prefix + url + "?" + query_param, headers=headers)
+
+
+def son_coin():
+    # emirleri listele
+    host = "https://api.gateio.ws"
+    prefix = "/api/v4"
+    headers = {'Accept': 'application/json', 'Content-Type': 'application/json'}
+
+    url = '/spot/my_trades'
+    query_param = ""
+
+    sign_headers = gen_sign('GET', prefix + url, query_param)
+    headers.update(sign_headers)
+
+    while True:
+        try:
+            r = requests.request('GET', host + prefix + url + "?" + query_param, headers=headers).json()
+        except ConnectionError as e:  # This is the correct syntax
+            print(e)
+            time.sleep(1)
+            r = "Nothing"
+            continue
+        except ValueError:
+            print("Gelen Dosya Json değil...")
+            r = "Nothing"
+            continue
+        except KeyError:
+            print("Key error hatası veriyor")
+            r = "Nothing"
+            continue
+        if r != "Nothing":
+            break
+        else:
+            print("Bağlantı bekleniyor...")
+            continue
+    global scoin
+    if len(r) >= 1:
+        scoin = r[0]["currency_pair"]
+    else:
+        scoin = "BTC_USDT"
+
+
+def tc_fiyatlar():
+    host = "https://api.gateio.ws"
+    prefix = "/api/v4"
+    headers = {'Accept': 'application/json', 'Content-Type': 'application/json'}
+
+    url = '/spot/tickers'
+    data = requests.request('GET', host + prefix + url, headers=headers).json()
+
+    global bulunanlar, toplu
+
+    toplu = []
+    bulunanlar = ["abc", "abcd"]
+
+    for i in range(len(data)):
+        if "_USDT" in data[i]["currency_pair"] \
+                and "3S" not in data[i]["currency_pair"] \
+                and "3L" not in data[i]["currency_pair"] \
+                and "5S" not in data[i]["currency_pair"] \
+                and "5L" not in data[i]["currency_pair"] \
+                and float(data[i]["last"]) > 0 \
+                and float(data[i]["low_24h"]) > 0 \
+                and float(data[i]["high_24h"]) / float(data[i]["low_24h"]) > 1.15 \
+                and float(data[i]["high_24h"]) / float(data[i]["last"]) > 1.10 \
+                and float(data[i]["quote_volume"]) > 80000:
+            toplu.append([data[i]["currency_pair"], float(data[i]["last"]), float(data[i]["low_24h"]),
+                          float(data[i]["high_24h"])])
+
+    print("coin sayısı ", len(toplu))
+    import pprint
+    pprint.pp(toplu)
+
+
+def tc_degisim():
+    global bc, ytablo, ytoplu
+
+    ytablo = PrettyTable()
+    ytablo.clear()
+    uygunlar = []
+    bc = "boş"
+    for i in range(len(toplu)):
+        sil = "hayır"
+        ytablo.clear()
+
+        bc = toplu[i][0]
+        ct = coin_trader(bc)
+        ct.coin_digit()
+        ct.toplu_islem()
+
+        t = int(60 / 5 * 2)
+        tao = round((max(tmumlar[:t]) / cp - 1) * 100, 2)
+        ado = round((cp / min(dmumlar[:t]) - 1) * 100, 2)
+
+        ecp = (fbids[0] + fasks[0]) / 2
+
+        if kema > ema and ecp / 1.02 < ema < ecp * 1.02:
+            ema_ok = "ema uygun"
+        else:
+            sil = "evet"
+            ema_ok = "ema uygun değil"
+
+        ytablo.field_names = [str(bc), str(" of " + str(len(toplu) - i))]
+        ytablo.add_row(["tao", tao])
+        ytablo.add_row(["ado", ado])
+        ytablo.add_row(["cp", cp])
+        ytablo.add_row(["kema", round(kema, digit)])
+        ytablo.add_row(["ema", round(ema, digit)])
+        ytablo.add_row(["ema", ema_ok])
+        ytablo.add_row(["m1hacim", m1hacim])
+
+        print(ytablo)
+
+        if len(tmumlar) < 800:
+            print("Yeni çıkan coin")
+            sil = "evet"
+
+        if tao < 10:
+            sil = "evet"
+
+        if ado > 5:
+            sil = "evet"
+
+        if m1hacim < 750:
+            sil = "evet"
+
+        if sil != "evet":
+            uygunlar.append([bc, tao])
+
+    import pprint
+
+    if len(uygunlar) > 0:
+        uygunlar.sort(key=lambda x: x[1])
+        uygunlar.reverse()
+        print("tarama bitti....")
+        pprint.pp(uygunlar)
+        bc = uygunlar[0][0]
+    else:
+        print("COİN BULUNAMADI....")
+        bc = "boş"
 
 
 # ***********************************************************************************************************************************************************
@@ -719,7 +688,7 @@ while True:
                     continue
     # ************- STABİL - PUMP - DUMP BÖLGESİ -*******************************#
 
-    at = 6 * 60
+    at = 12
     zmax = max(tmumlar[:at])
     zmin = min(dmumlar[:at])
     tdo = round((zmax / zmin - 1) * 100, 2)
@@ -749,7 +718,7 @@ while True:
 
     else:
         bolge = "Dibe yakın..."
-        asi, afi, ma = 1, 6, 2
+        asi, afi, ma = 1, 5, 2
 
     # ************- ZAF + ZSF BUL -*******************************#
 
@@ -878,8 +847,6 @@ while True:
                 hsf = max(songaort, songsort) * km
 
     af = haf
-    if usdt_to < mulk * 0.60:
-        af = haf / 1.02
     if ceder <= mulk / alk:
         af = max(af, zaf)
     if ado >= 10:
@@ -933,6 +900,8 @@ while True:
     for esi in range(ssi, sfi + 1):
         if mbids[max(ms, fs)] < masks[esi]:
             break
+        else:
+            esi = sfi
 
     if fasks[esi] == sfiyat:
         tsf = fasks[esi + 1] - k
@@ -944,6 +913,9 @@ while True:
             if abs(tsf - fasks[ysi]) / fasks[ysi] >= 0.5 / 100:
                 ysi = ysi + 1
                 break
+            else:
+                ysi = ssi
+
         if fasks[ysi] == sfiyat:
             tsf = fasks[ysi + 1] - k
         else:
@@ -952,6 +924,18 @@ while True:
     # ************- AL SAT EMİRLERİNİ GÖNDER BÖLÜMÜ -*******************************#
     af = round(af, digit)
     sf = round(sf, digit)
+
+    if max(cp, ema) > kema:
+        if max(kema, cp) >= mf * 1.05 and kar_orani > km:
+            m1 = ctm
+            m2 = 0
+            sf = tsf
+        elif max(kema, cp) >= songaort * 1.10 and ceder > mulk / 2:
+            m1 = mulk / slk / cp
+            m2 = ctm - m1
+            sf = tsf
+        else:
+            sf = songaort * 1.10
 
     if usdt_to >= 1:
         if af > afiyat or af < afiyat / 1.002 or usdt_av >= 2:
@@ -990,7 +974,8 @@ while True:
 
     # ************- EKRANA PRİNT BÖLÜMÜ -*******************************#
     fiyatlar = PrettyTable()
-    fiyatlar.field_names = [str(bolge) + "ado% " + str(ado), str("ema " + str(ema)), str("cp " + str(cp))]
+    fiyatlar.field_names = [str(bolge), str("ado% " + str(ado)), str("tdo% " + str(tdo))]
+    fiyatlar.add_row([str("cp " + str(cp)), str("ema " + str(ema)), str("kema " + str(kema))])
     fiyatlar.add_row([str(sonislem) + str(" af,sf ") + str(round(sf / af, 2)), round(af, digit), round(sf, digit)])
     fiyatlar.add_row(
         [str(" haf,hsf " + str(round(hsf / haf, 2))), round(haf, digit), round(hsf, digit)])
@@ -998,9 +983,7 @@ while True:
     fiyatlar.add_row(["son gaort, gsort ", round(songaort, digit), round(songsort, digit)])
     fiyatlar.add_row([str("taf, tsf " + str(round(tsf / taf, 2))), round(taf, digit), round(tsf, digit)])
     fiyatlar.add_row([str("zaf, zsf zk=" + str(round(zk, 2))), round(zaf, digit), round(zsf, digit)])
-    fiyatlar.add_row([str("zmin, zmax tdo=" + str(tdo)), round(zmin, digit), round(zmax, digit)])
-    fiyatlar.add_row(["alk, slk=" + str(alk) + "-" + str(slk), str(str("alk$=") + str(round(mulk / alk, 2))),
-                      str(str("slk#=") + str(round(m1, mdigit)))])
+
     print(fiyatlar)
 
     continue
