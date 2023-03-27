@@ -928,10 +928,10 @@ while True:
 
     if max(cp, ema) > kema:
         if kar_orani > -100:
-            if cp >= mf * km:
+            if max(cp, sf) >= mf * km:
                 m1 = ctm
                 m2 = 0
-                sf = tsf
+                sf = max(sf, tsf)
             else:
                 sf = max(hsf * 1.05, tsf)
                 
