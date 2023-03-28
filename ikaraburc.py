@@ -944,9 +944,10 @@ while True:
             m2 = ctm - m1
             sf = max(hsf, tsf)
 
-    elif min(cp, ema) < kema:
-        if kar_orani > km:
+    else:
+        if kar_orani > km or tsf >= hsf:
             sf = tsf
+        
 
     af = round(af, digit)
     sf = round(sf, digit)
