@@ -583,7 +583,7 @@ def tc_degisim():
 
         ecp = (fbids[0] + fasks[0]) / 2
 
-        if kema > ema and ecp / 1.02 < ema < ecp * 1.02:
+        if emas[12][0] > ema * 1.05 and ecp / 1.02 < ema < ecp * 1.02:
             ema_ok = "ema uygun"
         else:
             sil = "evet"
@@ -694,7 +694,7 @@ while True:
     tdo = round((zmax / zmin - 1) * 100, 2)
     ado = round((fbids[0] / zmin - 1) * 100, 2)
 
-    km = 1.03
+    km = 1.05
     zk = 1.06
     alk, slk = 4, 4
     if kar_orani < 0:
@@ -922,36 +922,34 @@ while True:
         else:
             tsf = fasks[ysi] - k
 
-    sf = max(sf, tsf)
 
     # ************- AL SAT EMİRLERİNİ GÖNDER BÖLÜMÜ -*******************************#
 
-    if max(cp, ema) > kema:
+    if max(fasks[0], ema) > kema:
         if kar_orani > -100:
-            if fasks[0] >= mf * 1.10:
-                m1 = ctm
-                m2 = 0
-                sf = fasks[0]
-
-            elif fasks[0] >= mf * km:
-                sf = max(sf, tsf)
-
+            if tsf/ema <= 1.03:
+                if tsf >= mf * km:
+                    m1 = ctm
+                    m2 = 0
+                    sf = tsf
+                elif tsf >= hsf:
+                    sf = tsf
             else:
-                sf = max(min(hsf * 1.05, mf * km), tsf)
-
+                sf = fasks[0] * 1.05
         elif cp >= songaort * 1.20:
-            m1 = mulk / slk / cp
+            m1 = min(ctm, mulk / slk / cp)
             m2 = ctm - m1
             sf = max(hsf, tsf)
 
     else:
-        if kar_orani > km:            
-            m1 = mulk / 2 / cp
+        if kar_orani >= 10:
+            m1 = ctm
+            m2 = 0
+            sf = fasks[0]-k
+        elif kar_orani >= (km-1)*100:            
+            m1 = min(ctm, mulk / 2 / cp)
             m2 = ctm - m1
-            sf = fasks[1] - k
-        elif fasks[0] >= hsf:
-            sf = fasks[1] - k           
-        
+            sf = fasks[0]-k
 
     af = round(af, digit)
     sf = round(sf, digit)
