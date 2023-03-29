@@ -937,7 +937,7 @@ while True:
                 sf = max(sf, tsf)
 
             else:
-                sf = max(sf * 1.05, tsf)
+                sf = max(min(hsf * 1.05, mf * km), tsf)
 
         elif cp >= songaort * 1.20:
             m1 = mulk / slk / cp
@@ -945,8 +945,12 @@ while True:
             sf = max(hsf, tsf)
 
     else:
-        if kar_orani > km or tsf >= hsf:
-            sf = tsf
+        if kar_orani > km:            
+            m1 = mulk / 2 / cp
+            m2 = ctm - m1
+            sf = fasks[1] - k
+        elif fasks[0] >= hsf:
+            sf = fasks[1] - k           
         
 
     af = round(af, digit)
