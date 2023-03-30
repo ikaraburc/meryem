@@ -939,7 +939,7 @@ while True:
         elif kar_orani == -100:
             m1 = min(ctm, mulk / slk / cp)
             m2 = ctm - m1
-            sf = max(sf, fasks[4] -k)
+            sf = max(sf*1.03, fasks[4] -k)
     
     elif fasks[0] < ema:
         yema = "düşüş"
@@ -951,8 +951,11 @@ while True:
         else:
             sf = max(sf, tsf)
     else:
-        if emas[24][0] > ema: 
-            yema = "dip yatay"
+        for i in range(100):
+            if abs(emas[i][0] - ema)/ema >= 5/100:               
+                break
+        if (emas[i][0] - ema)/ema >= 5/100: 
+            yema = "dip yatay"            
             sf = max(sf * 1.03, tsf)
         else:
             yema = "tepe yatay"
