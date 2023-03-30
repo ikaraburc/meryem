@@ -940,22 +940,20 @@ while True:
                 else:
                     sf = max(sf, tsf)
             else:
-                sf = fasks[0] * 1.03
-        elif cp >= songaort * 1.20:
+                sf = max(sf, fasks[5] -k)
+        elif kar_orani == -100:
             m1 = min(ctm, mulk / slk / cp)
             m2 = ctm - m1
-            sf = max(fasks[0] * 1.03,sf , tsf)
+            sf = max(sf, fasks[5] -k)
 
     else:
-        if kar_orani >= 10:
+        if kar_orani >= (km-1)*100:
             m1 = ctm
             m2 = 0
             sf = fasks[0]-k
-        elif kar_orani >= (km-1)*100:            
-            m1 = min(ctm, mulk / 2 / cp)
-            m2 = ctm - m1
-            sf = fasks[0]-k
-
+        else:
+            sf = max(sf, tsf)
+            
     af = round(af, digit)
     sf = round(sf, digit)
 
