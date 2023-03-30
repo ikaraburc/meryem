@@ -583,7 +583,7 @@ def tc_degisim():
 
         ecp = (fbids[0] + fasks[0]) / 2
 
-        if emas[12][0] > ema * 1.05 and ecp / 1.02 < ema < ecp * 1.02:
+        if emas[24][0] > ema * 1.07 and ecp / 1.02 < ema < ecp * 1.02:
             ema_ok = "ema uygun"
         else:
             sil = "evet"
@@ -601,7 +601,7 @@ def tc_degisim():
         print(ytablo)
 
         if len(tmumlar) < 800:
-            print("Yeni çıkan coin")
+            print("Yeni çıkan coin", bc)
             sil = "evet"
 
         if tao < 10:
@@ -702,23 +702,28 @@ while True:
 
     if ado >= 20:
         bolge = "Pumpa girdi..."
-        asi, afi, ma = 5, 13, 5
+        asi, afi, ma = 6, 13, 5
 
     elif 20 > ado >= 15:
         bolge = "USYükseliş..."
-        asi, afi, ma = 4, 13, 4
+        asi, afi, ma = 5, 13, 4
 
     elif 15 > ado >= 10:
         bolge = "SYükseliş..."
-        asi, afi, ma = 3, 10, 3
+        asi, afi, ma = 4, 10, 3
 
     elif 10 > ado >= 5:
         bolge = "Yükseliş..."
-        asi, afi, ma = 2, 6, 2
+        asi, afi, ma = 3, 6, 2
 
     else:
         bolge = "Dibe yakın..."
-        asi, afi, ma = 1, 5, 2
+        asi, afi, ma = 2, 6, 2
+        
+        if kema > ema:
+            if ema / 1.02 < fbids[0] < ema* 1.02:
+                bolge = "Alım yeri..."
+                asi, afi, ma = 0, 5, 2
 
     # ************- ZAF + ZSF BUL -*******************************#
 
