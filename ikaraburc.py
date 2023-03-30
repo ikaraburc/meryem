@@ -892,7 +892,7 @@ while True:
     # ************- TSF -*******************************#
 
     ssi, sfi, ms = 2, 4, 2
-    if kar_orani > 0 or ado >= 15:
+    if kar_orani >= (km-1)*100:
         ssi, sfi, ms = 0, 2, 2
 
     for fs in range(0, 5):
@@ -932,14 +932,14 @@ while True:
                     m1 = ctm
                     m2 = 0
                     sf = tsf
-                elif tsf >= hsf:
-                    sf = tsf
+                else:
+                    sf = max(sf, tsf)
             else:
-                sf = fasks[0] * 1.05
+                sf = fasks[0] * 1.03
         elif cp >= songaort * 1.20:
             m1 = min(ctm, mulk / slk / cp)
             m2 = ctm - m1
-            sf = max(hsf, tsf)
+            sf = max(fasks[0] * 1.03,sf , tsf)
 
     else:
         if kar_orani >= 10:
@@ -991,12 +991,10 @@ while True:
 
     # ************- EKRANA PRİNT BÖLÜMÜ -*******************************#
     fiyatlar = PrettyTable()
-    fiyatlar.field_names = [str(bolge) + str("ado% " + str(ado)), str("ema " + str(ema)), mal]
-    fiyatlar.add_row([str("tdo% " + str(tdo)), str("kema " + str(kema)), str("cp " + str(cp))])
+    fiyatlar.field_names = [str(bolge) + str("ado% " + str(ado)), mal, str("cp " + str(cp))]
+    fiyatlar.add_row([str("tdo% " + str(tdo)), str("kema " + str(kema)), str("ema " + str(ema))])
     fiyatlar.add_row([str(sonislem) + str(" af,sf ") + str(round(sf / af, 2)), round(af, digit), round(sf, digit)])
-    fiyatlar.add_row(
-        [str(" haf,hsf " + str(round(hsf / haf, 2))), round(haf, digit), round(hsf, digit)])
-    fiyatlar.add_row(["son aort, sort ", round(sonaort, digit), round(sonsort, digit)])
+    fiyatlar.add_row([str(" haf,hsf " + str(round(hsf / haf, 2))), round(haf, digit), round(hsf, digit)])
     fiyatlar.add_row(["son gaort, gsort ", round(songaort, digit), round(songsort, digit)])
     fiyatlar.add_row([str("taf, tsf " + str(round(tsf / taf, 2))), round(taf, digit), round(tsf, digit)])
     fiyatlar.add_row([str("zaf, zsf zk=" + str(round(zk, 2))), round(zaf, digit), round(zsf, digit)])
