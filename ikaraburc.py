@@ -694,36 +694,33 @@ while True:
     tdo = round((zmax / zmin - 1) * 100, 2)
     ado = round((fbids[0] / zmin - 1) * 100, 2)
 
-    km = 1.05
-    zk = 1.06
+    km = 1.03
+    zk = 1.07
     alk, slk = 4, 4
-    if kar_orani < 0:
-        slk = 5
 
     if ado >= 20:
         bolge = "Pumpa girdi..."
-        asi, afi, ma = 6, 13, 5
+        asi, afi, ma = 6, 13, 6
 
     elif 20 > ado >= 15:
         bolge = "USYükseliş..."
-        asi, afi, ma = 5, 13, 4
+        asi, afi, ma = 5, 13, 5
 
     elif 15 > ado >= 10:
         bolge = "SYükseliş..."
-        asi, afi, ma = 4, 10, 3
+        asi, afi, ma = 4, 10, 4
 
     elif 10 > ado >= 5:
         bolge = "Yükseliş..."
-        asi, afi, ma = 3, 6, 2
+        asi, afi, ma = 3, 6, 3
 
     else:
         bolge = "Dibe yakın..."
         asi, afi, ma = 2, 6, 2
         
-        if kema > ema:
-            if ema / 1.02 < fbids[0] < ema* 1.02:
-                bolge = "Alım yeri..."
-                asi, afi, ma = 0, 5, 2
+        if min(ema/1.02, fbids[0]) <= ema <= max(ema*1.02, fasks[0]):
+            bolge = "Alım yeri..."
+            asi, afi, ma = 0, 5, 2
 
     # ************- ZAF + ZSF BUL -*******************************#
 
@@ -858,8 +855,6 @@ while True:
         af = min(af, zaf)
 
     sf = hsf
-    if kar_orani < 0:
-        hsf = hsf * 1.02
     if usdt_to <= (mulk / slk - 5) and fasks[0] < sonafiyat / km:
         sf = min(hsf, zsf)
         if hsf / zsf <= 1.02:
@@ -881,9 +876,9 @@ while True:
     else:
         taf = fbids[eai] + k
 
-    if af >= taf * 1.003 and eai > asi:
+    if af >= taf / 1.005 and eai > asi:
         for yai in range(eai, asi, -1):
-            if abs(taf - fbids[yai]) / fbids[yai] >= 0.5 / 100:
+            if abs(taf - fbids[yai]) / fbids[yai] >= 5 / 1000:
                 yai = yai + 1
                 break
         if fbids[yai] == afiyat:
@@ -914,9 +909,9 @@ while True:
     else:
         tsf = fasks[esi] - k
 
-    if sf <= tsf * 1.003 and esi > ssi:
+    if sf <= tsf * 1.005 and esi > ssi:
         for ysi in range(esi, ssi, -1):
-            if abs(tsf - fasks[ysi]) / fasks[ysi] >= 0.5 / 100:
+            if abs(tsf - fasks[ysi]) / fasks[ysi] >= 5 / 1000:
                 ysi = ysi + 1
                 break
             else:
@@ -927,10 +922,10 @@ while True:
         else:
             tsf = fasks[ysi] - k
 
+    # ************- EMA STRATEJİSİ -*******************************#
 
-    # ************- AL SAT EMİRLERİNİ GÖNDER BÖLÜMÜ -*******************************#
-
-    if max(fasks[0], ema) > kema:
+    if fbids[0] > ema:
+        yema = "yükseliş"
         if kar_orani > -100:
             if tsf/ema <= 1.03:
                 if tsf >= mf * km:
@@ -940,20 +935,31 @@ while True:
                 else:
                     sf = max(sf, tsf)
             else:
-                sf = max(sf, fasks[5] -k)
+                sf = max(sf, fasks[4] -k)
         elif kar_orani == -100:
             m1 = min(ctm, mulk / slk / cp)
             m2 = ctm - m1
-            sf = max(sf, fasks[5] -k)
-
-    else:
+            sf = max(sf, fasks[4] -k)
+    
+    elif fasks[0] < ema:
+        yema = "düşüş"
+        af = af/1.02
         if kar_orani >= (km-1)*100:
             m1 = ctm
             m2 = 0
             sf = fasks[0]-k
         else:
             sf = max(sf, tsf)
-            
+    else:
+        if emas[24][0] > ema: 
+            yema = "dip yatay"
+            sf = max(sf * 1.03, tsf)
+        else:
+            yema = "tepe yatay"
+            sf = max(sf, tsf)
+        
+       
+    # ************- AL SAT EMİRLERİNİ GÖNDER BÖLÜMÜ -*******************************#
     af = round(af, digit)
     sf = round(sf, digit)
 
@@ -995,9 +1001,10 @@ while True:
     # ************- EKRANA PRİNT BÖLÜMÜ -*******************************#
     fiyatlar = PrettyTable()
     fiyatlar.field_names = [str(bolge) + str("ado% " + str(ado)), mal, str("cp " + str(cp))]
-    fiyatlar.add_row([str("tdo% " + str(tdo)), str("kema " + str(kema)), str("ema " + str(ema))])
+    fiyatlar.add_row([str(yema) +str(" tdo% " + str(tdo)), str("kema " + str(kema)), str("ema " + str(ema))])
     fiyatlar.add_row([str(sonislem) + str(" af,sf ") + str(round(sf / af, 2)), round(af, digit), round(sf, digit)])
     fiyatlar.add_row([str(" haf,hsf " + str(round(hsf / haf, 2))), round(haf, digit), round(hsf, digit)])
+    fiyatlar.add_row(["son aort, sort ", round(sonaort, digit), round(sonsort, digit)])
     fiyatlar.add_row(["son gaort, gsort ", round(songaort, digit), round(songsort, digit)])
     fiyatlar.add_row([str("taf, tsf " + str(round(tsf / taf, 2))), round(taf, digit), round(tsf, digit)])
     fiyatlar.add_row([str("zaf, zsf zk=" + str(round(zk, 2))), round(zaf, digit), round(zsf, digit)])
