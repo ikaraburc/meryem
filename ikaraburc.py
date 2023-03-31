@@ -111,7 +111,7 @@ class coin_trader:
                 continue
 
         # print(r)
-        global cam, ctm, usdt_to, usdt_av, mulk, ceder
+        global cam, ctm, usd, usdt_av, mulk, ceder
 
         eldeki_mal = list(filter(lambda coin: coin['currency'] == str.upper(coin_adi), r))
         eldeki_usdt = list(filter(lambda coin: coin['currency'] == 'USDT', r))
@@ -125,10 +125,10 @@ class coin_trader:
         else:
             usdt_av, usdt_lo = 0, 0
 
-        usdt_to = usdt_av + usdt_lo
+        usd = usdt_av + usdt_lo
         ctm = cam + clm
         ceder = ctm * cp
-        mulk = usdt_to + ceder
+        mulk = usd + ceder
 
     def tahta_getir(self):
 
@@ -423,12 +423,12 @@ class coin_trader:
                 break
 
         agider = round(abs(agider), 2)
-        anapara = round(abs(usdt_to + agider - sgelir), 2)
+        anapara = round(abs(usd + agider - sgelir), 2)
         kar_tutari = round(ceder - agider + sgelir, 2)
         harcanan = min(agider, anapara)
         if harcanan > 0:
             mf = round((agider - sgelir) / ctm * 1.002, digit)
-            mmf = round(anapara / (usdt_to / cp + ctm) * 1.002, digit)
+            mmf = round(anapara / (usd / cp + ctm) * 1.002, digit)
             kar_orani = round(kar_tutari / harcanan * 100, 2)
 
         if time.time() - tsiftah >= 6 * 24 * 60 * 60 or kar_orani > 20:
@@ -437,7 +437,7 @@ class coin_trader:
         bilanco = PrettyTable()
         bilanco.field_names = [str(self.coin).upper(), cp]
         bilanco.add_row([str("Ceder= " + str(round(ceder, 2))), str("mf = " + str(max(mf, 0)))])
-        bilanco.add_row([str(" Usdt= " + str(round(usdt_to, 2))), str("mmf= " + str(mmf))])
+        bilanco.add_row([str(" Usdt= " + str(round(usd, 2))), str("mmf= " + str(mmf))])
         bilanco.add_row([str("Apara= " + str(round(anapara, 2))), str(str("harcanan= ") + str(round(harcanan, 2)))])
         bilanco.add_row(
             [str(" Mülk= " + str(round(mulk, 2))), str(str("Agider= ") + str(round(agider, 2)))])
@@ -550,8 +550,7 @@ def tc_fiyatlar():
                 and "5L" not in data[i]["currency_pair"] \
                 and float(data[i]["last"]) > 0 \
                 and float(data[i]["low_24h"]) > 0 \
-                and float(data[i]["high_24h"]) / float(data[i]["low_24h"]) > 1.15 \
-                and float(data[i]["high_24h"]) / float(data[i]["last"]) > 1.10 \
+                and 1.50 > float(data[i]["last"]) / float(data[i]["low_24h"]) > 1.10 \
                 and float(data[i]["quote_volume"]) > 80000:
             toplu.append([data[i]["currency_pair"], float(data[i]["last"]), float(data[i]["low_24h"]),
                           float(data[i]["high_24h"])])
@@ -581,9 +580,7 @@ def tc_degisim():
         tao = round((max(tmumlar[:t]) / cp - 1) * 100, 2)
         ado = round((cp / min(dmumlar[:t]) - 1) * 100, 2)
 
-        ecp = (fbids[0] + fasks[0]) / 2
-
-        if emas[24][0] > ema * 1.07 and ecp / 1.02 < ema < ecp * 1.02:
+        if emas[24][0] >= ema * 1.10 and min(ema / 1.02, fbids[0]) <= ema <= max(ema * 1.02, fasks[0]):
             ema_ok = "ema uygun"
         else:
             sil = "evet"
@@ -602,9 +599,6 @@ def tc_degisim():
 
         if len(tmumlar) < 800:
             print("Yeni çıkan coin", bc)
-            sil = "evet"
-
-        if tao < 10:
             sil = "evet"
 
         if ado > 5:
@@ -712,13 +706,13 @@ while True:
 
     elif 10 > ado >= 5:
         bolge = "Yükseliş..."
-        asi, afi, ma = 3, 6, 3
+        asi, afi, ma = 4, 6, 3
 
     else:
         bolge = "Dibe yakın..."
         asi, afi, ma = 2, 6, 2
-        
-        if min(ema/1.02, fbids[0]) <= ema <= max(ema*1.02, fasks[0]):
+
+        if min(ema / 1.02, fbids[0]) <= ema <= max(ema * 1.02, fasks[0]):
             bolge = "Alım yeri..."
             asi, afi, ma = 0, 5, 2
 
@@ -802,7 +796,7 @@ while True:
         sonatut = 0
         sonstut = 0
 
-    p1 = usdt_to % (mulk / alk)
+    p1 = usd % (mulk / alk)
     if p1 < 5:
         p1 = mulk / alk
 
@@ -810,26 +804,14 @@ while True:
     if m1 * cp < 5:
         m1 = mulk / slk / cp
 
-    p2 = usdt_to - p1
-    m2 = ctm - m1
+    if usd <= mulk / alk * 1.10:
+        p1 = usd
 
-    if usdt_to <= mulk / alk * 1.10:
-        p1 = usdt_to
-        p2 = 0
     if ctm <= mulk / slk / cp * 1.10:
         m1 = ctm
-        m2 = 0
 
-    if p2 > 0:
-        ap1 = min(p1, p2)
-        ap2 = max(p1, p2)
-        p1 = ap1
-        p2 = ap2
-    if m2 > 0:
-        sm1 = min(m1, m2)
-        sm2 = max(m1, m2)
-        m1 = sm1
-        m2 = sm2
+    p1 = min(p1, usd - p1)
+    m1 = min(m1, ctm - m1)
 
     # ************- HAF + HSF -*******************************#
 
@@ -855,12 +837,11 @@ while True:
         af = min(af, zaf)
 
     sf = hsf
-    if usdt_to <= (mulk / slk - 5) and fasks[0] < sonafiyat / km:
+    if usd <= (mulk / slk - 5) and fasks[0] < sonafiyat / km:
         sf = min(hsf, zsf)
         if hsf / zsf <= 1.02:
             sf = hsf
-        m1 = (mulk / slk - usdt_to) / cp
-        m2 = ctm - m1
+        m1 = (mulk / slk - usd) / cp
 
     # ************- TAF -*******************************#
 
@@ -892,7 +873,7 @@ while True:
     # ************- TSF -*******************************#
 
     ssi, sfi, ms = 2, 4, 2
-    if kar_orani >= (km-1)*100:
+    if kar_orani >= (km - 1) * 100:
         ssi, sfi, ms = 0, 2, 2
 
     for fs in range(0, 5):
@@ -927,7 +908,7 @@ while True:
     if fbids[0] > ema:
         yema = "yükseliş"
         if kar_orani > -100:
-            if tsf/ema <= 1.03:
+            if tsf / ema <= 1.03:
                 if tsf >= mf * km:
                     m1 = ctm
                     m2 = 0
@@ -935,38 +916,36 @@ while True:
                 else:
                     sf = max(sf, tsf)
             else:
-                sf = max(sf, fasks[4] -k)
+                sf = max(sf, fasks[4] - k)
         elif kar_orani == -100:
             m1 = min(ctm, mulk / slk / cp)
-            m2 = ctm - m1
-            sf = max(sf*1.03, fasks[4] -k)
-    
+            sf = max(sf * 1.03, fasks[4] - k)
+
     elif fasks[0] < ema:
         yema = "düşüş"
-        af = af/1.02
-        if kar_orani >= (km-1)*100:
+        af = af / 1.02
+        if kar_orani >= (km - 1) * 100:
             m1 = ctm
-            m2 = 0
-            sf = fasks[0]-k
+            sf = fasks[0] - k
         else:
-            sf = max(sf, tsf)
+            sf = max(sf, fasks[0] - k)
+            m1 = min(ctm, mulk / 2 / cp)
     else:
         for i in range(100):
-            if abs(emas[i][0] - ema)/ema >= 5/100:               
+            if abs(emas[i][0] - ema) / ema >= 5 / 100:
                 break
-        if (emas[i][0] - ema)/ema >= 5/100: 
-            yema = "dip yatay"            
+        if (emas[i][0] - ema) / ema >= 5 / 100:
+            yema = "dip yatay"
             sf = max(sf * 1.03, tsf)
         else:
             yema = "tepe yatay"
             sf = max(sf, tsf)
-        
-       
+
     # ************- AL SAT EMİRLERİNİ GÖNDER BÖLÜMÜ -*******************************#
     af = round(af, digit)
     sf = round(sf, digit)
 
-    if usdt_to >= 1:
+    if usd >= 1:
         if af > afiyat or af < afiyat / 1.002 or usdt_av >= 2:
             T1 = threading.Thread(target=ct.alimlar_sil)
             T2 = threading.Thread(target=ct.bakiye_getir)
@@ -979,7 +958,7 @@ while True:
             afiyat1 = round(min(afiyat * 0.93, fbids[10] + k), digit)
 
             amiktar = (p1 - 0.5) / afiyat
-            amiktar1 = (usdt_to - p1) / afiyat1
+            amiktar1 = (usd - p1) / afiyat1
 
             ct.coklu_al()
 
@@ -993,18 +972,19 @@ while True:
             T2.join()
 
             sfiyat = sf
+            yedek = 0
             if -100 < kar_orani < km:
-                m1 = m1 - 2 / cp
+                yedek = 2 / cp
             sfiyat1 = round(max(sf * 1.1, fasks[10] - k), digit)
             smiktar = m1
-            smiktar1 = m2
+            smiktar1 = ctm - m1 - yedek
 
             ct.coklu_sat()
 
     # ************- EKRANA PRİNT BÖLÜMÜ -*******************************#
     fiyatlar = PrettyTable()
     fiyatlar.field_names = [str(bolge) + str("ado% " + str(ado)), mal, str("cp " + str(cp))]
-    fiyatlar.add_row([str(yema) +str(" tdo% " + str(tdo)), str("kema " + str(kema)), str("ema " + str(ema))])
+    fiyatlar.add_row([str(yema) + str(" tdo% " + str(tdo)), str("kema " + str(kema)), str("ema " + str(ema))])
     fiyatlar.add_row([str(sonislem) + str(" af,sf ") + str(round(sf / af, 2)), round(af, digit), round(sf, digit)])
     fiyatlar.add_row([str(" haf,hsf " + str(round(hsf / haf, 2))), round(haf, digit), round(hsf, digit)])
     fiyatlar.add_row(["son aort, sort ", round(sonaort, digit), round(sonsort, digit)])
