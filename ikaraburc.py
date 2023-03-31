@@ -680,6 +680,7 @@ while True:
                 else:
                     tc_fiyatlar()
                     continue
+
     # ************- STABİL - PUMP - DUMP BÖLGESİ -*******************************#
 
     at = 12
@@ -689,35 +690,31 @@ while True:
     ado = round((fbids[0] / zmin - 1) * 100, 2)
 
     km = 1.03
-    zk = 1.07
     alk, slk = 4, 4
 
-    if ado >= 20:
-        bolge = "Pumpa girdi..."
-        asi, afi, ma = 6, 13, 6
+    if ema < fbids[0]:
+        bolge = "yükseliş"
+        asi, afi, ma = 3, 10, 3
 
-    elif 20 > ado >= 15:
-        bolge = "USYükseliş..."
-        asi, afi, ma = 5, 13, 5
-
-    elif 15 > ado >= 10:
-        bolge = "SYükseliş..."
-        asi, afi, ma = 4, 10, 4
-
-    elif 10 > ado >= 5:
-        bolge = "Yükseliş..."
-        asi, afi, ma = 4, 6, 3
+    elif fasks[0] < ema:
+        bolge = "düşüş"
+        asi, afi, ma = 3, 10, 3
 
     else:
-        bolge = "Dibe yakın..."
-        asi, afi, ma = 2, 6, 2
-
-        if min(ema / 1.02, fbids[0]) <= ema <= max(ema * 1.02, fasks[0]):
-            bolge = "Alım yeri..."
-            asi, afi, ma = 0, 5, 2
+        for i in range(100):
+            if emas[i][0] / ema >= 1.05 or ema / emas[i][0] >= 1.05:
+                break
+        if emas[i][0] / ema >= 1.05:
+            bolge = "Dip yatay"
+            alk = 2
+            asi, afi, ma = 0, 6, 2
+        else:
+            bolge = "Tepe yatay"
+            slk = 2
+            asi, afi, ma = 3, 10, 3
 
     # ************- ZAF + ZSF BUL -*******************************#
-
+    zk = 1.07
     for x in range(1, 1000):
         if round(max(tmumlar[:x]) / min(dmumlar[:x]), 2) >= zk:
             zaf = min(dmumlar[:x])
@@ -730,7 +727,7 @@ while True:
 
     zaf = zaf * 1.005
     zsf = zsf / 1.005
-
+    
     # ************- AL SAT GEÇMİŞ BÖLÜMÜ -*******************************#
 
     sonort0, sonort1 = 0, 0
@@ -843,6 +840,38 @@ while True:
             sf = hsf
         m1 = (mulk / slk - usd) / cp
 
+    
+    # ************- EMA STRATEJİSİ -*******************************#
+
+    if bolge == "yükseliş":
+        if kar_orani > -100:
+            if fasks[0] / ema <= 1.03:
+                if fasks[0] >= mf * km:
+                    m1 = ctm
+                    m2 = 0
+                    sf = fasks[0]
+                else:
+                    sf = sf
+            else:
+                sf = max(sf, fasks[4] - k)
+        elif kar_orani == -100:
+            m1 = min(ctm, mulk / slk / cp)
+            sf = max(sf * 1.03, fasks[4] - k)
+
+    elif bolge == "düşüş":
+        af = af / 1.02
+        if kar_orani >= (km - 1) * 100:
+            m1 = ctm
+            sf = fasks[0] - k
+        else:
+            sf = max(sf, fasks[0] - k)
+            m1 = min(ctm, mulk / 2 / cp)
+    else:
+        if bolge == "Dip yatay":
+            sf = sf * 1.03
+        else:
+            sf = max(sf, fasks[0] - k)
+    
     # ************- TAF -*******************************#
 
     for fa in range(0, 5):
@@ -866,9 +895,6 @@ while True:
             taf = fbids[yai + 1] + k
         else:
             taf = fbids[yai] + k
-        af = taf
-
-    af = min(af, taf)
 
     # ************- TSF -*******************************#
 
@@ -902,44 +928,6 @@ while True:
             tsf = fasks[ysi + 1] - k
         else:
             tsf = fasks[ysi] - k
-
-    # ************- EMA STRATEJİSİ -*******************************#
-
-    if fbids[0] > ema:
-        yema = "yükseliş"
-        if kar_orani > -100:
-            if tsf / ema <= 1.03:
-                if tsf >= mf * km:
-                    m1 = ctm
-                    m2 = 0
-                    sf = tsf
-                else:
-                    sf = max(sf, tsf)
-            else:
-                sf = max(sf, fasks[4] - k)
-        elif kar_orani == -100:
-            m1 = min(ctm, mulk / slk / cp)
-            sf = max(sf * 1.03, fasks[4] - k)
-
-    elif fasks[0] < ema:
-        yema = "düşüş"
-        af = af / 1.02
-        if kar_orani >= (km - 1) * 100:
-            m1 = ctm
-            sf = fasks[0] - k
-        else:
-            sf = max(sf, fasks[0] - k)
-            m1 = min(ctm, mulk / 2 / cp)
-    else:
-        for i in range(100):
-            if abs(emas[i][0] - ema) / ema >= 5 / 100:
-                break
-        if (emas[i][0] - ema) / ema >= 5 / 100:
-            yema = "dip yatay"
-            sf = max(sf * 1.03, tsf)
-        else:
-            yema = "tepe yatay"
-            sf = max(sf, tsf)
 
     # ************- AL SAT EMİRLERİNİ GÖNDER BÖLÜMÜ -*******************************#
     af = round(af, digit)
@@ -983,8 +971,8 @@ while True:
 
     # ************- EKRANA PRİNT BÖLÜMÜ -*******************************#
     fiyatlar = PrettyTable()
-    fiyatlar.field_names = [str(bolge) + str("ado% " + str(ado)), mal, str("cp " + str(cp))]
-    fiyatlar.add_row([str(yema) + str(" tdo% " + str(tdo)), str("kema " + str(kema)), str("ema " + str(ema))])
+    fiyatlar.field_names = [str(bolge) + str(" ado% " + str(ado)), mal, str("cp " + str(cp))]
+    fiyatlar.add_row([str(" tdo% " + str(tdo)), str("kema " + str(kema)), str("ema " + str(ema))])
     fiyatlar.add_row([str(sonislem) + str(" af,sf ") + str(round(sf / af, 2)), round(af, digit), round(sf, digit)])
     fiyatlar.add_row([str(" haf,hsf " + str(round(hsf / haf, 2))), round(haf, digit), round(hsf, digit)])
     fiyatlar.add_row(["son aort, sort ", round(sonaort, digit), round(sonsort, digit)])
