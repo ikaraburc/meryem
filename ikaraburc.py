@@ -568,11 +568,11 @@ def tc_degisim():
     ytablo.clear()
     uygunlar = []
     bc = "boş"
-    for i in range(len(toplu)):
+    for y in range(len(toplu)):
         sil = "hayır"
         ytablo.clear()
 
-        bc = toplu[i][0]
+        bc = toplu[y][0]
         ct = coin_trader(bc)
         ct.coin_digit()
         ct.toplu_islem()
@@ -592,7 +592,7 @@ def tc_degisim():
             ema_ok = "ema uygun değil"
             sil = "evet"
 
-        ytablo.field_names = [str(bc), str(" of " + str(len(toplu) - i))]
+        ytablo.field_names = [str(bc), str(" of " + str(len(toplu) - y))]
         ytablo.add_row(["tao", tao])
         ytablo.add_row(["ado", ado])
         ytablo.add_row(["cp", cp])
