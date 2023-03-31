@@ -697,14 +697,13 @@ while True:
 
     km = 1.03
     alk, slk = 4, 4
+    asi, afi, ma = 2, 10, 2
 
     if ema < fbids[0]:
-        bolge = "yükseliş"
-        asi, afi, ma = 3, 10, 3
+        bolge = "yükseliş"        
 
     elif fasks[0] < ema:
         bolge = "düşüş"
-        asi, afi, ma = 3, 10, 3
 
     else:
         for i in range(len(emas)):
@@ -717,7 +716,6 @@ while True:
         else:
             bolge = "Tepe yatay"
             slk = 2
-            asi, afi, ma = 3, 10, 3
 
     # ************- ZAF + ZSF BUL -*******************************#
     zk = 1.07
@@ -840,38 +838,36 @@ while True:
         af = min(af, zaf)
 
     sf = hsf
-    if usd <= (mulk / slk - 5) and fasks[0] < sonafiyat / km:
+    if usd < (mulk / slk - 5) and fasks[0] < sonafiyat / km:
         sf = min(hsf, zsf)
-        if hsf / zsf <= 1.02:
-            sf = hsf
         m1 = (mulk / slk - usd) / cp
-
     
     # ************- EMA STRATEJİSİ -*******************************#
 
     if bolge == "yükseliş":
         if kar_orani > -100:
-            if fasks[0] / ema <= 1.03:
-                if fasks[0] >= mf * km:
-                    m1 = ctm
-                    m2 = 0
-                    sf = fasks[0]
-                else:
-                    sf = sf
+            if kar_orani >= (km - 1) * 100:
+                sf = max(sf, fasks[2] - k)
             else:
                 sf = max(sf, fasks[4] - k)
+                
         elif kar_orani == -100:
             m1 = min(ctm, mulk / slk / cp)
-            sf = max(sf * 1.03, fasks[4] - k)
+            sf = max(songaort * 1.05, sf, fasks[4] - k)
 
     elif bolge == "düşüş":
         af = af / 1.02
-        if kar_orani >= (km - 1) * 100:
-            m1 = ctm
-            sf = fasks[0] - k
+        if kar_orani > -100:
+            if kar_orani >= (km - 1) * 100:
+                sf = fasks[0] - k
+                m1 = ctm
+            else:
+                sf = max(sf, fasks[0] - k)
+                if ceder > mulk/2:
+                    m1 = ctm - mulk / 2 / cp
         else:
             sf = max(sf, fasks[0] - k)
-            m1 = min(ctm, mulk / 2 / cp)
+
     else:
         if bolge == "Dip yatay":
             sf = sf * 1.03
@@ -902,9 +898,10 @@ while True:
         else:
             taf = fbids[yai] + k    
    
+
     # ************- AL SAT EMİRLERİNİ GÖNDER BÖLÜMÜ -*******************************#
     af = round(min(af, taf), digit)
-    sf = round(sf, digit)
+    sf = round(max(sf, digit)
 
     if usd >= 1:
         if af > afiyat or af < afiyat / 1.002 or usdt_av >= 2:
@@ -924,7 +921,7 @@ while True:
             ct.coklu_al()
 
     if ceder > 1:
-        if sf > sfiyat * 1.002 or sf < sfiyat or cam * cp >= 5:
+        if sf > sfiyat * 1.002 or sf+k < sfiyat or cam * cp >= 5:
             T1 = threading.Thread(target=ct.satimlar_sil)
             T2 = threading.Thread(target=ct.bakiye_getir)
             T1.start()
