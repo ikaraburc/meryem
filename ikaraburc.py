@@ -550,7 +550,8 @@ def tc_fiyatlar():
                 and "5L" not in data[i]["currency_pair"] \
                 and float(data[i]["last"]) > 0 \
                 and float(data[i]["low_24h"]) > 0 \
-                and 1.50 > float(data[i]["last"]) / float(data[i]["low_24h"]) > 1.10 \
+                and float(data[i]["high_24h"]) / float(data[i]["last"]) > 1.10 \
+                and 1.60 > float(data[i]["last"]) / float(data[i]["low_24h"]) > 1.10 \
                 and float(data[i]["quote_volume"]) > 80000:
             toplu.append([data[i]["currency_pair"], float(data[i]["last"]), float(data[i]["low_24h"]),
                           float(data[i]["high_24h"])])
@@ -894,43 +895,10 @@ while True:
         if fbids[yai] == afiyat:
             taf = fbids[yai + 1] + k
         else:
-            taf = fbids[yai] + k
-
-    # ************- TSF -*******************************#
-
-    ssi, sfi, ms = 2, 4, 2
-    if kar_orani >= (km - 1) * 100:
-        ssi, sfi, ms = 0, 2, 2
-
-    for fs in range(0, 5):
-        if 50 <= mbids[fs] * fbids[fs]:
-            break
-    for esi in range(ssi, sfi + 1):
-        if mbids[max(ms, fs)] < masks[esi]:
-            break
-        else:
-            esi = sfi
-
-    if fasks[esi] == sfiyat:
-        tsf = fasks[esi + 1] - k
-    else:
-        tsf = fasks[esi] - k
-
-    if sf <= tsf * 1.005 and esi > ssi:
-        for ysi in range(esi, ssi, -1):
-            if abs(tsf - fasks[ysi]) / fasks[ysi] >= 5 / 1000:
-                ysi = ysi + 1
-                break
-            else:
-                ysi = ssi
-
-        if fasks[ysi] == sfiyat:
-            tsf = fasks[ysi + 1] - k
-        else:
-            tsf = fasks[ysi] - k
-
+            taf = fbids[yai] + k    
+   
     # ************- AL SAT EMİRLERİNİ GÖNDER BÖLÜMÜ -*******************************#
-    af = round(af, digit)
+    af = round(min(af, taf), digit)
     sf = round(sf, digit)
 
     if usd >= 1:
