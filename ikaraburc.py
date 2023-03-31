@@ -209,7 +209,7 @@ class coin_trader:
 
         emas = []
         ema_periyot = 12
-        for i in range(len(kmumlar[:100])):
+        for i in range(500):
             emas.append([round(sum(kmumlar[i:i + ema_periyot]) / ema_periyot, digit), kmumlar[i]])
 
         kemas = []
@@ -580,12 +580,17 @@ def tc_degisim():
         t = int(60 / 5 * 2)
         tao = round((max(tmumlar[:t]) / cp - 1) * 100, 2)
         ado = round((cp / min(dmumlar[:t]) - 1) * 100, 2)
-
-        if emas[24][0] >= ema * 1.10 and min(ema / 1.02, fbids[0]) <= ema <= max(ema * 1.02, fasks[0]):
-            ema_ok = "ema uygun"
-        else:
-            sil = "evet"
+        
+        for i in range(len(emas)):
+            if emas[i][0] / ema >= 1.05 or ema / emas[i][0] >= 1.05:
+                break
+        
+        if emas[i][0] / ema >= 1.05:
+            if min(ema / 1.02, fbids[0]) <= ema <= max(ema * 1.02, fasks[0]):
+                ema_ok = "ema uygun"
+        else:            
             ema_ok = "ema uygun değil"
+            sil = "evet"
 
         ytablo.field_names = [str(bc), str(" of " + str(len(toplu) - i))]
         ytablo.add_row(["tao", tao])
@@ -702,7 +707,7 @@ while True:
         asi, afi, ma = 3, 10, 3
 
     else:
-        for i in range(100):
+        for i in range(len(emas)):
             if emas[i][0] / ema >= 1.05 or ema / emas[i][0] >= 1.05:
                 break
         if emas[i][0] / ema >= 1.05:
