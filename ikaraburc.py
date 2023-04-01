@@ -843,8 +843,9 @@ while True:
         m1 = (mulk / slk - usd) / cp
     
     # ************- EMA STRATEJİSİ -*******************************#
-
+    ssi, sfi, ms = 0, 5, 2
     if bolge == "yükseliş":
+        sfi = 5
         if kar_orani > -100:
             if kar_orani >= (km - 1) * 100:
                 sf = max(sf, fasks[2] - k)
@@ -856,7 +857,7 @@ while True:
             sf = max(songaort * 1.05, sf, fasks[4] - k)
 
     elif bolge == "düşüş":
-        af = af / 1.02
+        sfi = 1
         if kar_orani > -100:
             if kar_orani >= (km - 1) * 100:
                 sf = fasks[0] - k
@@ -872,6 +873,7 @@ while True:
         if bolge == "Dip yatay":
             sf = sf * 1.03
         else:
+            sfi = 1
             sf = max(sf, fasks[0] - k)
     
     # ************- TAF -*******************************#
@@ -898,8 +900,8 @@ while True:
         else:
             taf = fbids[yai] + k    
    
-    # ************- TSF -*******************************#
-
+    # ************- TSF -*******************************#   
+    
     for fs in range(0, 5):
         if 50 <= mbids[fs] * fbids[fs]:
             break
