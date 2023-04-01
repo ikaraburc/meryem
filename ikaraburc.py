@@ -820,12 +820,11 @@ while True:
         sfi = 5
         if kar_orani > -100:
             if kar_orani >= (km - 1) * 100:
-                sf = max(sf, fasks[2] - k)
+                sf = max(sf * 1.01, fasks[4] - k)
             else:
                 sf = max(sf * 1.03, fasks[4] - k)
 
         elif kar_orani == -100:
-            m1 = min(ctm, mulk / slk / cp)
             sf = max(songaort * 1.05, sf, fasks[4] - k)
 
     elif bolge == "düşüş":
@@ -837,9 +836,10 @@ while True:
             else:
                 sf = max(sf, fasks[0] - k)
                 if ceder > mulk / 2:
-                    m1 = ctm - mulk / 2 / cp
+                    m1 = max(ctm - mulk / 2 / cp, m1)
         else:
             sf = max(sf, fasks[0] - k)
+            m1 = min(ctm, mulk/slk/cp)
 
         if usd < (mulk / slk - 5):
             sf = fasks[0] - k
@@ -851,6 +851,7 @@ while True:
         else:
             sfi = 1
             sf = max(sf, fasks[0] - k)
+            m1 = min(ctm, mulk/slk/cp)
 
     if bolge != "Dip yatay" or ceder >= mulk / 2:
         af = af / 1.03
