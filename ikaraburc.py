@@ -209,7 +209,7 @@ class coin_trader:
 
         emas = []
         ema_periyot = 12
-        for i in range(500):
+        for i in range(1000):
             emas.append([round(sum(kmumlar[i:i + ema_periyot]) / ema_periyot, digit), kmumlar[i]])
 
         kemas = []
@@ -707,10 +707,11 @@ while True:
         bolge = "düşüş"
 
     else:
-        for i in range(len(emas)):
-            fema = emas[i][0]
+        for w in range(len(emas)):
+            fema = emas[w][0]
             if fema / ema >= 1.05 or ema / fema >= 1.05:
                 break
+
         if fema / ema >= 1.05:
             bolge = "Dip yatay"
             asi, afi, ma = 0, 6, 2
