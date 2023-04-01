@@ -805,14 +805,26 @@ while True:
     if m1 * cp < 5:
         m1 = mulk / slk / cp
 
+    p2 = usd - p1
+    m2 = ctm - m1
+
     if usd <= mulk / alk * 1.10:
         p1 = usd
-
+        p2 = 0
     if ctm <= mulk / slk / cp * 1.10:
         m1 = ctm
+        m2 = 0
 
-    p1 = min(p1, usd - p1)
-    m1 = min(m1, ctm - m1)
+    if p2 > 0:
+        ap1 = min(p1, p2)
+        ap2 = max(p1, p2)
+        p1 = ap1
+        p2 = ap2
+    if m2 > 0:
+        sm1 = min(m1, m2)
+        sm2 = max(m1, m2)
+        m1 = sm1
+        m2 = sm2
 
     # ************- HAF + HSF -*******************************#
 
