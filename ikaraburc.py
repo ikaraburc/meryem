@@ -716,7 +716,7 @@ while True:
 
         if fema / ema >= 1.05:
             bolge = "Dip yatay"
-            asi, afi, ma = 0, 6, 2
+            asi, afi, ma = 0, 5, 2
             alk = 2
         else:
             bolge = "Tepe yatay"
@@ -847,15 +847,12 @@ while True:
             if tut0 >= mulk / slk * 0.8:
                 haf = min(songsort, sonsfiyat) / km
                 hsf = max(songaort, songsort) * km
-
     af = haf
-    if ceder <= mulk / alk:
-        af = max(af, zaf)
-    if ado >= 10:
-        af = min(af, zaf)
-
     sf = hsf
-    
+    if hsf/fasks[0] >= zk:
+        sf = zsf * 1.01
+    if fbids[0]/haf >= zk:
+        af = zaf / 1.01
     # ************- EMA STRATEJİSİ -*******************************#
     ssi, sfi, ms = 0, 5, 2
     if bolge == "yükseliş":
