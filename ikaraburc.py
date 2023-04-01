@@ -698,12 +698,14 @@ while True:
     km = 1.03
     alk, slk = 4, 4
     asi, afi, ma = 2, 7, 2
-
-    if fbids[0] >= ema * 1.01 or ema >= kema * 1.01:
+    kemao = round(((cp - kema) / min(cp, kema)) * 100, 2)
+    
+    
+    if kemao >= 2:
         bolge = "yükseliş"
         asi, afi, ma = 3, 10, 2
 
-    elif fasks[0] <= ema / 1.01 or kema >= ema * 1.01:
+    elif kemao <= -1:
         bolge = "düşüş"
 
     else:
@@ -991,8 +993,8 @@ while True:
             ct.coklu_sat()
 
     # ************- EKRANA PRİNT BÖLÜMÜ -*******************************#
-    fiyatlar = PrettyTable()
-    fiyatlar.field_names = [str(bolge) + str(" ado% " + str(ado)), mal, str("cp " + str(cp))]
+    fiyatlar = PrettyTable()    
+    fiyatlar.field_names = [str(bolge) + str(" kemao% " + str(kemao)), mal, str("cp " + str(cp))]
     fiyatlar.add_row([str(" tdo% " + str(tdo)), str("kema " + str(kema)), str("ema " + str(ema))])
     fiyatlar.add_row([str(sonislem) + str(" af,sf ") + str(round(sf / af, 2)), round(af, digit), round(sf, digit)])
     fiyatlar.add_row([str(" haf,hsf " + str(round(hsf / haf, 2))), round(haf, digit), round(hsf, digit)])
