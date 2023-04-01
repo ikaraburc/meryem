@@ -194,7 +194,7 @@ class coin_trader:
                 print("Bağlantı bekleniyor...")
                 continue
 
-        global tmumlar, dmumlar, m1hacim, ema, kema, emas, kemas
+        global tmumlar, dmumlar, m1hacim, emas, kemas, ema, kema, fema, kemao
 
         tmumlar = [float(i[3]) for i in r]
         dmumlar = [float(i[4]) for i in r]
@@ -226,8 +226,16 @@ class coin_trader:
                 if yer == -1:
                     kemas.append(emas[i][0])
                 yer = 1
+
         ema = emas[0][0]
         kema = kemas[0]
+
+        for w in range(len(emas)):
+            fema = emas[w][0]
+            if fema / ema >= 1.05 or ema / fema >= 1.05:
+                break
+
+        kemao = round(((cp - kema) / min(cp, kema)) * 100, 2)
 
     def coklu_al(self):
         # Alış emri girilmesi.........
@@ -581,13 +589,8 @@ def tc_degisim():
         tao = round((max(tmumlar[:t]) / cp - 1) * 100, 2)
         ado = round((cp / min(dmumlar[:t]) - 1) * 100, 2)
 
-        for i in range(len(emas)):
-            if emas[i][0] / ema >= 1.05 or ema / emas[i][0] >= 1.05:
-                break
-
-        if emas[i][0] / ema >= 1.05:
-            if min(ema / 1.02, fbids[0]) <= ema <= max(ema * 1.02, fasks[0]):
-                ema_ok = "ema uygun"
+        if fema / ema >= 1.05 and 0 < kemao <= 2:
+            ema_ok = "ema uygun"
         else:
             ema_ok = "ema uygun değil"
             sil = "evet"
@@ -689,18 +692,10 @@ while True:
 
     # ************- STABİL - PUMP - DUMP BÖLGESİ -*******************************#
 
-    at = 12
-    zmax = max(tmumlar[:at])
-    zmin = min(dmumlar[:at])
-    tdo = round((zmax / zmin - 1) * 100, 2)
-    ado = round((fbids[0] / zmin - 1) * 100, 2)
-
     km = 1.03
     alk, slk = 4, 4
     asi, afi, ma = 2, 7, 2
-    kemao = round(((cp - kema) / min(cp, kema)) * 100, 2)
-    
-    
+
     if kemao >= 2:
         bolge = "yükseliş"
         asi, afi, ma = 3, 10, 2
@@ -709,11 +704,6 @@ while True:
         bolge = "düşüş"
 
     else:
-        for w in range(len(emas)):
-            fema = emas[w][0]
-            if fema / ema >= 1.05 or ema / fema >= 1.05:
-                break
-
         if fema / ema >= 1.05:
             bolge = "Dip yatay"
             asi, afi, ma = 0, 5, 2
@@ -740,6 +730,7 @@ while True:
     # ************- AL SAT GEÇMİŞ BÖLÜMÜ -*******************************#
 
     sonort0, sonort1 = 0, 0
+    sonaort, sonsort = 0, 0
     songaort, songsort = 0, 0
     gamik, gsmik = 0, 0
     gatut, gstut = 0, 0
@@ -788,56 +779,24 @@ while True:
     if sonislem == "buy":
         sonaort = sonort0
         sonsort = sonort1
-        sonatut = tut0
-        sonstut = tut1
 
     elif sonislem == "sell":
         sonsort = sonort0
         sonaort = sonort1
-        sonatut = tut0
-        sonstut = tut1
-    else:
-        sonaort = 0
-        sonsort = 0
-        sonatut = 0
-        sonstut = 0
 
-    p1 = usd % (mulk / alk)
-    if p1 < 5:
-        p1 = mulk / alk
-
-    m1 = ctm % (mulk / slk / cp)
-    if m1 * cp < 5:
-        m1 = mulk / slk / cp
-
+    p1 = min(max(mulk / 10, 2), usd)
     p2 = usd - p1
+
+    m1 = min(max(mulk / 10 / cp, 2 / cp), ctm)
     m2 = ctm - m1
-
-    if usd <= mulk / alk * 1.10:
-        p1 = usd
-        p2 = 0
-    if ctm <= mulk / slk / cp * 1.10:
-        m1 = ctm
-        m2 = 0
-
-    if p2 > 0:
-        ap1 = min(p1, p2)
-        ap2 = max(p1, p2)
-        p1 = ap1
-        p2 = ap2
-    if m2 > 0:
-        sm1 = min(m1, m2)
-        sm2 = max(m1, m2)
-        m1 = sm1
-        m2 = sm2
 
     # ************- HAF + HSF -*******************************#
 
-    haf, hsf = zaf, zsf
+    haf, hsf = cp, cp
     if harcanan > 0:
         if sonislem == "buy":
             haf = sonaort
-            if max(tut0, p1) >= mulk / alk * 0.8:
+            if max(tut0, ceder) >= mulk / alk * 0.8:
                 haf = songaort / km
             hsf = max(songaort, sonafiyat) * km
 
@@ -849,11 +808,13 @@ while True:
                 hsf = max(songaort, songsort) * km
     af = haf
     sf = hsf
-    if hsf/fasks[0] >= zk:
+    if hsf / fasks[0] >= zk:
         sf = zsf * 1.01
-    if fbids[0]/haf >= zk:
+    if fbids[0] / haf >= zk:
         af = zaf / 1.01
+
     # ************- EMA STRATEJİSİ -*******************************#
+
     ssi, sfi, ms = 0, 5, 2
     if bolge == "yükseliş":
         sfi = 5
@@ -879,9 +840,9 @@ while True:
                     m1 = ctm - mulk / 2 / cp
         else:
             sf = max(sf, fasks[0] - k)
-            
+
         if usd < (mulk / slk - 5):
-            sf = fasks[0]-k
+            sf = fasks[0] - k
             m1 = (mulk / slk - usd) / cp
 
     else:
@@ -891,9 +852,9 @@ while True:
             sfi = 1
             sf = max(sf, fasks[0] - k)
 
-    if bolge != "Dip yatay":
+    if bolge != "Dip yatay" or ceder >= mulk / 2:
         af = af / 1.03
-    if m2 == 0:
+    if ceder <= mulk / 4:
         if -100 < kar_orani < (km - 1) * 100:
             sf = mf * km
         elif kar_orani == -100:
@@ -991,9 +952,9 @@ while True:
             ct.coklu_sat()
 
     # ************- EKRANA PRİNT BÖLÜMÜ -*******************************#
-    fiyatlar = PrettyTable()    
-    fiyatlar.field_names = [str(bolge) + str(" kemao% " + str(kemao)), mal, str("cp " + str(cp))]
-    fiyatlar.add_row([str(" tdo% " + str(tdo)), str("kema " + str(kema)), str("ema " + str(ema))])
+    fiyatlar = PrettyTable()
+    fiyatlar.field_names = [str(bolge), mal, str("cp " + str(cp))]
+    fiyatlar.add_row([str(" kemao% " + str(kemao)), str("kema " + str(kema)), str("ema " + str(ema))])
     fiyatlar.add_row([str(sonislem) + str(" af,sf ") + str(round(sf / af, 2)), round(af, digit), round(sf, digit)])
     fiyatlar.add_row([str(" haf,hsf " + str(round(hsf / haf, 2))), round(haf, digit), round(hsf, digit)])
     fiyatlar.add_row(["son aort, sort ", round(sonaort, digit), round(sonsort, digit)])
