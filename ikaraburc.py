@@ -940,7 +940,7 @@ while True:
     else:
         tsf = fasks[esi] - k
 
-    if sf <= tsf * 1.003:
+    if sf <= tsf * 1.003 and ssi > esi:
         for ysi in range(esi, ssi, -1):
             if abs(tsf - fasks[ysi]) / fasks[ysi] >= 0.5 / 100:
                 ysi = ysi + 1
