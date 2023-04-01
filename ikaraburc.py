@@ -898,10 +898,34 @@ while True:
         else:
             taf = fbids[yai] + k    
    
+    # ************- TSF -*******************************#
 
+    for fs in range(0, 5):
+        if 50 <= mbids[fs] * fbids[fs]:
+            break
+    for esi in range(ssi, sfi + 1):
+        if mbids[max(ms, fs)] < masks[esi]:
+            break
+
+    if fasks[esi] == sfiyat:
+        tsf = fasks[esi + 1] - k
+    else:
+        tsf = fasks[esi] - k
+
+    if sf <= tsf * 1.003:
+        for ysi in range(esi, ssi, -1):
+            if abs(tsf - fasks[ysi]) / fasks[ysi] >= 0.5 / 100:
+                ysi = ysi + 1
+                break
+        if fasks[ysi] == sfiyat:
+            tsf = fasks[ysi + 1] - k
+        else:
+            tsf = fasks[ysi] - k
+    
+    
     # ************- AL SAT EMİRLERİNİ GÖNDER BÖLÜMÜ -*******************************#
     af = round(min(af, taf), digit)
-    sf = round(max(sf, digit)
+    sf = round(max(sf, tsf), digit)
 
     if usd >= 1:
         if af > afiyat or af < afiyat / 1.002 or usdt_av >= 2:
@@ -921,7 +945,7 @@ while True:
             ct.coklu_al()
 
     if ceder > 1:
-        if sf > sfiyat * 1.002 or sf+k < sfiyat or cam * cp >= 5:
+        if sf > sfiyat * 1.002 or sf < sfiyat or cam * cp >= 5:
             T1 = threading.Thread(target=ct.satimlar_sil)
             T2 = threading.Thread(target=ct.bakiye_getir)
             T1.start()
@@ -952,3 +976,4 @@ while True:
     print(fiyatlar)
 
     continue
+               
