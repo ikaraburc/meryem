@@ -699,20 +699,20 @@ while True:
     alk, slk = 4, 4
     asi, afi, ma = 2, 10, 2
 
-    if ema * 1.01 < fbids[0] or ema >= kema * 1.02:
+    if ema * 1.01 <= fbids[0] or ema >= kema * 1.01:
         bolge = "yükseliş"        
 
-    elif fasks[0]*1.01 < ema or kema >= ema * 1.02:
+    elif fasks[0]*1.01 <= ema or kema >= ema * 1.01:
         bolge = "düşüş"
-
+        
     else:
         for i in range(len(emas)):
             if emas[i][0] / ema >= 1.05 or ema / emas[i][0] >= 1.05:
                 break
         if emas[i][0] / ema >= 1.05:
             bolge = "Dip yatay"
-            alk = 2
             asi, afi, ma = 0, 6, 2
+            alk = 2
         else:
             bolge = "Tepe yatay"
             slk = 2
@@ -862,7 +862,7 @@ while True:
             if kar_orani >= (km - 1) * 100:
                 sf = max(sf, fasks[2] - k)
             else:
-                sf = max(sf, fasks[4] - k)
+                sf = max(sf*1.02, fasks[4] - k)
                 
         elif kar_orani == -100:
             m1 = min(ctm, mulk / slk / cp)
@@ -883,11 +883,13 @@ while True:
 
     else:
         if bolge == "Dip yatay":
-            sf = sf * 1.03
+            sf = sf * 1.02
         else:
             sfi = 1
             sf = max(sf, fasks[0] - k)
     
+    if bolge != "Dip yatay":
+        af = af/1.03
     # ************- TAF -*******************************#
 
     for fa in range(0, 5):
@@ -971,6 +973,9 @@ while True:
             yedek = 0
             if -100 < kar_orani < km:
                 yedek = 2 / cp
+            elif cp <= songaort * 1.20:
+                yedek = 2 / cp
+                
             sfiyat1 = round(max(sf * 1.1, fasks[10] - k), digit)
             smiktar = m1
             smiktar1 = ctm - m1 - yedek
