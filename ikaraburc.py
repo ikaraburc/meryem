@@ -699,10 +699,10 @@ while True:
     alk, slk = 4, 4
     asi, afi, ma = 2, 10, 2
 
-    if ema < fbids[0]:
+    if ema * 1.01 < fbids[0] or ema >= kema * 1.02:
         bolge = "yükseliş"        
 
-    elif fasks[0] < ema:
+    elif fasks[0]*1.01 < ema or kema >= ema * 1.02:
         bolge = "düşüş"
 
     else:
