@@ -855,10 +855,7 @@ while True:
         af = min(af, zaf)
 
     sf = hsf
-    if usd < (mulk / slk - 5) and fasks[0] < sonafiyat / km:
-        sf = min(hsf, zsf)
-        m1 = (mulk / slk - usd) / cp
-
+    
     # ************- EMA STRATEJİSİ -*******************************#
     ssi, sfi, ms = 0, 5, 2
     if bolge == "yükseliş":
@@ -885,6 +882,10 @@ while True:
                     m1 = ctm - mulk / 2 / cp
         else:
             sf = max(sf, fasks[0] - k)
+            
+        if usd < (mulk / slk - 5):
+            sf = fasks[0]-k
+            m1 = (mulk / slk - usd) / cp
 
     else:
         if bolge == "Dip yatay":
