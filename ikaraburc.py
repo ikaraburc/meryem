@@ -580,15 +580,15 @@ def tc_degisim():
         t = int(60 / 5 * 2)
         tao = round((max(tmumlar[:t]) / cp - 1) * 100, 2)
         ado = round((cp / min(dmumlar[:t]) - 1) * 100, 2)
-        
+
         for i in range(len(emas)):
             if emas[i][0] / ema >= 1.05 or ema / emas[i][0] >= 1.05:
                 break
-        
+
         if emas[i][0] / ema >= 1.05:
             if min(ema / 1.02, fbids[0]) <= ema <= max(ema * 1.02, fasks[0]):
                 ema_ok = "ema uygun"
-        else:            
+        else:
             ema_ok = "ema uygun değil"
             sil = "evet"
 
@@ -697,19 +697,21 @@ while True:
 
     km = 1.03
     alk, slk = 4, 4
-    asi, afi, ma = 2, 10, 2
+    asi, afi, ma = 2, 7, 2
 
-    if ema * 1.01 <= fbids[0] or ema >= kema * 1.01:
-        bolge = "yükseliş"        
+    if fbids[0] >= ema * 1.01 or ema >= kema * 1.01:
+        bolge = "yükseliş"
+        asi, afi, ma = 3, 10, 2
 
-    elif fasks[0]*1.01 <= ema or kema >= ema * 1.01:
+    elif fasks[0] <= ema / 1.01 or kema >= ema * 1.01:
         bolge = "düşüş"
-        
+
     else:
         for i in range(len(emas)):
-            if emas[i][0] / ema >= 1.05 or ema / emas[i][0] >= 1.05:
+            fema = emas[i][0]
+            if fema / ema >= 1.05 or ema / fema >= 1.05:
                 break
-        if emas[i][0] / ema >= 1.05:
+        if fema / ema >= 1.05:
             bolge = "Dip yatay"
             asi, afi, ma = 0, 6, 2
             alk = 2
@@ -731,7 +733,7 @@ while True:
 
     zaf = zaf * 1.005
     zsf = zsf / 1.005
-    
+
     # ************- AL SAT GEÇMİŞ BÖLÜMÜ -*******************************#
 
     sonort0, sonort1 = 0, 0
@@ -853,7 +855,7 @@ while True:
     if usd < (mulk / slk - 5) and fasks[0] < sonafiyat / km:
         sf = min(hsf, zsf)
         m1 = (mulk / slk - usd) / cp
-    
+
     # ************- EMA STRATEJİSİ -*******************************#
     ssi, sfi, ms = 0, 5, 2
     if bolge == "yükseliş":
@@ -862,8 +864,8 @@ while True:
             if kar_orani >= (km - 1) * 100:
                 sf = max(sf, fasks[2] - k)
             else:
-                sf = max(sf*1.02, fasks[4] - k)
-                
+                sf = max(sf * 1.03, fasks[4] - k)
+
         elif kar_orani == -100:
             m1 = min(ctm, mulk / slk / cp)
             sf = max(songaort * 1.05, sf, fasks[4] - k)
@@ -876,20 +878,26 @@ while True:
                 m1 = ctm
             else:
                 sf = max(sf, fasks[0] - k)
-                if ceder > mulk/2:
+                if ceder > mulk / 2:
                     m1 = ctm - mulk / 2 / cp
         else:
             sf = max(sf, fasks[0] - k)
 
     else:
         if bolge == "Dip yatay":
-            sf = sf * 1.02
+            sf = sf * 1.03
         else:
             sfi = 1
             sf = max(sf, fasks[0] - k)
-    
+
     if bolge != "Dip yatay":
-        af = af/1.03
+        af = af / 1.03
+    if m2 == 0:
+        if -100 < kar_orani < (km - 1) * 100:
+            sf = mf * km
+        elif kar_orani == -100:
+            sf = max(sf * 1.05, songaort * 1.20)
+
     # ************- TAF -*******************************#
 
     for fa in range(0, 5):
@@ -912,14 +920,14 @@ while True:
         if fbids[yai] == afiyat:
             taf = fbids[yai + 1] + k
         else:
-            taf = fbids[yai] + k    
-   
-    # ************- TSF -*******************************#   
-    
-    for fs in range(0, 5):
+            taf = fbids[yai] + k
+
+    # ************- TSF -*******************************#
+
+    for fs in range(0, 4):
         if 50 <= mbids[fs] * fbids[fs]:
             break
-    for esi in range(ssi, sfi + 1):
+    for esi in range(ssi, sfi):
         if mbids[max(ms, fs)] < masks[esi]:
             break
 
@@ -937,8 +945,7 @@ while True:
             tsf = fasks[ysi + 1] - k
         else:
             tsf = fasks[ysi] - k
-    
-    
+
     # ************- AL SAT EMİRLERİNİ GÖNDER BÖLÜMÜ -*******************************#
     af = round(min(af, taf), digit)
     sf = round(max(sf, tsf), digit)
@@ -975,7 +982,7 @@ while True:
                 yedek = 2 / cp
             elif cp <= songaort * 1.20:
                 yedek = 2 / cp
-                
+
             sfiyat1 = round(max(sf * 1.1, fasks[10] - k), digit)
             smiktar = m1
             smiktar1 = ctm - m1 - yedek
@@ -995,4 +1002,3 @@ while True:
     print(fiyatlar)
 
     continue
-               
