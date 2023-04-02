@@ -194,7 +194,7 @@ class coin_trader:
                 print("Bağlantı bekleniyor...")
                 continue
 
-        global tmumlar, dmumlar, m1hacim, emas, kemas, ema, kema, fema, kemao
+        global tmumlar, dmumlar, m1hacim, emas, kemas, ema, kema, fema, kemao, max_emao
 
         tmumlar = [float(i[3]) for i in r]
         dmumlar = [float(i[4]) for i in r]
@@ -229,13 +229,13 @@ class coin_trader:
 
         ema = emas[0][0]
         kema = kemas[0]
+        kemao = round(((cp - kema) / min(cp, kema)) * 100, 2)
+        max_emao = round((max(emas, key=lambda cift: cift[0])[0] / ema - 1) * 100, 2)
 
         for w in range(len(emas)):
             fema = emas[w][0]
             if fema / ema >= 1.05 or ema / fema >= 1.05:
                 break
-
-        kemao = round(((cp - kema) / min(cp, kema)) * 100, 2)
 
     def coklu_al(self):
         # Alış emri girilmesi.........
@@ -558,8 +558,7 @@ def tc_fiyatlar():
                 and "5L" not in data[i]["currency_pair"] \
                 and float(data[i]["last"]) > 0 \
                 and float(data[i]["low_24h"]) > 0 \
-                and float(data[i]["high_24h"]) / float(data[i]["last"]) > 1.10 \
-                and 1.60 > float(data[i]["last"]) / float(data[i]["low_24h"]) > 1.10 \
+                and 1.20 > float(data[i]["last"]) / float(data[i]["low_24h"]) > 1.05 \
                 and float(data[i]["quote_volume"]) > 80000:
             toplu.append([data[i]["currency_pair"], float(data[i]["last"]), float(data[i]["low_24h"]),
                           float(data[i]["high_24h"])])
@@ -582,25 +581,39 @@ def tc_degisim():
 
         bc = toplu[y][0]
         ct = coin_trader(bc)
-        ct.coin_digit()
-        ct.toplu_islem()
 
-        t = int(60 / 5 * 2)
-        tao = round((max(tmumlar[:t]) / cp - 1) * 100, 2)
-        ado = round((cp / min(dmumlar[:t]) - 1) * 100, 2)
+        T1 = threading.Thread(target=ct.coin_digit)
+        T2 = threading.Thread(target=ct.coin_fiyat)
+        T3 = threading.Thread(target=ct.tahta_getir)
+        T4 = threading.Thread(target=ct.mumlar)
 
-        if fema / ema >= 1.05 and 0 < kemao <= 2:
+        T1.start()
+        T2.start()
+        T3.start()
+        T4.start()
+
+        T1.join()
+        T2.join()
+        T3.join()
+        T4.join()
+
+        for w in range(len(emas)):
+            fema = emas[w][0]
+            if fema / ema >= 1.10 or ema / fema >= 1.10:
+                break
+
+        if fema / ema >= 1.10 and 0 < kemao <= 5:
             ema_ok = "ema uygun"
         else:
             ema_ok = "ema uygun değil"
             sil = "evet"
 
         ytablo.field_names = [str(bc), str(" of " + str(len(toplu) - y))]
-        ytablo.add_row(["tao", tao])
-        ytablo.add_row(["ado", ado])
+        ytablo.add_row(["kemao", kemao])
+        ytablo.add_row(["max_emao", max_emao])
         ytablo.add_row(["cp", cp])
-        ytablo.add_row(["kema", round(kema, digit)])
-        ytablo.add_row(["ema", round(ema, digit)])
+        ytablo.add_row(["kema", kema])
+        ytablo.add_row(["ema", ema])
         ytablo.add_row(["ema", ema_ok])
         ytablo.add_row(["m1hacim", m1hacim])
 
@@ -610,14 +623,11 @@ def tc_degisim():
             print("Yeni çıkan coin", bc)
             sil = "evet"
 
-        if ado > 5:
-            sil = "evet"
-
         if m1hacim < 750:
             sil = "evet"
 
         if sil != "evet":
-            uygunlar.append([bc, tao])
+            uygunlar.append([bc, max_emao])
 
     import pprint
 
@@ -700,7 +710,7 @@ while True:
         bolge = "yükseliş"
         asi, afi, ma = 3, 10, 2
 
-    elif kemao <= -1:
+    elif kemao < 0:
         bolge = "düşüş"
 
     else:
@@ -839,7 +849,7 @@ while True:
                     m1 = max(ctm - mulk / 2 / cp, m1)
         else:
             sf = max(sf, fasks[0] - k)
-            m1 = min(ctm, mulk/slk/cp)
+            m1 = min(ctm, mulk / slk / cp)
 
         if usd < (mulk / slk - 5):
             sf = fasks[2] - k
@@ -848,10 +858,12 @@ while True:
     else:
         if bolge == "Dip yatay":
             sf = sf * 1.03
+            if fbids[0] <= min(songsort / 1.01, songaort / km):
+                af = min(songsort / 1.01, songaort / km)
         else:
             sfi = 1
             sf = max(sf, fasks[0] - k)
-            m1 = min(ctm, mulk/slk/cp)
+            m1 = min(ctm, mulk / slk / cp)
 
     if bolge != "Dip yatay":
         af = af / 1.03
@@ -876,7 +888,7 @@ while True:
         taf = fbids[eai] + k
 
     if af >= taf / 1.005 and eai > asi:
-        for yai in range(eai, asi-1, -1):
+        for yai in range(eai, asi - 1, -1):
             if abs(taf - fbids[yai]) / fbids[yai] >= 5 / 1000:
                 yai = yai + 1
                 break
@@ -900,7 +912,7 @@ while True:
         tsf = fasks[esi] - k
 
     if sf <= tsf * 1.003 and ssi > esi:
-        for ysi in range(esi, ssi-1, -1):
+        for ysi in range(esi, ssi - 1, -1):
             if abs(tsf - fasks[ysi]) / fasks[ysi] >= 0.5 / 100:
                 ysi = ysi + 1
                 break
@@ -954,8 +966,8 @@ while True:
 
     # ************- EKRANA PRİNT BÖLÜMÜ -*******************************#
     fiyatlar = PrettyTable()
-    fiyatlar.field_names = [str(bolge), mal, str("cp " + str(cp))]
-    fiyatlar.add_row([str(" kemao% " + str(kemao)), str("kema " + str(kema)), str("ema " + str(ema))])
+    fiyatlar.field_names = [str(bolge) + str(" kemao% " + str(kemao)), mal, str("cp " + str(cp))]
+    fiyatlar.add_row([str("max_emao% " + str(max_emao)), str("kema " + str(kema)), str("ema " + str(ema))])
     fiyatlar.add_row([str(sonislem) + str(" af,sf ") + str(round(sf / af, 2)), round(af, digit), round(sf, digit)])
     fiyatlar.add_row([str(" haf,hsf " + str(round(hsf / haf, 2))), round(haf, digit), round(hsf, digit)])
     fiyatlar.add_row(["son aort, sort ", round(sonaort, digit), round(sonsort, digit)])
