@@ -858,12 +858,14 @@ while True:
     else:
         if bolge == "Dip yatay":
             sf = sf * 1.03
-            af = min(songsort / 1.01, songaort / km)
+            if ceder < mulk/2:
+                af = haf * km / 1.01
         else:
             sfi = 1
             sf = max(sf, fasks[0] - k)
             m1 = min(ctm, mulk / slk / cp)
 
+    
     if bolge != "Dip yatay":
         af = af / 1.03
     if ceder <= mulk / 4:
