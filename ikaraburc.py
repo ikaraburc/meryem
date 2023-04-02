@@ -703,18 +703,26 @@ while True:
     # ************- STABİL - PUMP - DUMP BÖLGESİ -*******************************#
 
     km = 1.03
-    alk, slk = 4, 4    
+    alk, slk = 4, 4
+    if fema / ema >= 1.05:
+        yatay = "Dip"
+    else:
+        yatay = "Tepe"
 
     if kemao >= 2:
-        bolge = "yükseliş"
+        bolge = "Yükseliş"
         asi, afi, ma = 3, 10, 2
 
     elif kemao < 0:
-        bolge = "düşüş"
-        asi, afi, ma = 2, 7, 2
+        if yatay == "Dip":
+            bolge = "Dipten düşüş"
+            asi, afi, ma = 0, 5, 2
+        else:
+            bolge = "Tepeden düşüş"
+            asi, afi, ma = 3, 10, 2
 
     else:
-        if fema / ema >= 1.05:
+        if yatay == "Dip":
             bolge = "Dip yatay"
             asi, afi, ma = 0, 5, 2
             alk = 2
@@ -827,7 +835,7 @@ while True:
     # ************- EMA STRATEJİSİ -*******************************#
 
     ssi, sfi, ms = 0, 5, 2
-    if bolge == "yükseliş":
+    if bolge == "Yükseliş":
         sfi = 5
         af = af / km
         if kar_orani > -100:
@@ -839,7 +847,7 @@ while True:
         elif kar_orani == -100:
             sf = max(songaort * 1.05, sf, fasks[4] - k)
 
-    elif bolge == "düşüş":
+    elif bolge == "Tepeden düşüş":
         sfi = 1
         af = af / km
         if kar_orani > -100:
@@ -854,6 +862,7 @@ while True:
             sf = max(sf, fasks[0] - k)
             m1 = min(ctm, mulk / slk / cp)
 
+    elif bolge == "Dipten düşüş":
         if usd < (mulk / slk - 5):
             sf = fasks[2] - k
             m1 = (mulk / slk - usd) / cp
@@ -861,7 +870,7 @@ while True:
     else:
         if bolge == "Dip yatay":
             sf = sf * 1.03
-            if ceder < mulk/2:
+            if ceder < mulk / 2:
                 af = haf * km / 1.01
         else:
             sfi = 1
@@ -869,7 +878,6 @@ while True:
             sf = max(sf, fasks[0] - k)
             m1 = min(ctm, mulk / slk / cp)
 
-    
     if ceder <= mulk / 4:
         if -100 < kar_orani < (km - 1) * 100:
             sf = mf * km
