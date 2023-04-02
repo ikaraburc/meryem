@@ -853,7 +853,7 @@ while True:
             sf = max(sf, fasks[0] - k)
             m1 = min(ctm, mulk/slk/cp)
 
-    if bolge != "Dip yatay" or ceder >= mulk / 2:
+    if bolge != "Dip yatay":
         af = af / 1.03
     if ceder <= mulk / 4:
         if -100 < kar_orani < (km - 1) * 100:
