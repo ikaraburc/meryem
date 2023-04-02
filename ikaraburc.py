@@ -832,7 +832,7 @@ while True:
         af = af / km
         if kar_orani > -100:
             if kar_orani >= (km - 1) * 100:
-                sf = max(sf * 1.01, fasks[4] - k)
+                sf = max(sf * 1.01, fasks[2] - k)
             else:
                 sf = max(sf * 1.03, fasks[4] - k)
 
