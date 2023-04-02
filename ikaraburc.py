@@ -703,8 +703,7 @@ while True:
     # ************- STABİL - PUMP - DUMP BÖLGESİ -*******************************#
 
     km = 1.03
-    alk, slk = 4, 4
-    asi, afi, ma = 2, 7, 2
+    alk, slk = 4, 4    
 
     if kemao >= 2:
         bolge = "yükseliş"
@@ -712,6 +711,7 @@ while True:
 
     elif kemao < 0:
         bolge = "düşüş"
+        asi, afi, ma = 2, 7, 2
 
     else:
         if fema / ema >= 1.05:
@@ -720,6 +720,7 @@ while True:
             alk = 2
         else:
             bolge = "Tepe yatay"
+            asi, afi, ma = 2, 7, 2
             slk = 2
 
     # ************- ZAF + ZSF BUL -*******************************#
@@ -828,6 +829,7 @@ while True:
     ssi, sfi, ms = 0, 5, 2
     if bolge == "yükseliş":
         sfi = 5
+        af = af / km
         if kar_orani > -100:
             if kar_orani >= (km - 1) * 100:
                 sf = max(sf * 1.01, fasks[4] - k)
@@ -839,6 +841,7 @@ while True:
 
     elif bolge == "düşüş":
         sfi = 1
+        af = af / km
         if kar_orani > -100:
             if kar_orani >= (km - 1) * 100:
                 sf = fasks[0] - k
@@ -862,12 +865,11 @@ while True:
                 af = haf * km / 1.01
         else:
             sfi = 1
+            af = af / km
             sf = max(sf, fasks[0] - k)
             m1 = min(ctm, mulk / slk / cp)
 
     
-    if bolge != "Dip yatay":
-        af = af / 1.03
     if ceder <= mulk / 4:
         if -100 < kar_orani < (km - 1) * 100:
             sf = mf * km
