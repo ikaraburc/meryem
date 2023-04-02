@@ -731,21 +731,6 @@ while True:
             asi, afi, ma = 2, 7, 2
             slk = 2
 
-    # ************- ZAF + ZSF BUL -*******************************#
-    zk = 1.07
-    for x in range(1, 1000):
-        if round(max(tmumlar[:x]) / min(dmumlar[:x]), 2) >= zk:
-            zaf = min(dmumlar[:x])
-            zsf = max(tmumlar[:x])
-            break
-        else:
-            x = min(x, 1000)
-            zaf = (max(tmumlar[:x]) + min(dmumlar[:x])) / 2 / km
-            zsf = (max(tmumlar[:x]) + min(dmumlar[:x])) / 2 * km
-
-    zaf = zaf * 1.005
-    zsf = zsf / 1.005
-
     # ************- AL SAT GEÇMİŞ BÖLÜMÜ -*******************************#
 
     sonort0, sonort1 = 0, 0
@@ -757,22 +742,25 @@ while True:
     tut0, tut1 = 0, 0
 
     if harcanan > 0:
+        i = 0
         for i in range(0, len(sonislems)):
             if sonislems[i]["side"] == "buy":
-                gamik = gamik + float(sonislems[i]["amount"])
-                gatut = gatut + float(sonislems[i]["price"]) * float(sonislems[i]["amount"])
-                songaort = gatut / gamik
-                if gatut >= mulk / alk * 0.8:
+                if gatut < mulk / alk * 0.9:
+                    gamik = gamik + float(sonislems[i]["amount"])
+                    gatut = gatut + float(sonislems[i]["price"]) * float(sonislems[i]["amount"])
+                    songaort = gatut / gamik
+                else:
                     break
-
+        i = 0
         for i in range(0, len(sonislems)):
             if sonislems[i]["side"] == "sell":
-                gsmik = gsmik + float(sonislems[i]["amount"])
-                gstut = gstut + float(sonislems[i]["price"]) * float(sonislems[i]["amount"])
-                songsort = gstut / gsmik
-                if gstut >= mulk / slk * 0.8:
+                if gstut < mulk / slk * 0.9:
+                    gsmik = gsmik + float(sonislems[i]["amount"])
+                    gstut = gstut + float(sonislems[i]["price"]) * float(sonislems[i]["amount"])
+                    songsort = gstut / gsmik
+                else:
                     break
-
+        i = 0
         for i in range(len(sonislems)):
             if sonislems[i]["side"] == sonislem:
                 mik0 = mik0 + float(sonislems[i]["amount"])
@@ -815,7 +803,7 @@ while True:
     if harcanan > 0:
         if sonislem == "buy":
             haf = sonaort
-            if max(tut0, ceder) >= mulk / alk * 0.8:
+            if tut0 >= mulk / alk * 0.8:
                 haf = songaort / km
             hsf = max(songaort, sonafiyat) * km
 
@@ -827,10 +815,6 @@ while True:
                 hsf = max(songaort, songsort) * km
     af = haf
     sf = hsf
-    if hsf / fasks[0] >= zk:
-        sf = zsf * 1.01
-    if fbids[0] / haf >= zk:
-        af = zaf / 1.01
 
     # ************- EMA STRATEJİSİ -*******************************#
 
@@ -983,7 +967,6 @@ while True:
     fiyatlar.add_row([str(" haf,hsf " + str(round(hsf / haf, 2))), round(haf, digit), round(hsf, digit)])
     fiyatlar.add_row(["son aort, sort ", round(sonaort, digit), round(sonsort, digit)])
     fiyatlar.add_row(["son gaort, gsort ", round(songaort, digit), round(songsort, digit)])
-    fiyatlar.add_row([str("zaf, zsf zk=" + str(round(zk, 2))), round(zaf, digit), round(zsf, digit)])
 
     print(fiyatlar)
 
