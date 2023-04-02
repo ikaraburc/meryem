@@ -845,12 +845,14 @@ while True:
         else:
             sf = max(sf, fasks[0] - k)
             m1 = min(ctm, mulk / slk / cp)
-
-    elif bolge == "Dipten düşüş":
+        
         if usd < (mulk / slk - 5):
             sf = fasks[2] - k
             m1 = (mulk / slk - usd) / cp
 
+    elif bolge == "Dipten düşüş":
+        af = haf        
+        sf = hsf        
     else:
         if bolge == "Dip yatay":
             sf = sf * 1.03
