@@ -842,7 +842,7 @@ while True:
             m1 = min(ctm, mulk/slk/cp)
 
         if usd < (mulk / slk - 5):
-            sf = fasks[0] - k
+            sf = fasks[2] - k
             m1 = (mulk / slk - usd) / cp
 
     else:
@@ -876,7 +876,7 @@ while True:
         taf = fbids[eai] + k
 
     if af >= taf / 1.005 and eai > asi:
-        for yai in range(eai, asi, -1):
+        for yai in range(eai, asi-1, -1):
             if abs(taf - fbids[yai]) / fbids[yai] >= 5 / 1000:
                 yai = yai + 1
                 break
@@ -900,7 +900,7 @@ while True:
         tsf = fasks[esi] - k
 
     if sf <= tsf * 1.003 and ssi > esi:
-        for ysi in range(esi, ssi, -1):
+        for ysi in range(esi, ssi-1, -1):
             if abs(tsf - fasks[ysi]) / fasks[ysi] >= 0.5 / 100:
                 ysi = ysi + 1
                 break
