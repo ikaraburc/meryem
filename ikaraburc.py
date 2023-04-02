@@ -858,8 +858,7 @@ while True:
     else:
         if bolge == "Dip yatay":
             sf = sf * 1.03
-            if fbids[0] <= min(songsort / 1.01, songaort / km):
-                af = min(songsort / 1.01, songaort / km)
+            af = min(songsort / 1.01, songaort / km)
         else:
             sfi = 1
             sf = max(sf, fasks[0] - k)
