@@ -703,7 +703,7 @@ while True:
     # ************- STABİL - PUMP - DUMP BÖLGESİ -*******************************#
 
     km = 1.03
-    alk, slk = 4, 4
+    alk, slk = 5, 5
     if fema / ema >= 1.05:
         yatay = "Dip"
     else:
@@ -768,7 +768,7 @@ while True:
                 sonort0 = tut0 / mik0
             else:
                 break
-
+        i, x = 0, 0
         for x in range(len(sonislems)):
             if sonislems[x]["side"] == sonislem:
                 continue
@@ -836,7 +836,7 @@ while True:
         af = af / km
         if kar_orani > -100:
             if kar_orani >= (km - 1) * 100:
-                sf = fasks[0] - k
+                sf = max(mf * km, fasks[0] - k)
                 m1 = ctm
             else:
                 sf = max(sf, fasks[0] - k)
@@ -856,9 +856,10 @@ while True:
     else:
         if bolge == "Dip yatay":
             sf = sf * 1.03
+            af = haf
             if ceder < mulk / 2:
                 af = haf * km / 1.01
-        else:
+        elif bolge == "Tepe yatay":
             sfi = 1
             af = af / km
             sf = max(sf, fasks[0] - k)
