@@ -853,17 +853,16 @@ while True:
         if usd < (mulk / slk - 5):
             sf = fasks[2] - k
 
-    else:
-        if bolge == "Dip yatay":
+    elif bolge == "Dip yatay":
             sf = sf * 1.03
             af = haf
             if ceder < mulk / 2:
                 af = haf * km / 1.01
-        elif bolge == "Tepe yatay":
-            sfi = 1
-            af = af / km
-            sf = max(sf, fasks[0] - k)
-            m1 = min(ctm, mulk / slk / cp)
+    elif bolge == "Tepe yatay":
+        sfi = 1
+        af = af / km
+        sf = max(sf, fasks[0] - k)
+        m1 = min(ctm, mulk / slk / cp)
 
     if ceder <= mulk / 4:
         if -100 < kar_orani < (km - 1) * 100:
