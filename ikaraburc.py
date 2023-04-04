@@ -619,7 +619,7 @@ def tc_degisim():
         print(ytablo)
 
         if sil != "evet":
-            uygunlar.append([bc])
+            uygunlar.append(bc)
             bc = uygunlar[0]
             break
 
