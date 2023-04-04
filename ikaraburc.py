@@ -692,9 +692,8 @@ while True:
                     continue
 
     # ************- STABİL - PUMP - DUMP BÖLGESİ -*******************************#
-
     km = 1.03
-    alk, slk = 5, 5
+    alk, slk = 4, 4
     for w in range(len(emas)):
         fema = emas[w][0]
         if fema / ema >= km or ema / fema >= km:
@@ -704,28 +703,6 @@ while True:
         yatay = "Dip"
     else:
         yatay = "Tepe"
-
-    if kemao > 1:
-        bolge = "Yükseliş"
-        asi, afi, ma = 3, 10, 2
-
-    elif kemao < -1:
-        if yatay == "Dip":
-            bolge = "Dipten düşüş"
-            asi, afi, ma = 0, 5, 2
-        else:
-            bolge = "Tepeden düşüş"
-            asi, afi, ma = 3, 10, 2
-
-    else:
-        if yatay == "Dip":
-            bolge = "Dip yatay"
-            asi, afi, ma = 0, 5, 2
-            alk = 2
-        else:
-            bolge = "Tepe yatay"
-            asi, afi, ma = 2, 7, 2
-            slk = 2
 
     # ************- AL SAT GEÇMİŞ BÖLÜMÜ -*******************************#
 
@@ -813,58 +790,76 @@ while True:
     sf = hsf
 
     # ************- EMA STRATEJİSİ -*******************************#
+    if kemao > 1:
+        if yatay == "Dip":
+            bolge = "Dipten Yükseliş"
+            asi, afi, ma = 0, 3, 2
+            ssi, sfi, ms = 3, 5, 2
 
-    ssi, sfi, ms = 0, 5, 2
-    if bolge == "Yükseliş":
-        sfi = 5
-        af = af / km
-        if kar_orani > -100:
-            if kar_orani >= (km - 1) * 100:
-                sf = max(sf, fasks[3] - k)
-            else:
-                sf = max(sf * 1.03, fasks[4] - k)
+            if kar_orani > -100:
+                if kar_orani >= (km - 1) * 100:
+                    sf = max(sf, fasks[3] - k)
+                else:
+                    sf = max(sf * 1.03, fasks[4] - k)
 
-        elif kar_orani == -100:
-            sf = max(songaort * 1.05, sf, fasks[4] - k)
+            elif kar_orani == -100:
+                sf = max(songaort * 1.05, sf, fasks[4] - k)
+        else:
+            bolge = "Tepeden Yükseliş"
+            asi, afi, ma = 0, 3, 2
+            ssi, sfi, ms = 1, 5, 2
 
-    elif bolge == "Tepeden düşüş":
-        sfi = 1
-        af = af / km
-        if kar_orani > -100:
-            if kar_orani >= (km - 1) * 100:
-                sf = max(mf * km, fasks[0] - k)
-                m1 = ctm
+            if kar_orani > -100:
+                if kar_orani >= (km - 1) * 100:
+                    sf = max(sf, fasks[3] - k)
+                else:
+                    sf = max(sf * 1.03, fasks[4] - k)
+
+            elif kar_orani == -100:
+                sf = max(songaort * 1.05, sf, fasks[4] - k)
+
+    elif kemao <= -1:
+        if yatay == "Dip":
+            bolge = "Dipten düşüş"
+            asi, afi, ma = 0, 5, 2
+            ssi, sfi, ms = 2, 5, 2
+
+        else:
+            bolge = "Tepeden düşüş"
+            asi, afi, ma = 4, 10, 4
+            ssi, sfi, ms = 0, 2, 2
+
+            if kar_orani > -100:
+                if kar_orani >= (km - 1) * 100:
+                    sf = max(mf * km, fasks[0] - k)
+                    m1 = ctm
+                else:
+                    sf = max(sf, fasks[0] - k)
             else:
                 sf = max(sf, fasks[0] - k)
+
+            if usd < (mulk / slk - 5):
+                sf = fasks[0] - k
+                m1 = (mulk / slk - usd) / cp
+    else:
+        if yatay == "Dip":
+            bolge = "Dip yatay"
+            asi, afi, ma = 0, 3, 2
+            ssi, sfi, ms = 3, 5, 2
+
+            af = fbids[0] + k
+            sf = sf * 1.01
+
         else:
-            sf = max(sf, fasks[0] - k)
+            bolge = "Tepe yatay"
+            asi, afi, ma = 2, 5, 2
+            ssi, sfi, ms = 2, 5, 2
 
-        if usd < (mulk / slk - 5):
-            sf = fasks[0] - k
-            m1 = (mulk / slk - usd) / cp
+            af = af / 1.01
+            sf = max(sf, fasks[2] - k)
+            m1 = min(ctm, mulk / slk / cp)
 
-    elif bolge == "Dipten düşüş":
-        af = haf
-        sf = hsf
-        if usd < (mulk / slk - 5):
-            sf = fasks[2] - k
-
-        if usd < (mulk / slk - 5):
-            sf = fasks[3] - k
-            m1 = (mulk / slk - usd) / cp
-
-    elif bolge == "Dip yatay":
-        sf = sf * 1.03
-        af = haf
-        if ceder < mulk / 2:
-            af = haf * km / 1.01
-    elif bolge == "Tepe yatay":
-        sfi = 1
-        af = af / km
-        sf = max(sf, fasks[0] - k)
-        m1 = min(ctm, mulk / slk / cp)
-
-    if ceder <= mulk / 4:
+    if ceder <= mulk / 2:
         if -100 < kar_orani < (km - 1) * 100:
             sf = mf * km
         elif kar_orani == -100:
