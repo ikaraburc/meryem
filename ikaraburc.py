@@ -194,7 +194,7 @@ class coin_trader:
                 print("Bağlantı bekleniyor...")
                 continue
 
-        global tmumlar, dmumlar, m1hacim, emas, kemas, ema, kema, fema, kemao, max_emao
+        global tmumlar, dmumlar, m1hacim, emas, kemas, ema, kema, kemao, max_emao
 
         tmumlar = [float(i[3]) for i in r]
         dmumlar = [float(i[4]) for i in r]
@@ -231,11 +231,6 @@ class coin_trader:
         kema = kemas[0]
         kemao = round(((cp - kema) / min(cp, kema)) * 100, 2)
         max_emao = round((max(emas, key=lambda cift: cift[0])[0] / ema - 1) * 100, 2)
-
-        for w in range(len(emas)):
-            fema = emas[w][0]
-            if fema / ema >= 1.05 or ema / fema >= 1.05:
-                break
 
     def coklu_al(self):
         # Alış emri girilmesi.........
@@ -558,10 +553,9 @@ def tc_fiyatlar():
                 and "5L" not in data[i]["currency_pair"] \
                 and float(data[i]["last"]) > 0 \
                 and float(data[i]["low_24h"]) > 0 \
-                and 1.20 > float(data[i]["last"]) / float(data[i]["low_24h"]) > 1.05 \
-                and float(data[i]["quote_volume"]) > 80000:
-            toplu.append([data[i]["currency_pair"], float(data[i]["last"]), float(data[i]["low_24h"]),
-                          float(data[i]["high_24h"])])
+                and 1.40 > float(data[i]["last"]) / float(data[i]["low_24h"]) > 1.10 \
+                and 500000 > float(data[i]["quote_volume"]) > 30000:
+            toplu.append(data[i]["currency_pair"])
 
     print("coin sayısı ", len(toplu))
     import pprint
@@ -569,7 +563,7 @@ def tc_fiyatlar():
 
 
 def tc_degisim():
-    global bc, ytablo, ytoplu
+    global bc, ytablo
 
     ytablo = PrettyTable()
     ytablo.clear()
@@ -579,7 +573,7 @@ def tc_degisim():
         sil = "hayır"
         ytablo.clear()
 
-        bc = toplu[y][0]
+        bc = toplu[y]
         ct = coin_trader(bc)
 
         T1 = threading.Thread(target=ct.coin_digit)
@@ -599,25 +593,14 @@ def tc_degisim():
 
         for w in range(len(emas)):
             fema = emas[w][0]
-            if fema / ema >= 1.10 or ema / fema >= 1.10:
+            if ema < fema / 1.05 or ema > fema * 1.05:
                 break
 
-        if fema / ema >= 1.10 and 0 < kemao <= 5:
+        if ema < fema / 1.05 and cp * 1.02 > ema >= cp:
             ema_ok = "ema uygun"
         else:
             ema_ok = "ema uygun değil"
             sil = "evet"
-
-        ytablo.field_names = [str(bc), str(" of " + str(len(toplu) - y))]
-        ytablo.add_row(["kemao", kemao])
-        ytablo.add_row(["max_emao", max_emao])
-        ytablo.add_row(["cp", cp])
-        ytablo.add_row(["kema", kema])
-        ytablo.add_row(["ema", ema])
-        ytablo.add_row(["ema", ema_ok])
-        ytablo.add_row(["m1hacim", m1hacim])
-
-        print(ytablo)
 
         if len(tmumlar) < 800:
             print("Yeni çıkan coin", bc)
@@ -626,17 +609,25 @@ def tc_degisim():
         if m1hacim < 750:
             sil = "evet"
 
+        ytablo.field_names = [str(bc), str(" of " + str(len(toplu) - y))]
+        ytablo.add_row(["kemao", kemao])
+        ytablo.add_row(["cp", cp])
+        ytablo.add_row(["kema", kema])
+        ytablo.add_row(["ema", ema])
+        ytablo.add_row(["ema", ema_ok])
+        ytablo.add_row(["m1hacim", m1hacim])
+        print(ytablo)
+
         if sil != "evet":
-            uygunlar.append([bc, max_emao])
+            uygunlar.append([bc])
+            bc = uygunlar[0]
+            break
 
     import pprint
 
     if len(uygunlar) > 0:
-        uygunlar.sort(key=lambda x: x[1])
-        uygunlar.reverse()
         print("tarama bitti....")
         pprint.pp(uygunlar)
-        bc = uygunlar[0][0]
     else:
         print("COİN BULUNAMADI....")
         bc = "boş"
@@ -704,16 +695,21 @@ while True:
 
     km = 1.03
     alk, slk = 5, 5
-    if fema / ema >= 1.05:
+    for w in range(len(emas)):
+        fema = emas[w][0]
+        if fema / ema >= km or ema / fema >= km:
+            break
+
+    if fema / ema >= km:
         yatay = "Dip"
     else:
         yatay = "Tepe"
 
-    if kemao >= 2:
+    if kemao > 1:
         bolge = "Yükseliş"
         asi, afi, ma = 3, 10, 2
 
-    elif kemao < 0:
+    elif kemao < -1:
         if yatay == "Dip":
             bolge = "Dipten düşüş"
             asi, afi, ma = 0, 5, 2
@@ -824,7 +820,7 @@ while True:
         af = af / km
         if kar_orani > -100:
             if kar_orani >= (km - 1) * 100:
-                sf = max(sf * 1.01, fasks[2] - k)
+                sf = max(sf, fasks[3] - k)
             else:
                 sf = max(sf * 1.03, fasks[4] - k)
 
@@ -844,7 +840,7 @@ while True:
             sf = max(sf, fasks[0] - k)
 
         if usd < (mulk / slk - 5):
-            sf = fasks[2] - k
+            sf = fasks[0] - k
             m1 = (mulk / slk - usd) / cp
 
     elif bolge == "Dipten düşüş":
@@ -853,11 +849,15 @@ while True:
         if usd < (mulk / slk - 5):
             sf = fasks[2] - k
 
+        if usd < (mulk / slk - 5):
+            sf = fasks[3] - k
+            m1 = (mulk / slk - usd) / cp
+
     elif bolge == "Dip yatay":
-            sf = sf * 1.03
-            af = haf
-            if ceder < mulk / 2:
-                af = haf * km / 1.01
+        sf = sf * 1.03
+        af = haf
+        if ceder < mulk / 2:
+            af = haf * km / 1.01
     elif bolge == "Tepe yatay":
         sfi = 1
         af = af / km
