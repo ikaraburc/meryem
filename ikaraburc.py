@@ -819,7 +819,7 @@ while True:
                     sf = max(sf,fasks[0]*1.01, fasks[4] - k)
 
             elif kar_orani == -100:
-                sf = max(songaort * 1.05, sf,,fasks[0]*1.01, fasks[4] - k)
+                sf = max(songaort * 1.05, sf,fasks[0]*1.01, fasks[4] - k)
 
     elif kemao <= -1:
         if yatay == "Dip":
