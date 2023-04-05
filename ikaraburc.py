@@ -794,22 +794,24 @@ while True:
     if kemao > 1:
         if yatay == "Dip":
             bolge = "Dipten Yükseliş"
-            asi, afi, ma = 0, 5, 2
+            asi, afi, ma = 2, 5, 2
             ssi, sfi, ms = 3, 5, 2
-
+            
+            af = fbids[3]
             if kar_orani > -100:
                 if kar_orani >= (km - 1) * 100:
                     sf = max(sf,fasks[0]*1.01, fasks[3] - k)
                 else:
-                    sf = max(sf,fasks[0]*1.01, fasks[4] - k)
+                    sf = max(sf,fasks[0]*1.03, fasks[4] - k)
 
             elif kar_orani == -100:
-                sf = max(songaort * 1.05, sf, fasks[4] - k)
+                sf = max(songaort * 1.05, sf,,fasks[0]*1.01, fasks[4] - k)
         else:
             bolge = "Tepeden Yükseliş"
-            asi, afi, ma = 0, 5, 2
+            asi, afi, ma = 3, 7, 3
             ssi, sfi, ms = 1, 5, 2
-
+            
+            af = fbids[3]
             if kar_orani > -100:
                 if kar_orani >= (km - 1) * 100:
                     sf = max(sf,fasks[0]*1.01, fasks[3] - k)
@@ -817,12 +819,12 @@ while True:
                     sf = max(sf,fasks[0]*1.01, fasks[4] - k)
 
             elif kar_orani == -100:
-                sf = max(songaort * 1.05, sf, fasks[4] - k)
+                sf = max(songaort * 1.05, sf,,fasks[0]*1.01, fasks[4] - k)
 
     elif kemao <= -1:
         if yatay == "Dip":
             bolge = "Dipten düşüş"
-            asi, afi, ma = 0, 3, 2
+            asi, afi, ma = 1, 5, 2
             ssi, sfi, ms = 2, 5, 2
 
         else:
@@ -848,7 +850,7 @@ while True:
             asi, afi, ma = 1, 3, 2
             ssi, sfi, ms = 3, 5, 2
 
-            af = fbids[0] + k
+            af = fbids[asi] + k
             sf = sf * 1.01
 
         else:
