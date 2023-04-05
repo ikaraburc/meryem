@@ -205,7 +205,7 @@ class coin_trader:
         dmumlar.reverse()
         kmumlar.reverse()
         m1hacim.reverse()
-        m1hacim = round(sum(m1hacim[:7]), 2)
+        m1hacim = round(sum(m1hacim[:6]), 2)
 
         emas = []
         ema_periyot = 12
@@ -553,8 +553,7 @@ def tc_fiyatlar():
                 and "5L" not in data[i]["currency_pair"] \
                 and float(data[i]["last"]) > 0 \
                 and float(data[i]["low_24h"]) > 0 \
-                and float(data[i]["high_24h"]) / float(data[i]["last"]) > 1.05 \
-                and 1.40 > float(data[i]["last"]) / float(data[i]["low_24h"]) > 1.10 \
+                and 1.10 > float(data[i]["last"]) / float(data[i]["low_24h"]) > 1.05 \
                 and 500000 > float(data[i]["quote_volume"]) > 30000:
             toplu.append(data[i]["currency_pair"])
 
@@ -592,15 +591,13 @@ def tc_degisim():
         T3.join()
         T4.join()
 
-        for w in range(len(emas)):
-            fema = emas[w][0]
-            if ema < fema / 1.05 or ema > fema * 1.05:
-                break
-
-        if ema < fema / 1.05 and cp * 1.02 > ema >= cp:
+        if 3 > kemao >= 1:
             ema_ok = "ema uygun"
         else:
             ema_ok = "ema uygun değil"
+            sil = "evet"
+
+        if cp / min(dmumlar) > 1.10:
             sil = "evet"
 
         if len(tmumlar) < 800:
@@ -622,6 +619,7 @@ def tc_degisim():
         if sil != "evet":
             uygunlar.append(bc)
             bc = uygunlar[0]
+            print(uygunlar)
             break
 
     import pprint
@@ -791,44 +789,43 @@ while True:
     sf = hsf
 
     # ************- EMA STRATEJİSİ -*******************************#
-    if kemao > 1:
+    if kemao >= 2:
         if yatay == "Dip":
             bolge = "Dipten Yükseliş"
-            asi, afi, ma = 2, 5, 2
+            asi, afi, ma = 2, 7, 2
             ssi, sfi, ms = 3, 5, 2
-            
-            af = fbids[3]
+
+            af = fbids[asi]
             if kar_orani > -100:
                 if kar_orani >= (km - 1) * 100:
-                    sf = max(sf,fasks[0]*1.01, fasks[3] - k)
+                    sf = max(sf, fasks[0] * 1.01)
                 else:
-                    sf = max(sf,fasks[0]*1.03, fasks[4] - k)
+                    sf = max(sf, fasks[0] * 1.03)
 
             elif kar_orani == -100:
-                sf = max(songaort * 1.05, sf,fasks[0]*1.01, fasks[4] - k)
+                sf = max(songaort * 1.05, sf, fasks[0] * 1.01, fasks[4] - k)
         else:
             bolge = "Tepeden Yükseliş"
             asi, afi, ma = 3, 7, 3
             ssi, sfi, ms = 1, 5, 2
-            
+
             af = fbids[3]
             if kar_orani > -100:
                 if kar_orani >= (km - 1) * 100:
-                    sf = max(sf,fasks[0]*1.01, fasks[3] - k)
+                    sf = max(sf, fasks[0] * 1.01)
                 else:
-                    sf = max(sf,fasks[0]*1.01, fasks[4] - k)
+                    sf = max(sf, fasks[0] * 1.01)
 
             elif kar_orani == -100:
-                sf = max(songaort * 1.05, sf,fasks[0]*1.01, fasks[4] - k)
-
+                sf = max(songaort * 1.05, sf, fasks[0] * 1.01)
     elif kemao <= -1:
         if yatay == "Dip":
             bolge = "Dipten düşüş"
-            asi, afi, ma = 1, 5, 2
-            ssi, sfi, ms = 2, 5, 2
-            
+            asi, afi, ma = 2, 5, 2
+            ssi, sfi, ms = 0, 5, 2
+
             if usd < (mulk / 4 - 5):
-                sf = fasks[ssi] - k
+                sf = fasks[ssi]
                 m1 = (mulk / 4 - usd) / cp
 
         else:
@@ -836,37 +833,42 @@ while True:
             asi, afi, ma = 4, 10, 4
             ssi, sfi, ms = 0, 2, 2
 
-            if kar_orani > -100:
-                if kar_orani >= (km - 1) * 100:
-                    sf = max(mf * km, fasks[0] - k)
-                    m1 = ctm
-                else:
-                    sf = max(sf, fasks[0] - k)
+            if kar_orani >= (km - 1) * 100:
+                sf = max(mf * km, fasks[0])
+                m1 = ctm
             else:
-                sf = max(sf, fasks[0] - k)
+                sf = max(sf, fasks[0])
 
-            if usd < (mulk / 2 - 5):
-                sf = fasks[0] - k
-                m1 = (mulk / 2 - usd) / cp
+                if usd < (mulk / 2 - 5):
+                    sf = fasks[0]
+                    m1 = (mulk / 2 - usd) / cp
     else:
         if yatay == "Dip":
             bolge = "Dip yatay"
             asi, afi, ma = 1, 3, 2
             ssi, sfi, ms = 3, 5, 2
 
-            af = fbids[asi] + k
+            af = fbids[asi]
+            if kemao > 0:
+                af = fbids[asi]
+                sfi = 2
+
             sf = sf * 1.01
 
         else:
             bolge = "Tepe yatay"
             asi, afi, ma = 3, 5, 2
-            ssi, sfi, ms = 1, 5, 2
+            ssi, sfi, ms = 0, 3, 2
 
             af = af / 1.01
-            sf = max(sf, fasks[2] - k)
-            m1 = min(ctm, mulk / slk / cp)
+            if kema < 0:
+                sf = fbids[0]
 
     if ceder <= mulk / 2:
+        if kemao < 3 and harcanan < mulk / 2:
+            asi, afi, ma = 0, 3, 2
+            af = fbids[0]
+
         if -100 < kar_orani < (km - 1) * 100:
             sf = mf * km
         elif kar_orani == -100:
@@ -877,7 +879,7 @@ while True:
     for fa in range(0, 5):
         if 50 <= masks[fa] * fasks[fa]:
             break
-    for eai in range(asi, afi + 1):
+    for eai in range(0, afi + 1):
         if masks[max(ma, fa)] < mbids[eai]:
             break
 
@@ -896,12 +898,14 @@ while True:
         else:
             taf = fbids[yai] + k
 
+        af = taf
+
     # ************- TSF -*******************************#
 
     for fs in range(0, 4):
         if 50 <= mbids[fs] * fbids[fs]:
             break
-    for esi in range(ssi, sfi):
+    for esi in range(0, sfi):
         if mbids[max(ms, fs)] < masks[esi]:
             break
 
@@ -910,7 +914,9 @@ while True:
     else:
         tsf = fasks[esi] - k
 
-    if sf <= tsf * 1.003 and ssi > esi:
+    if kemao > 0:
+        sf = max(sf, tsf)
+    elif sf <= tsf and ssi > esi:
         for ysi in range(esi, ssi - 1, -1):
             if abs(tsf - fasks[ysi]) / fasks[ysi] >= 0.5 / 100:
                 ysi = ysi + 1
@@ -920,9 +926,14 @@ while True:
         else:
             tsf = fasks[ysi] - k
 
+        if tsf / fbids[0] < 1.01:
+            tsf = fbids[0]
+
+        sf = tsf
+
     # ************- AL SAT EMİRLERİNİ GÖNDER BÖLÜMÜ -*******************************#
-    af = round(min(af, taf), digit)
-    sf = round(max(sf, tsf), digit)
+    af = round(af, digit)
+    sf = round(sf, digit)
 
     if usd >= 1:
         if af > afiyat or af < afiyat / 1.002 or usdt_av >= 2:
