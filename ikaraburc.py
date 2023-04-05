@@ -553,6 +553,7 @@ def tc_fiyatlar():
                 and "5L" not in data[i]["currency_pair"] \
                 and float(data[i]["last"]) > 0 \
                 and float(data[i]["low_24h"]) > 0 \
+                and float(data[i]["high_24h"]) / float(data[i]["last"]) > 1.05 \
                 and 1.40 > float(data[i]["last"]) / float(data[i]["low_24h"]) > 1.10 \
                 and 500000 > float(data[i]["quote_volume"]) > 30000:
             toplu.append(data[i]["currency_pair"])
@@ -793,27 +794,27 @@ while True:
     if kemao > 1:
         if yatay == "Dip":
             bolge = "Dipten Yükseliş"
-            asi, afi, ma = 0, 3, 2
+            asi, afi, ma = 0, 5, 2
             ssi, sfi, ms = 3, 5, 2
 
             if kar_orani > -100:
                 if kar_orani >= (km - 1) * 100:
-                    sf = max(sf, fasks[3] - k)
+                    sf = max(sf,fasks[0]*1.01, fasks[3] - k)
                 else:
-                    sf = max(sf * 1.03, fasks[4] - k)
+                    sf = max(sf,fasks[0]*1.01, fasks[4] - k)
 
             elif kar_orani == -100:
                 sf = max(songaort * 1.05, sf, fasks[4] - k)
         else:
             bolge = "Tepeden Yükseliş"
-            asi, afi, ma = 0, 3, 2
+            asi, afi, ma = 0, 5, 2
             ssi, sfi, ms = 1, 5, 2
 
             if kar_orani > -100:
                 if kar_orani >= (km - 1) * 100:
-                    sf = max(sf, fasks[3] - k)
+                    sf = max(sf,fasks[0]*1.01, fasks[3] - k)
                 else:
-                    sf = max(sf * 1.03, fasks[4] - k)
+                    sf = max(sf,fasks[0]*1.01, fasks[4] - k)
 
             elif kar_orani == -100:
                 sf = max(songaort * 1.05, sf, fasks[4] - k)
@@ -821,7 +822,7 @@ while True:
     elif kemao <= -1:
         if yatay == "Dip":
             bolge = "Dipten düşüş"
-            asi, afi, ma = 0, 5, 2
+            asi, afi, ma = 0, 3, 2
             ssi, sfi, ms = 2, 5, 2
 
         else:
@@ -838,13 +839,13 @@ while True:
             else:
                 sf = max(sf, fasks[0] - k)
 
-            if usd < (mulk / slk - 5):
+            if usd < (mulk / 2 - 5):
                 sf = fasks[0] - k
-                m1 = (mulk / slk - usd) / cp
+                m1 = (mulk / 2 - usd) / cp
     else:
         if yatay == "Dip":
             bolge = "Dip yatay"
-            asi, afi, ma = 0, 3, 2
+            asi, afi, ma = 1, 3, 2
             ssi, sfi, ms = 3, 5, 2
 
             af = fbids[0] + k
@@ -852,8 +853,8 @@ while True:
 
         else:
             bolge = "Tepe yatay"
-            asi, afi, ma = 2, 5, 2
-            ssi, sfi, ms = 2, 5, 2
+            asi, afi, ma = 3, 5, 2
+            ssi, sfi, ms = 1, 5, 2
 
             af = af / 1.01
             sf = max(sf, fasks[2] - k)
