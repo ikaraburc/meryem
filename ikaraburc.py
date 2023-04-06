@@ -844,7 +844,10 @@ while True:
             ssi, sfi, ms = 0, 5, 2
 
             if usd < (mulk / 4 - 5):
-                sf = fasks[ssi]
+                if kemao > -2:
+                    sf = fasks[ssi]
+                else:
+                    sf = fasks[3]
                 m1 = (mulk / 4 - usd) / cp
 
         else:
@@ -868,7 +871,7 @@ while True:
             ssi, sfi, ms = 3, 5, 2
 
             af = fbids[asi]
-            if kemao > 0 and harcanan < mulk / 2:
+            if kemao > 0:
                 af = fbids[asi]
                 afi = 2
 
