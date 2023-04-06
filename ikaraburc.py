@@ -713,13 +713,14 @@ while True:
 
     # ************- STABİL - PUMP - DUMP BÖLGESİ -*******************************#
     km = 1.03
+    emak = 1.014
     alk, slk = 4, 4
     for w in range(len(emas)):
         fema = emas[w][0]
-        if fema / ema >= km or ema / fema >= km:
+        if fema / ema >= emak or ema / fema >= emak:
             break
 
-    if fema / ema >= km:
+    if fema / ema >= emak:
         yatay = "Dip"
     else:
         yatay = "Tepe"
