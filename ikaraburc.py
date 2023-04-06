@@ -613,8 +613,10 @@ def tc_degisim():
             sil = "evet"
 
         emmao = round(cp / min(emas, key=lambda em: em[0])[0], 2)
-        if emmao > 1.20:
-            print("son günlerde aşırı yükselmiş silindi...%", emmao, bc)
+        emmao1 = round(cp / min(emas[:24], key=lambda em: em[0])[0], 2)
+        
+        if emmao > 1.20 or emmao1 >= 1.07:
+            print("son günlerde/saatlerde aşırı yükselmiş silindi...%", emmao,emmao1, bc)
             sil = "evet"
 
         if len(tmumlar) < 800:
