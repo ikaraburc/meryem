@@ -910,8 +910,8 @@ while True:
     else:
         taf = fbids[eai] + k
 
-    if af >= taf / 1.005 and eai > asi:
-        for yai in range(eai, asi - 1, -1):
+    if abs(af-taf)/min(af,taf) >= 1.005 and eai > asi:
+        for yai in range(eai, - 1, -1):
             if abs(taf - fbids[yai]) / fbids[yai] >= 5 / 1000:
                 yai = yai + 1
                 break
@@ -939,7 +939,7 @@ while True:
     if kemao > 0:
         sf = max(sf, tsf)
     elif sf <= tsf and ssi > esi:
-        for ysi in range(esi, ssi - 1, -1):
+        for ysi in range(esi, - 1, -1):
             if abs(tsf - fasks[ysi]) / fasks[ysi] >= 0.5 / 100:
                 ysi = ysi + 1
                 break
