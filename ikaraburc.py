@@ -817,9 +817,9 @@ while True:
             af = fbids[asi]
             if kar_orani > -100:
                 if kar_orani >= (km - 1) * 100:
-                    sf = max(sf, fasks[0] * 1.01)
+                    sf = max(sf, fasks[0] * 1.01, fasks[3])
                 else:
-                    sf = max(sf, fasks[0] * 1.03)
+                    sf = max(sf, fasks[0] * 1.01, fasks[4])
 
             elif kar_orani == -100:
                 sf = max(songaort * 1.05, sf, fasks[0] * 1.01, fasks[4] - k)
@@ -831,9 +831,9 @@ while True:
             af = fbids[3]
             if kar_orani > -100:
                 if kar_orani >= (km - 1) * 100:
-                    sf = max(sf, fasks[0] * 1.01)
+                    sf = max(sf, fasks[0] * 1.01, fasks[3])
                 else:
-                    sf = max(sf, fasks[0] * 1.01)
+                    sf = max(sf, fasks[0] * 1.01, fasks[4])
 
             elif kar_orani == -100:
                 sf = max(songaort * 1.05, sf, fasks[0] * 1.01)
@@ -868,11 +868,11 @@ while True:
             ssi, sfi, ms = 3, 5, 2
 
             af = fbids[asi]
-            if kemao > 0 and ceder < mulk / 2:
+            if kemao > 0 and harcanan < mulk / 2:
                 af = fbids[asi]
                 afi = 2
 
-            sf = sf * 1.01
+            sf = max(sf * 1.01, fasks[4])
 
         else:
             bolge = "Tepe yatay"
