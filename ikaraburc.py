@@ -209,7 +209,7 @@ class coin_trader:
 
         emas = []
         ema_periyot = 12
-        for i in range(1000):
+        for i in range(1000 - ema_periyot):
             emas.append([round(sum(kmumlar[i:i + ema_periyot]) / ema_periyot, digit), kmumlar[i]])
 
         kemas = []
@@ -532,30 +532,32 @@ def son_coin():
         scoin = "BTC_USDT"
 
 
-def tc_fiyatlar():
+def coins_fiyatlar():
     host = "https://api.gateio.ws"
     prefix = "/api/v4"
     headers = {'Accept': 'application/json', 'Content-Type': 'application/json'}
 
     url = '/spot/tickers'
-    data = requests.request('GET', host + prefix + url, headers=headers).json()
+    global coin_liste
+    coin_liste = requests.request('GET', host + prefix + url, headers=headers).json()
 
-    global bulunanlar, toplu
 
+def birinci_elek():
+    global toplu
     toplu = []
-    bulunanlar = ["abc", "abcd"]
-
-    for i in range(len(data)):
-        if "_USDT" in data[i]["currency_pair"] \
-                and "3S" not in data[i]["currency_pair"] \
-                and "3L" not in data[i]["currency_pair"] \
-                and "5S" not in data[i]["currency_pair"] \
-                and "5L" not in data[i]["currency_pair"] \
-                and float(data[i]["last"]) > 0 \
-                and float(data[i]["low_24h"]) > 0 \
-                and 1.10 > float(data[i]["last"]) / float(data[i]["low_24h"]) > 1.05 \
-                and 500000 > float(data[i]["quote_volume"]) > 30000:
-            toplu.append(data[i]["currency_pair"])
+    coins_fiyatlar()
+    for i in range(len(coin_liste)):
+        if "_USDT" in coin_liste[i]["currency_pair"] \
+                and "3S" not in coin_liste[i]["currency_pair"] \
+                and "3L" not in coin_liste[i]["currency_pair"] \
+                and "5S" not in coin_liste[i]["currency_pair"] \
+                and "5L" not in coin_liste[i]["currency_pair"] \
+                and float(coin_liste[i]["last"]) > 0 \
+                and float(coin_liste[i]["low_24h"]) > 0 \
+                and float(coin_liste[i]["change_percentage"]) > 0 \
+                and 500000 > float(coin_liste[i]["quote_volume"]) > 15000 \
+                and 1.10 > float(coin_liste[i]["last"]) / float(coin_liste[i]["low_24h"]) > 1.03:
+            toplu.append([coin_liste[i]["currency_pair"], float(coin_liste[i]["last"])])
 
     print("coin sayısı ", len(toplu))
     import pprint
@@ -566,48 +568,64 @@ def tc_degisim():
     global bc, ytablo
 
     ytablo = PrettyTable()
-    ytablo.clear()
     uygunlar = []
     bc = "boş"
-    for y in range(len(toplu)):
+    for i in range(len(toplu)):
+        degisim = []
+        ytablo.clear()
+        for s in range(len(toplu)):
+            for n in coin_liste:
+                if toplu[s][0] == n["currency_pair"]:
+                    degisim.append([toplu[s][0], round(float(n["last"]) / toplu[s][1], 2)])
+
+        bch = max(degisim, key=lambda x: x[1])
+        print(bch)
+        bc = bch[0]
+
         sil = "hayır"
         ytablo.clear()
 
-        bc = toplu[y]
         ct = coin_trader(bc)
 
         T1 = threading.Thread(target=ct.coin_digit)
         T2 = threading.Thread(target=ct.coin_fiyat)
         T3 = threading.Thread(target=ct.tahta_getir)
         T4 = threading.Thread(target=ct.mumlar)
+        T5 = threading.Thread(target=coins_fiyatlar)
 
         T1.start()
         T2.start()
         T3.start()
         T4.start()
+        T5.start()
 
         T1.join()
         T2.join()
         T3.join()
         T4.join()
+        T5.join()
 
-        if 3 > kemao >= 1:
+        if 3 > kemao > 1:
             ema_ok = "ema uygun"
         else:
             ema_ok = "ema uygun değil"
+            print("ema uygun değil silindi...", bc)
             sil = "evet"
 
-        if cp / min(dmumlar) > 1.10:
+        emmao = round(cp / min(emas, key=lambda em: em[0])[0], 2)
+        if emmao > 1.20:
+            print("son günlerde aşırı yükselmiş silindi...%", emmao, bc)
             sil = "evet"
 
         if len(tmumlar) < 800:
-            print("Yeni çıkan coin", bc)
+            print("Yeni çıkan coin, silindi...", bc)
             sil = "evet"
 
         if m1hacim < 750:
+            print("hacim düşük silindi..", bc)
             sil = "evet"
 
-        ytablo.field_names = [str(bc), str(" of " + str(len(toplu) - y))]
+        ytablo.field_names = [str(bc), str(" of " + str(len(toplu)))]
         ytablo.add_row(["kemao", kemao])
         ytablo.add_row(["cp", cp])
         ytablo.add_row(["kema", kema])
@@ -616,9 +634,10 @@ def tc_degisim():
         ytablo.add_row(["m1hacim", m1hacim])
         print(ytablo)
 
+        toplu.remove(list(filter(lambda k: k[0] == bc, toplu))[0])
+
         if sil != "evet":
             uygunlar.append(bc)
-            bc = uygunlar[0]
             print(uygunlar)
             break
 
@@ -665,7 +684,7 @@ while True:
 
         if yeni_tara == "evet":
             emirleri_sil()
-            tc_fiyatlar()
+            birinci_elek()
             son_coin()
             for i in toplu:
                 if i[0] == scoin:
@@ -687,7 +706,7 @@ while True:
                     tbot_ozel.send_message(telegram_chat_id, str("https://www.gate.io/tr/trade-old/" + str(bc)))
                     break
                 else:
-                    tc_fiyatlar()
+                    birinci_elek()
                     continue
 
     # ************- STABİL - PUMP - DUMP BÖLGESİ -*******************************#
@@ -789,7 +808,7 @@ while True:
     sf = hsf
 
     # ************- EMA STRATEJİSİ -*******************************#
-    if kemao >= 2:
+    if kemao >= 1:
         if yatay == "Dip":
             bolge = "Dipten Yükseliş"
             asi, afi, ma = 2, 7, 2
@@ -849,9 +868,9 @@ while True:
             ssi, sfi, ms = 3, 5, 2
 
             af = fbids[asi]
-            if kemao > 0:
+            if kemao > 0 and ceder < mulk / 2:
                 af = fbids[asi]
-                sfi = 2
+                afi = 2
 
             sf = sf * 1.01
 
