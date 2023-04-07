@@ -860,15 +860,15 @@ while True:
             break
 
     if fbids[eai] == afiyat:
-        taf = fbids[eai + 1] + k
+        taff = fbids[eai + 1] + k
     else:
-        taf = fbids[eai] + k
+        taff = fbids[eai] + k
 
-    af = min(af, taf)
+    af = min(af, taff)
 
-    if af * 1.005 >= taf:
+    if af * 1.005 >= taff:
         for yai in range(eai, - 1, -1):
-            if abs(taf - fbids[yai]) / fbids[yai] >= 5 / 1000:
+            if abs(taff - fbids[yai]) / fbids[yai] >= 5 / 1000:
                 yai = yai + 1
                 break
         if fbids[yai] == afiyat:
@@ -877,6 +877,9 @@ while True:
             taf = fbids[yai] + k
 
         af = taf
+    if bolge == "ALIM YERİ" and fasks[0]/taff < 1.005:
+        af = fasks[0]
+            
 
     # ************- TSF -*******************************#
 
