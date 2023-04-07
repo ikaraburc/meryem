@@ -194,7 +194,7 @@ class coin_trader:
                 print("Bağlantı bekleniyor...")
                 continue
 
-        global tmumlar, dmumlar, m1hacim, emas, kemas, ema, kema, kemao, max_emao
+        global tmumlar, dmumlar, m1hacim, emas, kemas, ema, kema, kemao, max_emao, kema1
 
         tmumlar = [float(i[3]) for i in r]
         dmumlar = [float(i[4]) for i in r]
@@ -229,6 +229,7 @@ class coin_trader:
 
         ema = emas[0][0]
         kema = kemas[0]
+        kema1 = kemas[1]
         kemao = round(((cp - kema) / min(cp, kema)) * 100, 2)
         max_emao = round((max(emas, key=lambda cift: cift[0])[0] / ema - 1) * 100, 2)
 
@@ -613,7 +614,7 @@ def tc_degisim():
             sil = "evet"
 
         emmao = round(cp / min(emas, key=lambda em: em[0])[0], 2)
-        emmao1 = round(cp / min(emas[:24], key=lambda em: em[0])[0], 2)
+        emmao1 = round(cp / min(emas[:36], key=lambda em: em[0])[0], 2)
         
         if emmao > 1.20 or emmao1 >= 1.07:
             print("son günlerde/saatlerde aşırı yükselmiş silindi...%", emmao,emmao1, bc)
@@ -713,14 +714,13 @@ while True:
 
     # ************- STABİL - PUMP - DUMP BÖLGESİ -*******************************#
     km = 1.03
-    emak = 1.014
     alk, slk = 4, 4
     for w in range(len(emas)):
         fema = emas[w][0]
-        if fema / ema >= emak or ema / fema >= emak:
+        if fema / ema >= km or ema / fema >= km:
             break
 
-    if fema / ema >= emak:
+    if fema / ema >= km:
         yatay = "Dip"
     else:
         yatay = "Tepe"
@@ -840,18 +840,17 @@ while True:
 
             elif kar_orani == -100:
                 sf = max(songaort * 1.05, sf, fasks[0] * 1.01)
-    elif kemao <= -1:
+    elif kemao < 0:
         if yatay == "Dip":
             bolge = "Dipten düşüş"
             asi, afi, ma = 2, 5, 2
             ssi, sfi, ms = 0, 5, 2
 
-            if usd < (mulk / 4 - 5):
-                if kemao > -2:
-                    sf = fasks[ssi]
-                else:
-                    sf = fasks[3]
+            if usd < (mulk / 4 - 5) and kemao <= -1:
+                sf = fasks[0]
                 m1 = (mulk / 4 - usd) / cp
+            else:
+                sf = max(sf, fasks[3])
 
         else:
             bolge = "Tepeden düşüş"
@@ -861,12 +860,11 @@ while True:
             if kar_orani >= (km - 1) * 100:
                 sf = max(mf * km, fasks[0])
                 m1 = ctm
-            else:
-                sf = max(sf, fasks[0])
-
-                if usd < (mulk / 2 - 5):
+            elif kar_orani == -100 and fasks[0] >= songaort * 1.20:
+                sf = max(songaort * 1.20, fasks[0])
+                m1 = ctm
+            elif usd < (mulk / 2 - 5):
                     sf = fasks[0]
-                    m1 = (mulk / 2 - usd) / cp
     else:
         if yatay == "Dip":
             bolge = "Dip yatay"
@@ -874,29 +872,18 @@ while True:
             ssi, sfi, ms = 3, 5, 2
 
             af = fbids[asi]
-            if kemao > 0:
-                af = fbids[asi]
-                afi = 2
-
-            sf = max(sf * 1.01, fasks[4])
+            sf = max(sf * 1.01, fasks[4])           
 
         else:
             bolge = "Tepe yatay"
             asi, afi, ma = 3, 5, 2
             ssi, sfi, ms = 0, 3, 2
 
-            if kema < 0:
-                sf = fbids[0]
-
     if ceder <= mulk / 2:
-        if kemao < 3 and harcanan < mulk / 2:
-            asi, afi, ma = 0, 3, 2
-            af = fbids[0]
-
-        if -100 < kar_orani < (km - 1) * 100:
-            sf = mf * km
-        elif kar_orani == -100:
+        if kar_orani == -100:
             sf = max(sf * 1.05, songaort * 1.20)
+        else:
+            sf = mf * km
 
     # ************- TAF -*******************************#
 
@@ -923,9 +910,7 @@ while True:
             taf = fbids[yai + 1] + k
         else:
             taf = fbids[yai] + k
-
-        if fasks[0]/af < 1.005:
-            taf = fasks[0]
+            
         af = taf
 
     # ************- TSF -*******************************#
