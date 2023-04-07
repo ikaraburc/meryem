@@ -832,17 +832,18 @@ while True:
         elif usd < (mulk / 2 - 5) and kemao > -1:
             sf = fasks[0]
     else:  # ne alım ne de satım yeri
-        if kemao > 0:
-            bolge = "YÜKSELİŞ"
-        else:
-            bolge = "DÜŞÜŞ"
-
         asi, afi, ma = 3, 7, 3
         ssi, sfi, ms = 3, 7, 3
-
-        af = min(af, fbids[asi])
-        sf = max(sf, fasks[ssi])
-
+        
+        if kemao > 0:
+            bolge = "YÜKSELİŞ"
+            af = min(af, fbids[asi])
+            sf = max(sf,fbids[0]*1.01, fasks[ssi])
+        else:
+            bolge = "DÜŞÜŞ"            
+            af = min(af, fasks[0]/1.01, fbids[asi])
+            sf = max(sf, fasks[ssi])          
+            
     if ceder <= mulk / 2:
         if kar_orani == -100:
             sf = max(sf * 1.05, songaort * 1.20)
@@ -865,7 +866,7 @@ while True:
 
     af = min(af, taf)
 
-    if af * 1.005 >= taf and kemao > 0:
+    if af * 1.005 >= taf:
         for yai in range(eai, - 1, -1):
             if abs(taf - fbids[yai]) / fbids[yai] >= 5 / 1000:
                 yai = yai + 1
@@ -893,7 +894,7 @@ while True:
 
     sf = max(sf, tsf)
 
-    if sf / 1.005 <= tsf and kemao < 0:
+    if sf / 1.005 <= tsf:
         for ysi in range(esi, - 1, -1):
             if abs(tsf - fasks[ysi]) / fasks[ysi] >= 0.5 / 100:
                 ysi = ysi + 1
