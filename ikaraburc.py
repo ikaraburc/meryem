@@ -565,7 +565,7 @@ def birinci_elek():
     pprint.pp(toplu)
 
 
-def tc_degisim():
+def ikinci_elek():
     global bc, ytablo
 
     ytablo = PrettyTable()
@@ -615,9 +615,9 @@ def tc_degisim():
 
         emmao = round(cp / min(emas, key=lambda em: em[0])[0], 2)
         emmao1 = round(cp / min(emas[:36], key=lambda em: em[0])[0], 2)
-        
+
         if emmao > 1.20 or emmao1 >= 1.07:
-            print("son günlerde/saatlerde aşırı yükselmiş silindi...%", emmao,emmao1, bc)
+            print("son günlerde/saatlerde aşırı yükselmiş silindi...%", emmao, emmao1, bc)
             sil = "evet"
 
         if len(tmumlar) < 800:
@@ -693,7 +693,7 @@ while True:
                 if i[0] == scoin:
                     toplu.remove(i)
             while True:
-                tc_degisim()
+                ikinci_elek()
                 if bc != "boş":
                     tbot_ozel.send_message(telegram_chat_id, str(bc + str(" coine girildi...")))
                     ct = coin_trader(str(bc))
@@ -811,73 +811,37 @@ while True:
     sf = hsf
 
     # ************- EMA STRATEJİSİ -*******************************#
-    if kemao >= 1:
-        if yatay == "Dip":
-            bolge = "Dipten Yükseliş"
-            asi, afi, ma = 2, 7, 2
-            ssi, sfi, ms = 3, 5, 2
+    if yatay == "Dip" and 0 < kemao < 1:  # alım yeri
+        bolge = "ALIM YERİ"
+        asi, afi, ma = 0, 3, 2
+        ssi, sfi, ms = 3, 5, 2
 
-            af = fbids[asi]
-            if kar_orani > -100:
-                if kar_orani >= (km - 1) * 100:
-                    sf = max(sf, fasks[0] * 1.01, fasks[3])
-                else:
-                    sf = max(sf, fasks[0] * 1.01, fasks[4])
+        af = fbids[asi]
+        sf = max(sf * 1.01, fasks[4])
+    elif yatay == "Tepe" and -1 < kemao < 0:  # satım yeri
+        bolge = "SATIM YERİ"
+        asi, afi, ma = 4, 10, 4
+        ssi, sfi, ms = 0, 2, 2
 
-            elif kar_orani == -100:
-                sf = max(songaort * 1.05, sf, fasks[0] * 1.01, fasks[4] - k)
+        if kar_orani >= (km - 1) * 100:
+            sf = max(mf * km, fasks[0])
+            m1 = ctm
+        elif kar_orani == -100 and fasks[0] >= songaort * 1.20:
+            sf = max(songaort * 1.20, fasks[0])
+            m1 = ctm
+        elif usd < (mulk / 2 - 5) and kemao > -1:
+            sf = fasks[0]
+    else:  # ne alım ne de satım yeri
+        if kemao > 0:
+            bolge = "YÜKSELİŞ"
         else:
-            bolge = "Tepeden Yükseliş"
-            asi, afi, ma = 3, 7, 3
-            ssi, sfi, ms = 1, 5, 2
+            bolge = "DÜŞÜŞ"
 
-            af = fbids[3]
-            if kar_orani > -100:
-                if kar_orani >= (km - 1) * 100:
-                    sf = max(sf, fasks[0] * 1.01, fasks[3])
-                else:
-                    sf = max(sf, fasks[0] * 1.01, fasks[4])
+        asi, afi, ma = 3, 7, 3
+        ssi, sfi, ms = 3, 7, 3
 
-            elif kar_orani == -100:
-                sf = max(songaort * 1.05, sf, fasks[0] * 1.01)
-    elif kemao < 0:
-        if yatay == "Dip":
-            bolge = "Dipten düşüş"
-            asi, afi, ma = 2, 5, 2
-            ssi, sfi, ms = 0, 5, 2
-
-            if usd < (mulk / 4 - 5) and kemao <= -1:
-                sf = fasks[0]
-                m1 = (mulk / 4 - usd) / cp
-            else:
-                sf = max(sf, fasks[3])
-
-        else:
-            bolge = "Tepeden düşüş"
-            asi, afi, ma = 4, 10, 4
-            ssi, sfi, ms = 0, 2, 2
-
-            if kar_orani >= (km - 1) * 100:
-                sf = max(mf * km, fasks[0])
-                m1 = ctm
-            elif kar_orani == -100 and fasks[0] >= songaort * 1.20:
-                sf = max(songaort * 1.20, fasks[0])
-                m1 = ctm
-            elif usd < (mulk / 2 - 5) and kemao >-1:
-                    sf = fasks[0]
-    else:
-        if yatay == "Dip":
-            bolge = "Dip yatay"
-            asi, afi, ma = 1, 3, 2
-            ssi, sfi, ms = 3, 5, 2
-
-            af = fbids[asi]
-            sf = max(sf * 1.01, fasks[4])           
-
-        else:
-            bolge = "Tepe yatay"
-            asi, afi, ma = 3, 5, 2
-            ssi, sfi, ms = 0, 3, 2
+        af = min(af, fbids[asi])
+        sf = max(sf, fasks[ssi])
 
     if ceder <= mulk / 2:
         if kar_orani == -100:
@@ -898,10 +862,10 @@ while True:
         taf = fbids[eai + 1] + k
     else:
         taf = fbids[eai] + k
-    
+
     af = min(af, taf)
 
-    if af*1.005 >= taf and kemao > 0:
+    if af * 1.005 >= taf and kemao > 0:
         for yai in range(eai, - 1, -1):
             if abs(taf - fbids[yai]) / fbids[yai] >= 5 / 1000:
                 yai = yai + 1
@@ -910,7 +874,7 @@ while True:
             taf = fbids[yai + 1] + k
         else:
             taf = fbids[yai] + k
-            
+
         af = taf
 
     # ************- TSF -*******************************#
@@ -926,10 +890,10 @@ while True:
         tsf = fasks[esi + 1] - k
     else:
         tsf = fasks[esi] - k
-    
+
     sf = max(sf, tsf)
 
-    if sf/1.005 <= tsf and kemao < 0:
+    if sf / 1.005 <= tsf and kemao < 0:
         for ysi in range(esi, - 1, -1):
             if abs(tsf - fasks[ysi]) / fasks[ysi] >= 0.5 / 100:
                 ysi = ysi + 1
