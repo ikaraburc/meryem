@@ -863,7 +863,7 @@ while True:
             elif kar_orani == -100 and fasks[0] >= songaort * 1.20:
                 sf = max(songaort * 1.20, fasks[0])
                 m1 = ctm
-            elif usd < (mulk / 2 - 5):
+            elif usd < (mulk / 2 - 5) and kemao >-1:
                     sf = fasks[0]
     else:
         if yatay == "Dip":
@@ -938,9 +938,6 @@ while True:
             tsf = fasks[ysi + 1] - k
         else:
             tsf = fasks[ysi] - k
-
-        if tsf / fbids[0] < 1.01:
-            tsf = fbids[0]
 
         sf = tsf
 
