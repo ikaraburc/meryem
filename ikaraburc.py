@@ -409,9 +409,11 @@ class coin_trader:
         anapara = mulk
         agider, sgelir, limit = 0, 0, 0
         mf, mmf, kzo, tsiftah = 0, 0, 0, time.time()
+        sonislem = "bos"
 
         for x in r:
             if miktar * float(x["price"]) >= 1:
+                sonislem = r[0]["side"]
                 limit = limit + 1
                 if x["side"] == "buy":
                     miktar = miktar - float(x["amount"])
@@ -446,18 +448,71 @@ class coin_trader:
         bilanco.add_row(["%" + str(kzo) + " " + str(kzt) + "$", str("harcanan= ") + str(round(harcanan, 2))])
         bilanco.align[str(self.coin).upper()] = "l"
 
-        sonislem, sonafiyat, sonsfiyat = "bos", 0, 0
+        sonafiyat, sonsfiyat = 0, 0
         sonislems = r[:limit]
+
+        global sonaort, sonsort, songaort, songsort, tut0
+        sonort0, sonort1 = 0, 0
+        sonaort, sonsort = 0, 0
+        songaort, songsort = 0, 0
+        gamik, gsmik = 0, 0
+        gatut, gstut = 0, 0
+        mik0, mik1 = 0, 0
+        tut0, tut1 = 0, 0
         if ceder >= 1:
-            for x in r:
-                if x["side"] == "buy":
-                    sonafiyat = float(x["price"])
+            for i in range(0, len(sonislems)):
+                if sonislems[i]["side"] == "buy":
+                    if gatut < mulk / alk * 0.9:
+                        gamik = gamik + float(sonislems[i]["amount"])
+                        gatut = gatut + float(sonislems[i]["price"]) * float(sonislems[i]["amount"])
+                        songaort = gatut / gamik
+                    else:
+                        break
+
+            for i in range(0, len(sonislems)):
+                if sonislems[i]["side"] == "sell":
+                    if gstut < mulk / slk * 0.9:
+                        gsmik = gsmik + float(sonislems[i]["amount"])
+                        gstut = gstut + float(sonislems[i]["price"]) * float(sonislems[i]["amount"])
+                        songsort = gstut / gsmik
+                    else:
+                        break
+
+            for i in range(len(sonislems)):
+                if sonislems[i]["side"] == sonislem:
+                    mik0 = mik0 + float(sonislems[i]["amount"])
+                    tut0 = tut0 + float(sonislems[i]["amount"]) * float(sonislems[i]["price"])
+                    sonort0 = tut0 / mik0
+                else:
                     break
-            for x in r:
-                if x["side"] == "sell":
-                    sonsfiyat = float(x["price"])
+
+            for x in range(len(sonislems)):
+                if sonislems[x]["side"] == sonislem:
+                    continue
+                else:
+                    for i in range(x, len(sonislems)):
+                        if sonislems[i]["side"] == sonislem:
+                            break
+                        mik1 = mik1 + float(sonislems[i]["amount"])
+                        tut1 = tut1 + float(sonislems[i]["amount"]) * float(sonislems[i]["price"])
+                        sonort1 = tut1 / mik1
+                break
+
+            for x in range(len(sonislems)):
+                if sonislems[x]["side"] == "buy":
+                    sonafiyat = float(sonislems[x]["price"])
                     break
-            sonislem = r[0]["side"]
+            for x in range(len(sonislems)):
+                if sonislems[x]["side"] == "sell":
+                    sonsfiyat = float(sonislems[x]["price"])
+                    break
+            if sonislem == "buy":
+                sonaort = sonort0
+                sonsort = sonort1
+
+            elif sonislem == "sell":
+                sonsort = sonort0
+                sonaort = sonort1
 
     def toplu_islem(self):
         T1 = threading.Thread(target=self.coin_fiyat)
@@ -680,6 +735,8 @@ if ceder < 1:
 afiyat = cp * 0.98
 sfiyat = cp * 1.05
 
+alk, slk = 5, 5
+
 while True:
     ct.toplu_islem()
     print(bilanco)
@@ -722,7 +779,6 @@ while True:
 
     # ************- STABİL - PUMP - DUMP BÖLGESİ -*******************************#
     km = 1.03
-    alk, slk = 5, 5
     for w in range(len(emas)):
         fema = emas[w][0]
         if fema / ema >= km or ema / fema >= km:
@@ -730,10 +786,10 @@ while True:
 
     if fema / ema >= km:
         yatay = "Dip"
-        kemao = round((fbids[0] / kema - 1) * 100, 2)
-    else:
         kemao = round((fasks[0] / kema - 1) * 100, 2)
+    else:
         yatay = "Tepe"
+        kemao = round((fbids[0] / kema - 1) * 100, 2)
 
     aso = 5
     p1 = min(max(mulk / aso, 2), usd)
@@ -741,64 +797,6 @@ while True:
 
     m1 = min(max(mulk / aso / cp, 2 / cp), ctm)
     m2 = ctm - m1
-
-    # ************- AL SAT GEÇMİŞ BÖLÜMÜ -*******************************#
-
-    sonort0, sonort1 = 0, 0
-    sonaort, sonsort = 0, 0
-    songaort, songsort = 0, 0
-    gamik, gsmik = 0, 0
-    gatut, gstut = 0, 0
-    mik0, mik1 = 0, 0
-    tut0, tut1 = 0, 0
-
-    if harcanan > 0:
-        i = 0
-        for i in range(0, len(sonislems)):
-            if sonislems[i]["side"] == "buy":
-                if gatut < mulk / alk * 0.9:
-                    gamik = gamik + float(sonislems[i]["amount"])
-                    gatut = gatut + float(sonislems[i]["price"]) * float(sonislems[i]["amount"])
-                    songaort = gatut / gamik
-                else:
-                    break
-        i = 0
-        for i in range(0, len(sonislems)):
-            if sonislems[i]["side"] == "sell":
-                if gstut < mulk / slk * 0.9:
-                    gsmik = gsmik + float(sonislems[i]["amount"])
-                    gstut = gstut + float(sonislems[i]["price"]) * float(sonislems[i]["amount"])
-                    songsort = gstut / gsmik
-                else:
-                    break
-        i = 0
-        for i in range(len(sonislems)):
-            if sonislems[i]["side"] == sonislem:
-                mik0 = mik0 + float(sonislems[i]["amount"])
-                tut0 = tut0 + float(sonislems[i]["amount"]) * float(sonislems[i]["price"])
-                sonort0 = tut0 / mik0
-            else:
-                break
-        i, x = 0, 0
-        for x in range(len(sonislems)):
-            if sonislems[x]["side"] == sonislem:
-                continue
-            else:
-                for i in range(x, len(sonislems)):
-                    if sonislems[i]["side"] == sonislem:
-                        break
-                    mik1 = mik1 + float(sonislems[i]["amount"])
-                    tut1 = tut1 + float(sonislems[i]["amount"]) * float(sonislems[i]["price"])
-                    sonort1 = tut1 / mik1
-            break
-
-    if sonislem == "buy":
-        sonaort = sonort0
-        sonsort = sonort1
-
-    elif sonislem == "sell":
-        sonsort = sonort0
-        sonaort = sonort1
 
     # ************- HAF + HSF -*******************************#
 
@@ -820,13 +818,14 @@ while True:
     sf = hsf
 
     # ************- EMA STRATEJİSİ -*******************************#
+
     if yatay == "Dip":
         if kemao >= 1:
             bolge = "Dipten yükseliş"
             asi, afi, ma = 3, 5, 2
             ssi, sfi, ms = 3, 5, 2
 
-            af = fbids[asi]
+            af = min(fbids[asi], fasks[0] / 1.01)
             sf = max(sf, fbids[0] * 1.01, fasks[ssi])
 
         elif 0 <= kemao < 1:
