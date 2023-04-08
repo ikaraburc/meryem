@@ -441,11 +441,11 @@ class coin_trader:
 
         bilanco = PrettyTable()
         bilanco.field_names = [str(self.coin).upper(), cp]
-        bilanco.add_row(["Ceder= " + str(round(ceder, 2)), "mf = " + str(max(mf, 0))])
-        bilanco.add_row([" Usdt= " + str(round(usd, 2)), "mmf= " + str(mmf)])
-        bilanco.add_row([" Mülk= " + str(round(mulk, 2)), str("Agider= ") + str(round(agider, 2))])
-        bilanco.add_row(["Apara= " + str(round(anapara, 2)), "Sgelir= " + str(round(sgelir, 2))])
-        bilanco.add_row(["%" + str(kzo) + " " + str(kzt) + "$", str("harcanan= ") + str(round(harcanan, 2))])
+        bilanco.add_row(["Apara= " + str(round(anapara, 2)), " mf= " + str(max(mf, 0))])
+        bilanco.add_row([" Alım= " + str(round(harcanan, 2)), "mmf= " + str(mmf)])
+        bilanco.add_row(["Ceder= " + str(round(ceder, 2)), "Agider= " + str(round(agider, 2))])
+        bilanco.add_row([" Usdt= " + str(round(usd, 2)), "Sgelir= " + str(round(sgelir, 2))])
+        bilanco.add_row([" Mülk= " + str(round(mulk, 2)), "%" + str(kzo) + " " + str(kzt) + "$"])
         bilanco.align[str(self.coin).upper()] = "l"
 
         sonafiyat, sonsfiyat = 0, 0
@@ -680,7 +680,7 @@ def ikinci_elek():
         emmao = round(cp / min(emas, key=lambda em: em[0])[0], 2)
         emmao1 = round(cp / min(emas[:36], key=lambda em: em[0])[0], 2)
 
-        if emmao > 1.20 or emmao1 >= 1.07:
+        if emmao > 1.20 or emmao1 >= 1.05:
             print("son günlerde/saatlerde aşırı yükselmiş silindi...%", emmao, emmao1, bc)
             sil = "evet"
 
