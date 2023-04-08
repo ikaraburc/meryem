@@ -658,12 +658,13 @@ def ikinci_elek():
         T3.join()
         T4.join()
         T5.join()
-
+        
+        km = 1.03
         for w in range(len(emas)):
             fema = emas[w][0]
             if fema / ema >= km or ema / fema >= km:
                 break
-
+        
         if fema / ema >= km:
             kemao = round((fbids[0] / kema - 1) * 100, 2)
         else:
@@ -825,8 +826,8 @@ while True:
             asi, afi, ma = 3, 5, 2
             ssi, sfi, ms = 3, 5, 2
 
-            af = min(fbids[asi], fasks[0] / 1.01)
-            sf = max(sf, fbids[0] * 1.01, fasks[ssi])
+            af = min(kema*1.01, fbids[asi])
+            sf = max(sf, fasks[0] * 1.01, fasks[ssi])
 
         elif 0 <= kemao < 1:
             bolge = "ALIM YERİ"
