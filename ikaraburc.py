@@ -788,11 +788,9 @@ while True:
     if fema / ema >= km:
         yatay = "Dip"
         kemao = round((fasks[0] / kema - 1) * 100, 2)
-        haf = fbids[0]
     else:
         yatay = "Tepe"
         kemao = round((fbids[0] / kema - 1) * 100, 2)
-        haf = fbids[0] / km
 
     aso = 5
     p1 = min(max(mulk / aso, 2), usd)
@@ -803,7 +801,7 @@ while True:
 
     # ************- HAF + HSF -*******************************#
 
-    hsf = fasks[0]
+    haf, hsf = fbids[0], fasks[0]
     if harcanan > 0:
         if sonislem == "buy":
             haf = sonaort
@@ -838,6 +836,7 @@ while True:
 
             af = fbids[asi]
             sf = max(sf, fbids[asi] * 1.01, fasks[ssi])
+            p1 = min(mulk/2,usd)
         elif kemao < 0:
             bolge = "dipten düşüş"
             asi, afi, ma = 1, 5, 2
@@ -867,8 +866,9 @@ while True:
             elif kzo == -100 and fasks[0] >= songaort * 1.20:
                 sf = max(songaort * 1.20, fasks[0])
                 m1 = ctm
-            elif usd < (mulk / 2 - 5) and kemao > -1:
+            else:
                 sf = fasks[0]
+                m1 = max(ctm - mulk/2/cp, 2/cp)
 
         elif kemao <= -1:
             bolge = "Tepeden düşüş"
