@@ -788,9 +788,11 @@ while True:
     if fema / ema >= km:
         yatay = "Dip"
         kemao = round((fasks[0] / kema - 1) * 100, 2)
+        haf = fbids[0]
     else:
         yatay = "Tepe"
         kemao = round((fbids[0] / kema - 1) * 100, 2)
+        haf = fbids[0] / km
 
     aso = 5
     p1 = min(max(mulk / aso, 2), usd)
@@ -801,7 +803,7 @@ while True:
 
     # ************- HAF + HSF -*******************************#
 
-    haf, hsf = cp, cp
+    hsf = fasks[0]
     if harcanan > 0:
         if sonislem == "buy":
             haf = sonaort
@@ -853,12 +855,12 @@ while True:
             af = min(af, fbids[0] / 1.01, fbids[asi])
             sf = max(sf, fasks[ssi])
 
-
         elif -1 < kemao < 0:
             bolge = "SATIM YERİ"
             asi, afi, ma = 4, 10, 4
             ssi, sfi, ms = 0, 2, 2
-
+            
+            af = min(af, fbids[0] / 1.01, fbids[asi])
             if kzo >= (km - 1) * 100:
                 sf = max(mf * km, fasks[0])
                 m1 = ctm
