@@ -1,5 +1,4 @@
 import threading
-from datetime import datetime
 
 import requests
 from prettytable import PrettyTable
@@ -195,7 +194,7 @@ class coin_trader:
                 print("Bağlantı bekleniyor...")
                 continue
 
-        global tmumlar, dmumlar, m1hacim, emas, kemas, ema, kema, kemao, max_emao, kema1
+        global tmumlar, dmumlar, m1hacim, emas, kemas, ema, kema, max_emao, kema1
 
         tmumlar = [float(i[3]) for i in r]
         dmumlar = [float(i[4]) for i in r]
@@ -231,7 +230,6 @@ class coin_trader:
         ema = emas[0][0]
         kema = kemas[0]
         kema1 = kemas[1]
-        kemao = round(((cp - kema) / min(cp, kema)) * 100, 2)
         max_emao = round((max(emas, key=lambda cift: cift[0])[0] / ema - 1) * 100, 2)
 
     def coklu_al(self):
@@ -606,6 +604,16 @@ def ikinci_elek():
         T4.join()
         T5.join()
 
+        for w in range(len(emas)):
+            fema = emas[w][0]
+            if fema / ema >= km or ema / fema >= km:
+                break
+
+        if fema / ema >= km:
+            kemao = round((fbids[0] / kema - 1) * 100, 2)
+        else:
+            kemao = round((fasks[0] / kema - 1) * 100, 2)
+
         if 3 > kemao > 1:
             ema_ok = "ema uygun"
         else:
@@ -722,7 +730,9 @@ while True:
 
     if fema / ema >= km:
         yatay = "Dip"
+        kemao = round((fbids[0] / kema - 1) * 100, 2)
     else:
+        kemao = round((fasks[0] / kema - 1) * 100, 2)
         yatay = "Tepe"
 
     aso = 5
@@ -813,10 +823,10 @@ while True:
     if yatay == "Dip":
         if kemao >= 1:
             bolge = "Dipten yükseliş"
-            asi, afi, ma = 3, 3, 2
+            asi, afi, ma = 3, 5, 2
             ssi, sfi, ms = 3, 5, 2
 
-            af = min(af, fbids[asi])
+            af = fbids[asi]
             sf = max(sf, fbids[0] * 1.01, fasks[ssi])
 
         elif 0 <= kemao < 1:
