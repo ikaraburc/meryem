@@ -378,8 +378,7 @@ class coin_trader:
         prefix = "/api/v4"
         headers = {'Accept': 'application/json', 'Content-Type': 'application/json'}
         url = '/spot/my_trades'
-        tt = int(int(time.time()) - 20 * 24 * 60 * 60)
-        query_param = 'currency_pair=' + self.coin + "&from=" + str(tt) + "&limit=1000"
+        query_param = 'currency_pair=' + "&limit=1000"
 
         sign_headers = gen_sign('GET', prefix + url, query_param)
         headers.update(sign_headers)
@@ -437,17 +436,16 @@ class coin_trader:
             mmf = round(anapara / (usd / cp + ctm) * 1.002, digit)
             kzo = round(kzt / harcanan * 100, 2)
 
+        if (time.time() - tsiftah) > 6 * 24 * 60 * 60:
+            kzo = -100
+
         bilanco = PrettyTable()
         bilanco.field_names = [str(self.coin).upper(), cp]
         bilanco.add_row(["Ceder= " + str(round(ceder, 2)), "mf = " + str(max(mf, 0))])
         bilanco.add_row([" Usdt= " + str(round(usd, 2)), "mmf= " + str(mmf)])
         bilanco.add_row([" Mülk= " + str(round(mulk, 2)), str("Agider= ") + str(round(agider, 2))])
-        bilanco.add_row(
-            ["Apara= " + str(round(anapara, 2)), "Sgelir= " + str(round(sgelir, 2))])
-        bilanco.add_row(
-            [datetime.fromtimestamp(tsiftah), str("harcanan= ") + str(round(harcanan, 2))])
-        bilanco.add_row(
-            ["%" + str(kzo) + " " + str(kzt) + "$", "hedefe %" + str(round((mf / cp - 1) * 100, 2))])
+        bilanco.add_row(["Apara= " + str(round(anapara, 2)), "Sgelir= " + str(round(sgelir, 2))])
+        bilanco.add_row(["%" + str(kzo) + " " + str(kzt) + "$", str("harcanan= ") + str(round(harcanan, 2))])
         bilanco.align[str(self.coin).upper()] = "l"
 
         sonislem, sonafiyat, sonsfiyat = "bos", 0, 0
@@ -827,10 +825,10 @@ while True:
             ssi, sfi, ms = 3, 5, 2
 
             af = fbids[asi]
-            sf = max(sf, fbids[asi] * 1.01, fasks[4])
+            sf = max(sf, fbids[asi] * 1.01, fasks[ssi])
         elif kemao < 0:
             bolge = "dipten düşüş"
-            asi, afi, ma = 0, 4, 2
+            asi, afi, ma = 1, 5, 2
             ssi, sfi, ms = 3, 5, 2
 
             af = fbids[asi]
@@ -843,7 +841,7 @@ while True:
             ssi, sfi, ms = 2, 5, 2
 
             af = min(af, fbids[0] / 1.01, fbids[asi])
-            sf = max(sf, fbids[0] * 1.01, fasks[ssi])
+            sf = max(sf, fasks[ssi])
 
 
         elif -1 < kemao < 0:
