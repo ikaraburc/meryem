@@ -827,7 +827,7 @@ while True:
             ssi, sfi, ms = 3, 5, 2
 
             af = min(kema*1.01, fbids[asi])
-            sf = max(sf, fasks[0] * 1.01, fasks[ssi])
+            sf = max(sf*km, fasks[0] * 1.01, fasks[ssi])
 
         elif 0 <= kemao < 1:
             bolge = "ALIM YERİ"
@@ -859,7 +859,7 @@ while True:
             asi, afi, ma = 4, 10, 4
             ssi, sfi, ms = 0, 2, 2
             
-            af = min(af, fbids[0] / 1.01, fbids[asi])
+            af = min(af/km, fbids[0] / 1.01, fbids[asi])
             if kzo >= (km - 1) * 100:
                 sf = max(mf * km, fasks[0])
                 m1 = ctm
@@ -875,7 +875,7 @@ while True:
             asi, afi, ma = 4, 7, 4
             ssi, sfi, ms = 3, 7, 3
 
-            af = min(af, fbids[0] / 1.01, fbids[asi])
+            af = min(af/km, fbids[0] / 1.01, fbids[asi])
             sf = max(sf, fasks[ssi])
 
     if ceder <= mulk / 2:
@@ -911,8 +911,8 @@ while True:
             taf = fbids[yai] + k
 
         af = taf
-    if bolge == "ALIM YERİ" and fasks[0] / taf < 1.005:
-        af = fasks[0]
+        if bolge == "ALIM YERİ" and fasks[0] / taf < 1.005:
+            af = fasks[0]
 
     # ************- TSF -*******************************#
 
@@ -941,8 +941,8 @@ while True:
             tsf = fasks[ysi] - k
 
         sf = tsf
-    if bolge == "SATIM YERİ" and tsf / fbids[0] < 1.005:
-        sf = fbids[0]
+        if bolge == "SATIM YERİ" and tsf / fbids[0] < 1.005:
+            sf = fbids[0]
 
     # ************- AL SAT EMİRLERİNİ GÖNDER BÖLÜMÜ -*******************************#
     af = round(af, digit)
