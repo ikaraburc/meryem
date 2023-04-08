@@ -1,4 +1,5 @@
 import threading
+from datetime import datetime
 
 import requests
 from prettytable import PrettyTable
@@ -377,7 +378,8 @@ class coin_trader:
         prefix = "/api/v4"
         headers = {'Accept': 'application/json', 'Content-Type': 'application/json'}
         url = '/spot/my_trades'
-        query_param = 'currency_pair=' + self.coin + "&limit=1000"
+        tt = int(int(time.time()) - 14 * 24 * 60 * 60)
+        query_param = 'currency_pair=' + self.coin + "&from=" + str(tt) + "&limit=1000"
 
         sign_headers = gen_sign('GET', prefix + url, query_param)
         headers.update(sign_headers)
@@ -404,12 +406,12 @@ class coin_trader:
                 print("Bağlantı bekleniyor...")
                 continue
 
-        global bilanco, sonislems, sonislem, sonafiyat, sonsfiyat, mf, kar_orani, kar_tutari, anapara, harcanan, agider, sgelir
+        global bilanco, sonislems, sonislem, sonafiyat, sonsfiyat, mf, kzo, kzt, anapara, harcanan, agider, sgelir
 
         miktar = ctm
         anapara = mulk
         agider, sgelir, limit = 0, 0, 0
-        mf, mmf, kar_orani, tsiftah = 0, 0, 0, time.time()
+        mf, mmf, kzo, tsiftah = 0, 0, 0, time.time()
 
         for x in r:
             if miktar * float(x["price"]) >= 1:
@@ -428,24 +430,24 @@ class coin_trader:
 
         agider = round(abs(agider), 2)
         anapara = round(abs(usd + agider - sgelir), 2)
-        kar_tutari = round(ceder - agider + sgelir, 2)
+        kzt = round(ceder - agider + sgelir, 2)
         harcanan = min(agider, anapara)
         if harcanan > 0:
             mf = round((agider - sgelir) / ctm * 1.002, digit)
             mmf = round(anapara / (usd / cp + ctm) * 1.002, digit)
-            kar_orani = round(kar_tutari / harcanan * 100, 2)
+            kzo = round(kzt / harcanan * 100, 2)
 
-        if time.time() - tsiftah >= 6 * 24 * 60 * 60 or kar_orani > 20:
-            mf = -100
-            kar_orani = -100
         bilanco = PrettyTable()
         bilanco.field_names = [str(self.coin).upper(), cp]
-        bilanco.add_row([str("Ceder= " + str(round(ceder, 2))), str("mf = " + str(max(mf, 0)))])
-        bilanco.add_row([str(" Usdt= " + str(round(usd, 2))), str("mmf= " + str(mmf))])
-        bilanco.add_row([str("Apara= " + str(round(anapara, 2))), str(str("harcanan= ") + str(round(harcanan, 2)))])
+        bilanco.add_row(["Ceder= " + str(round(ceder, 2)), "mf = " + str(max(mf, 0))])
+        bilanco.add_row([" Usdt= " + str(round(usd, 2)), "mmf= " + str(mmf)])
+        bilanco.add_row([" Mülk= " + str(round(mulk, 2)), str("Agider= ") + str(round(agider, 2))])
         bilanco.add_row(
-            [str(" Mülk= " + str(round(mulk, 2))), str(str("Agider= ") + str(round(agider, 2)))])
-        bilanco.add_row([str(str(kar_tutari) + " $"), str("% " + str(kar_orani))])
+            ["Apara= " + str(round(anapara, 2)), "Sgelir= " + str(round(sgelir, 2))])
+        bilanco.add_row(
+            [datetime.fromtimestamp(tsiftah), str("harcanan= ") + str(round(harcanan, 2))])
+        bilanco.add_row(
+            ["%" + str(kzo) + " " + str(kzt) + "$", "hedefe %" + str(round((mf / cp - 1) * 100, 2))])
         bilanco.align[str(self.coin).upper()] = "l"
 
         sonislem, sonafiyat, sonsfiyat = "bos", 0, 0
@@ -714,7 +716,7 @@ while True:
 
     # ************- STABİL - PUMP - DUMP BÖLGESİ -*******************************#
     km = 1.03
-    alk, slk = 4, 4
+    alk, slk = 5, 5
     for w in range(len(emas)):
         fema = emas[w][0]
         if fema / ema >= km or ema / fema >= km:
@@ -724,6 +726,13 @@ while True:
         yatay = "Dip"
     else:
         yatay = "Tepe"
+
+    aso = 5
+    p1 = min(max(mulk / aso, 2), usd)
+    p2 = usd - p1
+
+    m1 = min(max(mulk / aso / cp, 2 / cp), ctm)
+    m2 = ctm - m1
 
     # ************- AL SAT GEÇMİŞ BÖLÜMÜ -*******************************#
 
@@ -775,8 +784,6 @@ while True:
                     sonort1 = tut1 / mik1
             break
 
-    # ************- ALIŞ SATIŞ MİKTAR -*******************************#
-
     if sonislem == "buy":
         sonaort = sonort0
         sonsort = sonort1
@@ -784,12 +791,6 @@ while True:
     elif sonislem == "sell":
         sonsort = sonort0
         sonaort = sonort1
-
-    p1 = min(max(mulk / 10, 2), usd)
-    p2 = usd - p1
-
-    m1 = min(max(mulk / 10 / cp, 2 / cp), ctm)
-    m2 = ctm - m1
 
     # ************- HAF + HSF -*******************************#
 
@@ -811,41 +812,64 @@ while True:
     sf = hsf
 
     # ************- EMA STRATEJİSİ -*******************************#
-    if yatay == "Dip" and 0 < kemao < 1:  # alım yeri
-        bolge = "ALIM YERİ"
-        asi, afi, ma = 0, 3, 2
-        ssi, sfi, ms = 3, 5, 2
+    if yatay == "Dip":
+        if kemao >= 1:
+            bolge = "Dipten yükseliş"
+            asi, afi, ma = 3, 3, 2
+            ssi, sfi, ms = 3, 5, 2
 
-        af = fbids[asi]
-        sf = max(sf * 1.01, fasks[4])
-    elif yatay == "Tepe" and -1 < kemao < 0:  # satım yeri
-        bolge = "SATIM YERİ"
-        asi, afi, ma = 4, 10, 4
-        ssi, sfi, ms = 0, 2, 2
-
-        if kar_orani >= (km - 1) * 100:
-            sf = max(mf * km, fasks[0])
-            m1 = ctm
-        elif kar_orani == -100 and fasks[0] >= songaort * 1.20:
-            sf = max(songaort * 1.20, fasks[0])
-            m1 = ctm
-        elif usd < (mulk / 2 - 5) and kemao > -1:
-            sf = fasks[0]
-    else:  # ne alım ne de satım yeri
-        asi, afi, ma = 3, 7, 3
-        ssi, sfi, ms = 3, 7, 3
-        
-        if kemao > 0:
-            bolge = "YÜKSELİŞ"
             af = min(af, fbids[asi])
-            sf = max(sf,fbids[0]*1.01, fasks[ssi])
-        else:
-            bolge = "DÜŞÜŞ"            
-            af = min(af, fasks[0]/1.01, fbids[asi])
-            sf = max(sf, fasks[ssi])          
-            
+            sf = max(sf, fbids[0] * 1.01, fasks[ssi])
+
+        elif 0 <= kemao < 1:
+            bolge = "ALIM YERİ"
+            asi, afi, ma = 0, 3, 2
+            ssi, sfi, ms = 3, 5, 2
+
+            af = fbids[asi]
+            sf = max(sf, fbids[asi] * 1.01, fasks[4])
+        elif kemao < 0:
+            bolge = "dipten düşüş"
+            asi, afi, ma = 0, 4, 2
+            ssi, sfi, ms = 3, 5, 2
+
+            af = fbids[asi]
+            sf = max(sf, fasks[ssi])
+
+    elif yatay == "Tepe":
+        if kemao >= 0:
+            bolge = "Tepeden yükseliş"
+            asi, afi, ma = 3, 7, 3
+            ssi, sfi, ms = 2, 5, 2
+
+            af = min(af, fbids[0] / 1.01, fbids[asi])
+            sf = max(sf, fbids[0] * 1.01, fasks[ssi])
+
+
+        elif -1 < kemao < 0:
+            bolge = "SATIM YERİ"
+            asi, afi, ma = 4, 10, 4
+            ssi, sfi, ms = 0, 2, 2
+
+            if kzo >= (km - 1) * 100:
+                sf = max(mf * km, fasks[0])
+                m1 = ctm
+            elif kzo == -100 and fasks[0] >= songaort * 1.20:
+                sf = max(songaort * 1.20, fasks[0])
+                m1 = ctm
+            elif usd < (mulk / 2 - 5) and kemao > -1:
+                sf = fasks[0]
+
+        elif kemao <= -1:
+            bolge = "Tepeden düşüş"
+            asi, afi, ma = 4, 7, 4
+            ssi, sfi, ms = 3, 7, 3
+
+            af = min(af, fbids[0] / 1.01, fbids[asi])
+            sf = max(sf, fasks[ssi])
+
     if ceder <= mulk / 2:
-        if kar_orani == -100:
+        if kzo == -100:
             sf = max(sf * 1.05, songaort * 1.20)
         else:
             sf = mf * km
@@ -877,9 +901,8 @@ while True:
             taf = fbids[yai] + k
 
         af = taf
-    if bolge == "ALIM YERİ" and fasks[0]/taff < 1.005:
+    if bolge == "ALIM YERİ" and fasks[0] / taf < 1.005:
         af = fasks[0]
-            
 
     # ************- TSF -*******************************#
 
@@ -891,15 +914,15 @@ while True:
             break
 
     if fasks[esi] == sfiyat:
-        tsf = fasks[esi + 1] - k
+        tsff = fasks[esi + 1] - k
     else:
-        tsf = fasks[esi] - k
+        tsff = fasks[esi] - k
 
-    sf = max(sf, tsf)
+    sf = max(sf, tsff)
 
-    if sf / 1.005 <= tsf:
+    if sf / 1.005 <= tsff:
         for ysi in range(esi, - 1, -1):
-            if abs(tsf - fasks[ysi]) / fasks[ysi] >= 0.5 / 100:
+            if abs(tsff - fasks[ysi]) / fasks[ysi] >= 0.5 / 100:
                 ysi = ysi + 1
                 break
         if fasks[ysi] == sfiyat:
@@ -908,6 +931,8 @@ while True:
             tsf = fasks[ysi] - k
 
         sf = tsf
+    if bolge == "SATIM YERİ" and tsf / fbids[0] < 1.005:
+        sf = fbids[0]
 
     # ************- AL SAT EMİRLERİNİ GÖNDER BÖLÜMÜ -*******************************#
     af = round(af, digit)
@@ -941,7 +966,7 @@ while True:
 
             sfiyat = sf
             yedek = 0
-            if -100 < kar_orani < km:
+            if -100 < kzo < km:
                 yedek = 2 / cp
             elif cp <= songaort * 1.20:
                 yedek = 2 / cp
