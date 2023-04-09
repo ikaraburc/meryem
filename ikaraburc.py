@@ -410,12 +410,14 @@ class coin_trader:
         agider, sgelir, limit = 0, 0, 0
         mf, mmf, kzo, tsiftah = 0, 0, 0, time.time()
         sonislem = "bos"
+        amikk = 0
 
         for x in r:
             if miktar * float(x["price"]) >= 1:
                 sonislem = r[0]["side"]
                 limit = limit + 1
                 if x["side"] == "buy":
+                    amikk = amikk + float(x["amount"])
                     miktar = miktar - float(x["amount"])
                     agider = agider + float(x["amount"]) * float(x["price"])
                     tsiftah = float(x["create_time"])
@@ -435,16 +437,19 @@ class coin_trader:
             mf = round((agider - sgelir) / ctm * 1.002, digit)
             mmf = round(anapara / (usd / cp + ctm) * 1.002, digit)
             kzo = round(kzt / harcanan * 100, 2)
+            amalf = round(agider / amikk, digit)
+            amalko = round((cp / amalf - 1) * 100, 2)
+            print(amalf, amalko)
 
-        if (time.time() - tsiftah) > 6 * 24 * 60 * 60:
+        if (time.time() - tsiftah) > (6 * 24 * 60 * 60 + 20 * 60 * 60) or (amalko - kzo) / min(amalko, kzo) > 1.20:
             kzo = -100
 
         bilanco = PrettyTable()
         bilanco.field_names = [str(self.coin).upper(), cp]
-        bilanco.add_row(["Apara= " + str(round(anapara, 2)), " mf= " + str(max(mf, 0))])
-        bilanco.add_row([" Alım= " + str(round(harcanan, 2)), "mmf= " + str(mmf)])
-        bilanco.add_row(["Ceder= " + str(round(ceder, 2)), "Agider= " + str(round(agider, 2))])
-        bilanco.add_row([" Usdt= " + str(round(usd, 2)), "Sgelir= " + str(round(sgelir, 2))])
+        bilanco.add_row(["Ceder= " + str(round(ceder, 2)), " mf= " + str(max(mf, 0))])
+        bilanco.add_row([" Usdt= " + str(round(usd, 2)), "mmf= " + str(mmf)])
+        bilanco.add_row([" Alım= " + str(round(harcanan, 2)), "Agider= " + str(round(agider, 2))])
+        bilanco.add_row(["Apara= " + str(round(anapara, 2)), "Sgelir= " + str(round(sgelir, 2))])
         bilanco.add_row([" Mülk= " + str(round(mulk, 2)), "%" + str(kzo) + " " + str(kzt) + "$"])
         bilanco.align[str(self.coin).upper()] = "l"
 
@@ -658,29 +663,32 @@ def ikinci_elek():
         T3.join()
         T4.join()
         T5.join()
-        
+
         km = 1.03
         for w in range(len(emas)):
             fema = emas[w][0]
             if fema / ema >= km or ema / fema >= km:
                 break
-        
+
         if fema / ema >= km:
+            yatay = "Dip"
             kemao = round((fbids[0] / kema - 1) * 100, 2)
         else:
             kemao = round((fasks[0] / kema - 1) * 100, 2)
+            yatay = "Tepe"
+
+        emmao1 = round(cp / min(emas[:24], key=lambda em: em[0])[0], 2)
 
         if 3 > kemao > 1:
-            ema_ok = "ema uygun"
+            if yatay == "Dip" or emmao1 <= 1.05:
+                ema_ok = "ema uygun"
         else:
             ema_ok = "ema uygun değil"
             print("ema uygun değil silindi...", bc)
             sil = "evet"
 
-        emmao = round(cp / min(emas, key=lambda em: em[0])[0], 2)
-        emmao1 = round(cp / min(emas[:36], key=lambda em: em[0])[0], 2)
-
-        if emmao > 1.20 or emmao1 >= 1.05:
+        emmao = round(cp / min(emas[:864], key=lambda em: em[0])[0], 2)
+        if emmao > 1.15:
             print("son günlerde/saatlerde aşırı yükselmiş silindi...%", emmao, emmao1, bc)
             sil = "evet"
 
@@ -688,7 +696,7 @@ def ikinci_elek():
             print("Yeni çıkan coin, silindi...", bc)
             sil = "evet"
 
-        if m1hacim < 750:
+        if m1hacim < 500:
             print("hacim düşük silindi..", bc)
             sil = "evet"
 
@@ -823,20 +831,20 @@ while True:
     if yatay == "Dip":
         if kemao >= 1:
             bolge = "Dipten yükseliş"
-            asi, afi, ma = 3, 5, 2
+            asi, afi, ma = 1, 5, 2
             ssi, sfi, ms = 3, 5, 2
 
-            af = min(kema*1.01, fbids[asi])
-            sf = max(sf*km, fasks[0] * 1.01, fasks[ssi])
+            af = min(kema * 1.02, fbids[asi])
+            sf = max(sf * km, fasks[0] * 1.01, fasks[ssi])
 
         elif 0 <= kemao < 1:
             bolge = "ALIM YERİ"
-            asi, afi, ma = 0, 3, 2
+            asi, afi, ma = 0, 2, 2
             ssi, sfi, ms = 3, 5, 2
 
             af = fbids[asi]
             sf = max(sf, fbids[asi] * 1.01, fasks[ssi])
-            p1 = min(mulk/2,usd)
+            p1 = min(mulk / 2, usd)
         elif kemao < 0:
             bolge = "dipten düşüş"
             asi, afi, ma = 1, 5, 2
@@ -844,6 +852,9 @@ while True:
 
             af = fbids[asi]
             sf = max(sf, fasks[ssi])
+            if kemao < -1 and usd < mulk / 4:
+                sf = fasks[ssi]
+                af = min(sonsfiyat / 1.01, fbids[asi])
 
     elif yatay == "Tepe":
         if kemao >= 0:
@@ -853,13 +864,16 @@ while True:
 
             af = min(af, fbids[0] / 1.01, fbids[asi])
             sf = max(sf, fasks[ssi])
+            if ceder < mulk / 2 and kemao < 1:
+                asi, afi, ma = 1, 5, 2
+                af = fbids[1]
 
         elif -1 < kemao < 0:
             bolge = "SATIM YERİ"
             asi, afi, ma = 4, 10, 4
             ssi, sfi, ms = 0, 2, 2
-            
-            af = min(af/km, fbids[0] / 1.01, fbids[asi])
+
+            af = min(af / km, fbids[0] / 1.01, fbids[asi])
             if kzo >= (km - 1) * 100:
                 sf = max(mf * km, fasks[0])
                 m1 = ctm
@@ -868,14 +882,14 @@ while True:
                 m1 = ctm
             else:
                 sf = fasks[0]
-                m1 = max(ctm - mulk/2/cp, 2/cp)
+                m1 = max(ctm - mulk / 2 / cp, 2 / cp)
 
         elif kemao <= -1:
             bolge = "Tepeden düşüş"
             asi, afi, ma = 4, 7, 4
-            ssi, sfi, ms = 3, 7, 3
+            ssi, sfi, ms = 0, 3, 2
 
-            af = min(af/km, fbids[0] / 1.01, fbids[asi])
+            af = min(af / km, fbids[0] / 1.01, fbids[asi])
             sf = max(sf, fasks[ssi])
 
     if ceder <= mulk / 2:
@@ -899,20 +913,19 @@ while True:
         taff = fbids[eai] + k
 
     af = min(af, taff)
+    alist = [fasks[0]] + fbids[:eai + 1]
 
     if af * 1.005 >= taff:
         for yai in range(eai, - 1, -1):
-            if abs(taff - fbids[yai]) / fbids[yai] >= 5 / 1000:
+            if abs(taff - alist[yai]) / alist[yai] >= 5 / 1000:
                 yai = yai + 1
                 break
-        if fbids[yai] == afiyat:
+        if alist[yai] == afiyat:
             taf = fbids[yai + 1] + k
         else:
             taf = fbids[yai] + k
 
         af = taf
-        if bolge == "ALIM YERİ" and fasks[0] / taf < 1.005:
-            af = fasks[0]
 
     # ************- TSF -*******************************#
 
@@ -929,20 +942,19 @@ while True:
         tsff = fasks[esi] - k
 
     sf = max(sf, tsff)
+    slist = [fbids[0]] + fasks[:esi + 1]
 
     if sf / 1.005 <= tsff:
         for ysi in range(esi, - 1, -1):
-            if abs(tsff - fasks[ysi]) / fasks[ysi] >= 0.5 / 100:
+            if abs(tsff - slist[ysi]) / slist[ysi] >= 0.5 / 100:
                 ysi = ysi + 1
                 break
-        if fasks[ysi] == sfiyat:
+        if slist[ysi] == sfiyat:
             tsf = fasks[ysi + 1] - k
         else:
             tsf = fasks[ysi] - k
 
         sf = tsf
-        if bolge == "SATIM YERİ" and tsf / fbids[0] < 1.005:
-            sf = fbids[0]
 
     # ************- AL SAT EMİRLERİNİ GÖNDER BÖLÜMÜ -*******************************#
     af = round(af, digit)
