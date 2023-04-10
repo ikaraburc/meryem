@@ -407,7 +407,7 @@ class coin_trader:
 
         miktar = ctm
         anapara = mulk
-        agider, sgelir, limit, amalko, amalf= 0, 0, 0, 0, 0
+        agider, sgelir, limit, amalko, amalf = 0, 0, 0, 0, 0
         mf, mmf, kzo, tsiftah = 0, 0, 0, time.time()
         sonislem = "bos"
         amikk = 0
@@ -443,7 +443,7 @@ class coin_trader:
 
         if (time.time() - tsiftah) > (6 * 24 * 60 * 60 + 20 * 60 * 60):
             kzo = -100
-        if min(amalko, kzo)> 0 and (max(amalko, kzo)- min(amalko, kzo)) / min(amalko, kzo) > 1.20:
+        if min(amalko, kzo) > 0 and (max(amalko, kzo) - min(amalko, kzo)) / min(amalko, kzo) > 1.20:
             kzo = -100
 
         bilanco = PrettyTable()
@@ -682,7 +682,7 @@ def ikinci_elek():
         emmao1 = round(cp / min(emas[:24], key=lambda em: em[0])[0], 2)
 
         if 3 > kemao > 1:
-            if yatay == "Dip" or emmao1 <= 1.05:
+            if yatay == "Dip" or emmao1 <= 1.03:
                 ema_ok = "ema uygun"
         else:
             ema_ok = "ema uygun değil"
@@ -745,6 +745,7 @@ if ceder < 1:
 
 afiyat = cp * 0.98
 sfiyat = cp * 1.05
+kemao = 1
 
 alk, slk = 5, 5
 
@@ -755,7 +756,7 @@ while True:
     if harcanan >= mulk / 5:
         alim_tamam = "evet"
     if ceder < 1:
-        if alim_tamam == "evet":
+        if alim_tamam == "evet" or kemao > 5:
             ct.alsat_gecmisi()
             tbot_ozel.send_message(telegram_chat_id, str("Eldeki son mal satıldı. Yeni mal taranıyor..."))
             tbot_ozel.send_message(telegram_chat_id, str(bilanco))
@@ -794,14 +795,16 @@ while True:
         fema = emas[w][0]
         if fema / ema >= km or ema / fema >= km:
             break
-        
+
     if fema / ema >= km:
         yatay = "Dip"
     else:
         yatay = "Tepe"
-    cc = (fbids[0] + fasks[0])/2
+
+    cc = (fbids[0] + fasks[0]) / 2
     kemao = round((cc / kema - 1) * 100, 2)
     aso = 5
+
     p1 = min(max(mulk / aso, 2), usd)
     p2 = usd - p1
 
@@ -836,7 +839,7 @@ while True:
             ssi, sfi, ms = 3, 5, 2
 
             af = min(kema * 1.02, fbids[asi])
-            sf = max(sf * km, fasks[0] * 1.01, fasks[ssi])
+            sf = max(sf, fasks[0] * 1.01, fasks[ssi])
 
         elif 0 <= kemao < 1:
             bolge = "ALIM YERİ"
@@ -845,7 +848,7 @@ while True:
 
             af = fbids[asi]
             sf = max(sf, fbids[asi] * 1.01, fasks[ssi])
-            p1 = min(mulk / 2, usd)
+            p1 = usd
         elif kemao < 0:
             bolge = "dipten düşüş"
             asi, afi, ma = 1, 5, 2
@@ -861,17 +864,17 @@ while True:
         if kemao >= 0:
             bolge = "Tepeden yükseliş"
             asi, afi, ma = 3, 7, 3
-            ssi, sfi, ms = 2, 5, 2
+            ssi, sfi, ms = 1, 5, 2
 
-            af = min(af, fbids[0]/km, fbids[asi])
-            sf = max(sf, fasks[ssi])
+            af = min(af, fbids[0] / km, fbids[asi])
+            sf = max(sf, fbids[0] * 1.01, fasks[ssi])
 
         elif -1 < kemao < 0:
             bolge = "SATIM YERİ"
             asi, afi, ma = 4, 10, 4
             ssi, sfi, ms = 0, 2, 2
 
-            af = min(af/km, fbids[0] / km, fbids[asi])
+            af = min(af / km, fbids[0] / km, fbids[asi])
             if kzo >= (km - 1) * 100:
                 sf = max(mf * km, fasks[0])
                 m1 = ctm
@@ -879,7 +882,7 @@ while True:
                 sf = max(songaort * 1.20, fasks[0])
                 m1 = ctm
             else:
-                sf = max(kema/1.01,fasks[0])
+                sf = max(kema / 1.01, fasks[0])
                 m1 = max(ctm - mulk / 2 / cp, 2 / cp)
 
         elif kemao <= -1:
@@ -887,7 +890,7 @@ while True:
             asi, afi, ma = 4, 10, 4
             ssi, sfi, ms = 0, 3, 2
 
-            af = min(af/km, fbids[0] /km, fbids[asi])
+            af = min(af / km, fbids[0] / km, fbids[asi])
             sf = max(sf, fasks[ssi])
 
     if ceder <= mulk / 2:
@@ -915,7 +918,7 @@ while True:
 
     if af * 1.005 >= taff:
         for yai in range(eai, - 1, -1):
-            if abs(taff - alist[yai]) / alist[yai] >= 1/ 100:
+            if abs(taff - alist[yai]) / alist[yai] >= 1 / 100:
                 yai = yai + 1
                 break
         if alist[yai] == afiyat:
