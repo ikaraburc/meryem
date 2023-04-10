@@ -443,7 +443,7 @@ class coin_trader:
 
         if (time.time() - tsiftah) > (6 * 24 * 60 * 60 + 20 * 60 * 60):
             kzo = -100
-        if min(amalko, kzo)> 0 and (amalko - kzo) / min(amalko, kzo) > 1.20:
+        if min(amalko, kzo)> 0 and (max(amalko, kzo)- min(amalko, kzo)) / min(amalko, kzo) > 1.20:
             kzo = -100
 
         bilanco = PrettyTable()
