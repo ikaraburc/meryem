@@ -407,7 +407,7 @@ class coin_trader:
 
         miktar = ctm
         anapara = mulk
-        agider, sgelir, limit = 0, 0, 0
+        agider, sgelir, limit, amalko, amalf= 0, 0, 0, 0, 0
         mf, mmf, kzo, tsiftah = 0, 0, 0, time.time()
         sonislem = "bos"
         amikk = 0
@@ -441,7 +441,9 @@ class coin_trader:
             amalko = round((cp / amalf - 1) * 100, 2)
             print(amalf, amalko)
 
-        if (time.time() - tsiftah) > (6 * 24 * 60 * 60 + 20 * 60 * 60) or (amalko - kzo) / min(amalko, kzo) > 1.20:
+        if (time.time() - tsiftah) > (6 * 24 * 60 * 60 + 20 * 60 * 60):
+            kzo = -100
+        if min(amalko, kzo)> 0 and (amalko - kzo) / min(amalko, kzo) > 1.20:
             kzo = -100
 
         bilanco = PrettyTable()
@@ -792,14 +794,14 @@ while True:
         fema = emas[w][0]
         if fema / ema >= km or ema / fema >= km:
             break
-
+        
     if fema / ema >= km:
         yatay = "Dip"
-        kemao = round((fasks[0] / kema - 1) * 100, 2)
+        cc = fasks[0]
     else:
         yatay = "Tepe"
-        kemao = round((fbids[0] / kema - 1) * 100, 2)
-
+        cc = fbids[0]
+    kemao = round((cc / kema - 1) * 100, 2)
     aso = 5
     p1 = min(max(mulk / aso, 2), usd)
     p2 = usd - p1
@@ -862,7 +864,7 @@ while True:
             asi, afi, ma = 3, 7, 3
             ssi, sfi, ms = 2, 5, 2
 
-            af = min(af, fbids[0] / 1.01, fbids[asi])
+            af = min(fbids[0] / 1.01, fbids[asi])
             sf = max(sf, fasks[ssi])
             if ceder < mulk / 2 and kemao < 1:
                 asi, afi, ma = 1, 5, 2
@@ -873,7 +875,7 @@ while True:
             asi, afi, ma = 4, 10, 4
             ssi, sfi, ms = 0, 2, 2
 
-            af = min(af / km, fbids[0] / 1.01, fbids[asi])
+            af = min(af, fbids[0] / 1.01, fbids[asi])
             if kzo >= (km - 1) * 100:
                 sf = max(mf * km, fasks[0])
                 m1 = ctm
@@ -881,7 +883,7 @@ while True:
                 sf = max(songaort * 1.20, fasks[0])
                 m1 = ctm
             else:
-                sf = fasks[0]
+                sf = max(kema/1.01,fasks[0])
                 m1 = max(ctm - mulk / 2 / cp, 2 / cp)
 
         elif kemao <= -1:
@@ -889,7 +891,7 @@ while True:
             asi, afi, ma = 4, 7, 4
             ssi, sfi, ms = 0, 3, 2
 
-            af = min(af / km, fbids[0] / 1.01, fbids[asi])
+            af = min(af, fbids[0] / 1.01, fbids[asi])
             sf = max(sf, fasks[ssi])
 
     if ceder <= mulk / 2:
