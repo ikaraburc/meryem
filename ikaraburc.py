@@ -170,68 +170,6 @@ class coin_trader:
         fbids = [float(x[0]) for x in r["bids"]]
         fasks = [float(x[0]) for x in r["asks"]]
 
-    def mumlar(self):
-        host = "https://api.gateio.ws"
-        prefix = "/api/v4"
-        headers = {'Accept': 'application/json', 'Content-Type': 'application/json'}
-        url = '/spot/candlesticks'
-        query_param = 'currency_pair=' + self.coin + '&interval=5m' + '&limit=1000'
-        while True:
-            try:
-                r = requests.request('GET', host + prefix + url + "?" + query_param, headers=headers).json()
-            except ConnectionError as e:  # This is the correct syntax
-                print(e)
-                time.sleep(1)
-                r = "Nothing"
-
-            except ValueError:
-                print("Gelen Dosya Json değil...")
-                r = "Nothing"
-
-            if r != "Nothing":
-                break
-            else:
-                print("Bağlantı bekleniyor...")
-                continue
-
-        global tmumlar, dmumlar, m1hacim, emas, kemas, ema, kema, max_emao, kema1
-
-        tmumlar = [float(i[3]) for i in r]
-        dmumlar = [float(i[4]) for i in r]
-        kmumlar = [float(i[2]) for i in r]
-        m1hacim = [float(i[1]) for i in r]
-
-        tmumlar.reverse()
-        dmumlar.reverse()
-        kmumlar.reverse()
-        m1hacim.reverse()
-        m1hacim = round(sum(m1hacim[:6]), 2)
-
-        emas = []
-        ema_periyot = 12
-        for i in range(1000 - ema_periyot):
-            emas.append([round(sum(kmumlar[i:i + ema_periyot]) / ema_periyot, digit), kmumlar[i]])
-
-        kemas = []
-        if emas[0][0] < emas[0][1]:
-            yer = -1
-        else:
-            yer = 1
-        for i in range(len(emas)):
-            if emas[i][0] < emas[i][1]:
-                if yer == 1:
-                    kemas.append(emas[i][0])
-                yer = -1
-            else:
-                if yer == -1:
-                    kemas.append(emas[i][0])
-                yer = 1
-
-        ema = emas[0][0]
-        kema = kemas[0]
-        kema1 = kemas[1]
-        max_emao = round((max(emas, key=lambda cift: cift[0])[0] / ema - 1) * 100, 2)
-
     def coklu_al(self):
         # Alış emri girilmesi.........
 
@@ -368,6 +306,68 @@ class coin_trader:
                 continue
 
         # print("Satım emirleri silindi......")
+
+    def mumlar(self):
+        host = "https://api.gateio.ws"
+        prefix = "/api/v4"
+        headers = {'Accept': 'application/json', 'Content-Type': 'application/json'}
+        url = '/spot/candlesticks'
+        query_param = 'currency_pair=' + self.coin + '&interval=5m' + '&limit=1000'
+        while True:
+            try:
+                r = requests.request('GET', host + prefix + url + "?" + query_param, headers=headers).json()
+            except ConnectionError as e:  # This is the correct syntax
+                print(e)
+                time.sleep(1)
+                r = "Nothing"
+
+            except ValueError:
+                print("Gelen Dosya Json değil...")
+                r = "Nothing"
+
+            if r != "Nothing":
+                break
+            else:
+                print("Bağlantı bekleniyor...")
+                continue
+
+        global tmumlar, dmumlar, m1hacim, emas, kemas, ema, kema, max_emao, kema1
+
+        tmumlar = [float(i[3]) for i in r]
+        dmumlar = [float(i[4]) for i in r]
+        kmumlar = [float(i[2]) for i in r]
+        m1hacim = [float(i[1]) for i in r]
+
+        tmumlar.reverse()
+        dmumlar.reverse()
+        kmumlar.reverse()
+        m1hacim.reverse()
+        m1hacim = round(sum(m1hacim[:6]), 2)
+
+        emas = []
+        ema_periyot = 12
+        for i in range(1000 - ema_periyot):
+            emas.append([round(sum(kmumlar[i:i + ema_periyot]) / ema_periyot, digit), kmumlar[i]])
+
+        kemas = []
+        if emas[0][0] < emas[0][1]:
+            yer = -1
+        else:
+            yer = 1
+        for i in range(len(emas)):
+            if emas[i][0] < emas[i][1]:
+                if yer == 1:
+                    kemas.append(emas[i][0])
+                yer = -1
+            else:
+                if yer == -1:
+                    kemas.append(emas[i][0])
+                yer = 1
+
+        ema = emas[0][0]
+        kema = kemas[0]
+        kema1 = kemas[1]
+        max_emao = round((max(emas, key=lambda cift: cift[0])[0] / ema - 1) * 100, 2)
 
     def alsat_gecmisi(self):
 
@@ -698,7 +698,7 @@ def ikinci_elek():
             print("Yeni çıkan coin, silindi...", bc)
             sil = "evet"
 
-        if m1hacim < 500:
+        if m1hacim < 750:
             print("hacim düşük silindi..", bc)
             sil = "evet"
 
@@ -791,15 +791,14 @@ while True:
 
     # ************- STABİL - PUMP - DUMP BÖLGESİ -*******************************#
     km = 1.03
-    for w in range(len(emas)):
-        fema = emas[w][0]
-        if fema / ema >= km or ema / fema >= km:
-            break
 
-    if fema / ema >= km:
-        yatay = "Dip"
+    for i in range(len(kemas)):
+        if kema / kemas[i] > km or kemas[i] / kema > km:
+            break
+    if kema / kemas[i] > km:
+        syer = "Tepe"
     else:
-        yatay = "Tepe"
+        syer = "Dip"
 
     cc = (fbids[0] + fasks[0]) / 2
     kemao = round((cc / kema - 1) * 100, 2)
@@ -832,7 +831,7 @@ while True:
 
     # ************- EMA STRATEJİSİ -*******************************#
 
-    if yatay == "Dip":
+    if syer == "Dip":
         if kemao >= 1:
             bolge = "Dipten yükseliş"
             asi, afi, ma = 1, 5, 2
@@ -840,6 +839,7 @@ while True:
 
             af = min(kema * 1.02, fbids[asi])
             sf = max(sf, fasks[0] * 1.01, fasks[ssi])
+            p1 = usd
 
         elif 0 <= kemao < 1:
             bolge = "ALIM YERİ"
@@ -850,9 +850,9 @@ while True:
             sf = max(sf, fbids[asi] * 1.01, fasks[ssi])
             p1 = usd
         elif kemao < 0:
-            bolge = "dipten düşüş"
+            bolge = "Dipten düşüş"
             asi, afi, ma = 1, 5, 2
-            ssi, sfi, ms = 3, 5, 2
+            ssi, sfi, ms = 3, 6, 3
 
             af = fbids[asi]
             sf = max(sf, fasks[ssi])
@@ -860,17 +860,17 @@ while True:
                 sf = fasks[ssi]
                 af = min(sonsfiyat / 1.01, fbids[asi])
 
-    elif yatay == "Tepe":
-        if kemao >= 0:
+    elif syer == "Tepe":
+        if kemao > 0:
             bolge = "Tepeden yükseliş"
-            asi, afi, ma = 3, 7, 3
+            asi, afi, ma = 2, 5, 2
             ssi, sfi, ms = 1, 5, 2
 
-            af = min(af, fbids[0] / km, fbids[asi])
+            af = min(kema * 1.01, fbids[asi])
             sf = max(sf, fbids[0] * 1.01, fasks[ssi])
 
-        elif -1 < kemao < 0:
-            bolge = "SATIM YERİ"
+        elif kemao <= 0:
+            bolge = "Tepeden düşüş"
             asi, afi, ma = 4, 10, 4
             ssi, sfi, ms = 0, 2, 2
 
@@ -881,17 +881,11 @@ while True:
             elif kzo == -100 and fasks[0] >= songaort * 1.20:
                 sf = max(songaort * 1.20, fasks[0])
                 m1 = ctm
-            else:
-                sf = max(kema / 1.01, fasks[0])
+            elif fbids[0] > songaort * km:
+                sf = fasks[0]
                 m1 = max(ctm - mulk / 2 / cp, 2 / cp)
-
-        elif kemao <= -1:
-            bolge = "Tepeden düşüş"
-            asi, afi, ma = 4, 10, 4
-            ssi, sfi, ms = 0, 3, 2
-
-            af = min(af / km, fbids[0] / km, fbids[asi])
-            sf = max(sf, fasks[ssi])
+            else:
+                sf = max(sf, fasks[0])
 
     if ceder <= mulk / 2:
         if kzo == -100:
@@ -962,7 +956,7 @@ while True:
     sf = round(sf, digit)
 
     if usd >= 1:
-        if af > afiyat or af < afiyat / 1.002 or usdt_av >= 2:
+        if af > afiyat or af < afiyat / 1.005 or usdt_av >= 2:
             T1 = threading.Thread(target=ct.alimlar_sil)
             T2 = threading.Thread(target=ct.bakiye_getir)
             T1.start()
@@ -979,7 +973,7 @@ while True:
             ct.coklu_al()
 
     if ceder > 1:
-        if sf > sfiyat * 1.002 or sf < sfiyat or cam * cp >= 5:
+        if sf > sfiyat * 1.005 or sf < sfiyat or cam * cp >= 5:
             T1 = threading.Thread(target=ct.satimlar_sil)
             T2 = threading.Thread(target=ct.bakiye_getir)
             T1.start()
