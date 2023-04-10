@@ -797,10 +797,9 @@ while True:
         
     if fema / ema >= km:
         yatay = "Dip"
-        cc = fasks[0]
     else:
         yatay = "Tepe"
-        cc = fbids[0]
+    cc = (fbids[0] + fasks[0])/2
     kemao = round((cc / kema - 1) * 100, 2)
     aso = 5
     p1 = min(max(mulk / aso, 2), usd)
@@ -864,18 +863,15 @@ while True:
             asi, afi, ma = 3, 7, 3
             ssi, sfi, ms = 2, 5, 2
 
-            af = min(fbids[0] / 1.01, fbids[asi])
+            af = min(af, fbids[0]/km, fbids[asi])
             sf = max(sf, fasks[ssi])
-            if ceder < mulk / 2 and kemao < 1:
-                asi, afi, ma = 1, 5, 2
-                af = fbids[1]
 
         elif -1 < kemao < 0:
             bolge = "SATIM YERİ"
             asi, afi, ma = 4, 10, 4
             ssi, sfi, ms = 0, 2, 2
 
-            af = min(af, fbids[0] / 1.01, fbids[asi])
+            af = min(af/km, fbids[0] / km, fbids[asi])
             if kzo >= (km - 1) * 100:
                 sf = max(mf * km, fasks[0])
                 m1 = ctm
@@ -888,10 +884,10 @@ while True:
 
         elif kemao <= -1:
             bolge = "Tepeden düşüş"
-            asi, afi, ma = 4, 7, 4
+            asi, afi, ma = 4, 10, 4
             ssi, sfi, ms = 0, 3, 2
 
-            af = min(af, fbids[0] / 1.01, fbids[asi])
+            af = min(af/km, fbids[0] /km, fbids[asi])
             sf = max(sf, fasks[ssi])
 
     if ceder <= mulk / 2:
@@ -919,7 +915,7 @@ while True:
 
     if af * 1.005 >= taff:
         for yai in range(eai, - 1, -1):
-            if abs(taff - alist[yai]) / alist[yai] >= 5 / 1000:
+            if abs(taff - alist[yai]) / alist[yai] >= 1/ 100:
                 yai = yai + 1
                 break
         if alist[yai] == afiyat:
@@ -948,7 +944,7 @@ while True:
 
     if sf / 1.005 <= tsff:
         for ysi in range(esi, - 1, -1):
-            if abs(tsff - slist[ysi]) / slist[ysi] >= 0.5 / 100:
+            if abs(tsff - slist[ysi]) / slist[ysi] >= 1 / 100:
                 ysi = ysi + 1
                 break
         if slist[ysi] == sfiyat:
