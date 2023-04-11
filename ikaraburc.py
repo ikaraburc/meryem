@@ -667,22 +667,18 @@ def ikinci_elek():
         T5.join()
 
         km = 1.03
-        for w in range(len(emas)):
-            fema = emas[w][0]
-            if fema / ema >= km or ema / fema >= km:
+        for i in range(len(kemas)):
+            if kema / kemas[i] > km or kemas[i] / kema > km:
                 break
-
-        if fema / ema >= km:
-            yatay = "Dip"
-            kemao = round((fbids[0] / kema - 1) * 100, 2)
+        if kema / kemas[i] > km:
+            syer = "Tepe"
         else:
-            kemao = round((fasks[0] / kema - 1) * 100, 2)
-            yatay = "Tepe"
+            syer = "Dip"
 
-        emmao1 = round(cp / min(emas[:24], key=lambda em: em[0])[0], 2)
+        emmao1 = round(cp / min(emas[:36], key=lambda em: em[0])[0], 2)
 
-        if 3 > kemao > 1:
-            if yatay == "Dip" or emmao1 <= 1.03:
+        if 1 < kemao < 3:
+            if syer == "Dip" or emmao1 <= 1.05:
                 ema_ok = "ema uygun"
         else:
             ema_ok = "ema uygun değil"
@@ -866,7 +862,7 @@ while True:
             asi, afi, ma = 2, 5, 2
             ssi, sfi, ms = 1, 5, 2
 
-            af = min(kema * 1.01, fbids[asi])
+            af = min(af, fbids[asi])
             sf = max(sf, fbids[0] * 1.01, fasks[ssi])
 
         elif kemao <= 0:
