@@ -443,7 +443,7 @@ class coin_trader:
 
         if (time.time() - tsiftah) > (6 * 24 * 60 * 60 + 20 * 60 * 60):
             kzo = -100
-        if min(amalko, kzo) > 0 and (max(amalko, kzo) - min(amalko, kzo)) / min(amalko, kzo) > 1.20:
+        if amalf > mf * 1.15 or amalf < mf/1.15
             kzo = -100
 
         bilanco = PrettyTable()
@@ -881,7 +881,7 @@ while True:
             elif kzo == -100 and fasks[0] >= songaort * 1.20:
                 sf = max(songaort * 1.20, fasks[0])
                 m1 = ctm
-            elif fbids[0] > songaort * km:
+            elif fbids[0] > songaort * km and ceder > mulk / 2:
                 sf = fasks[0]
                 m1 = max(ctm - mulk / 2 / cp, 2 / cp)
             else:
