@@ -445,8 +445,10 @@ class coin_trader:
             print(amalf, amalko)
 
         if (time.time() - tsiftah) > (6 * 24 * 60 * 60 + 20 * 60 * 60):
+            mf = amalf
             kzo = -100
-        if amalf > mf * 1.15 or amalf < mf / 1.15:
+        if amalf > mf * 1.05 or amalf < mf / 1.05:
+            mf = amalf
             kzo = -100
 
         bilanco = PrettyTable()
@@ -841,8 +843,8 @@ while True:
             ssi, sfi, ms = 3, 5, 2
 
             af = min(kema * 1.02, fbids[asi])
-            sf = max(sf, fasks[0] * 1.01, fasks[ssi])
             p1 = usd
+            sf = max(sf, fasks[0] * 1.01, fasks[ssi])
 
         elif 0 <= kemao < 1:
             bolge = "ALIM YERİ"
@@ -850,18 +852,19 @@ while True:
             ssi, sfi, ms = 3, 5, 2
 
             af = fbids[asi]
-            sf = max(sf, fbids[asi] * 1.01, fasks[ssi])
             p1 = usd
+            sf = max(sf, fbids[asi] * 1.01, fasks[ssi])
+
         elif kemao < 0:
             bolge = "Dipten düşüş"
-            asi, afi, ma = 1, 5, 2
-            ssi, sfi, ms = 3, 6, 3
+            asi, afi, ma = 1, 4, 2
+            ssi, sfi, ms = 0, 3, 2
 
             af = fbids[asi]
             sf = max(sf, fasks[ssi])
             if kemao < -1 and usd < mulk / 4:
                 sf = fasks[ssi]
-                af = min(sonsfiyat / 1.01, fbids[asi])
+                af = fbids[asi]
 
     elif syer == "Tepe":
         if kemao > 0:
@@ -870,7 +873,7 @@ while True:
             ssi, sfi, ms = 1, 5, 2
 
             af = min(af, fbids[asi])
-            sf = max(sf, fbids[0] * 1.01, fasks[ssi])
+            sf = max(sf, fasks[ssi])
 
         elif kemao <= 0:
             bolge = "Tepeden düşüş"
@@ -881,24 +884,24 @@ while True:
             if kzo >= (km - 1) * 100:
                 sf = max(mf * km, fasks[0])
                 m1 = ctm
-            elif kzo == -100 and fasks[0] >= songaort * 1.20:
+            elif kzo == -100 and fasks[0] >= mf * 1.20:
                 sf = max(songaort * 1.20, fasks[0])
                 m1 = ctm
-            elif fbids[0] > songaort * km and ceder > mulk / 2:
-                sf = fasks[0]
+            elif ceder > mulk / 2:
+                sf = max(sf, fasks[0])
                 m1 = max(ctm - mulk / 2 / cp, 2 / cp)
             else:
                 sf = max(sf, fasks[0])
 
     if ceder <= mulk / 2:
         if kzo == -100:
-            sf = max(sf * 1.05, songaort * 1.20)
+            sf = max(sf * 1.05, mf * 1.20)
         else:
             sf = mf * km
 
     # ************- TAF -*******************************#
 
-    for fa in range(0, 5):
+    for fa in range(0, afi):
         if 50 <= masks[fa] * fasks[fa]:
             break
     for eai in range(0, afi + 1):
@@ -910,10 +913,8 @@ while True:
     else:
         taff = fbids[eai] + k
 
-    af = min(af, taff)
     alist = [fasks[0]] + fbids[:eai + 1]
-
-    if af * 1.005 >= taff:
+    if af >= taff and kemao >= 0:
         for yai in range(eai, - 1, -1):
             if abs(taff - alist[yai]) / alist[yai] >= 1 / 100:
                 yai = yai + 1
@@ -927,7 +928,7 @@ while True:
 
     # ************- TSF -*******************************#
 
-    for fs in range(0, 4):
+    for fs in range(0, sfi):
         if 50 <= mbids[fs] * fbids[fs]:
             break
     for esi in range(0, sfi):
@@ -939,18 +940,16 @@ while True:
     else:
         tsff = fasks[esi] - k
 
-    sf = max(sf, tsff)
     slist = [fbids[0]] + fasks[:esi + 1]
-
-    if sf / 1.005 <= tsff:
+    if sf <= tsff and kemao <= 0:
         for ysi in range(esi, - 1, -1):
             if abs(tsff - slist[ysi]) / slist[ysi] >= 1 / 100:
                 ysi = ysi + 1
                 break
         if slist[ysi] == sfiyat:
-            tsf = fasks[ysi + 1] - k
+            tsf = slist[ysi + 1] - k
         else:
-            tsf = fasks[ysi] - k
+            tsf = slist[ysi] - k
 
         sf = tsf
 
