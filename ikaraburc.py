@@ -331,7 +331,7 @@ class coin_trader:
                 print("Bağlantı bekleniyor...")
                 continue
 
-        global tmumlar, dmumlar, m1hacim, emas, kemas, ema, kema, max_emao, kema1
+        global tmumlar, dmumlar, m1hacim, emas, kemas, ema, kema, kema1, emak, emab
 
         tmumlar = [float(i[3]) for i in r]
         dmumlar = [float(i[4]) for i in r]
@@ -345,9 +345,11 @@ class coin_trader:
         m1hacim = round(sum(m1hacim[:6]), 2)
 
         emas = []
-        ema_periyot = 12
-        for i in range(1000 - ema_periyot):
-            emas.append([round(sum(kmumlar[i:i + ema_periyot]) / ema_periyot, digit), kmumlar[i]])
+        emakp = 4
+        emabp = 12
+        for i in range(1000 - emabp):
+            emas.append(
+                [round(sum(kmumlar[i:i + emakp]) / emakp, digit), round(sum(kmumlar[i:i + emabp]) / emabp, digit)])
 
         kemas = []
         if emas[0][0] < emas[0][1]:
@@ -364,10 +366,11 @@ class coin_trader:
                     kemas.append(emas[i][0])
                 yer = 1
 
-        ema = emas[0][0]
+        emak = emas[0][0]
+        emab = emas[0][1]
+
         kema = kemas[0]
         kema1 = kemas[1]
-        max_emao = round((max(emas, key=lambda cift: cift[0])[0] / ema - 1) * 100, 2)
 
     def alsat_gecmisi(self):
 
@@ -443,7 +446,7 @@ class coin_trader:
 
         if (time.time() - tsiftah) > (6 * 24 * 60 * 60 + 20 * 60 * 60):
             kzo = -100
-        if amalf > mf * 1.15 or amalf < mf/1.15:
+        if amalf > mf * 1.15 or amalf < mf / 1.15:
             kzo = -100
 
         bilanco = PrettyTable()
@@ -668,13 +671,15 @@ def ikinci_elek():
 
         km = 1.03
         for i in range(len(kemas)):
-            if kema / kemas[i] > km or kemas[i] / kema > km:
+            fkema = kemas[i]
+            if kema / fkema > km or fkema / kema > km:
                 break
-        if kema / kemas[i] > km:
+        if kema / fkema > km:
             syer = "Tepe"
         else:
             syer = "Dip"
 
+        kemao = round((emak - kema) / min(emak, kema) * 100, 2)
         emmao1 = round(cp / min(emas[:36], key=lambda em: em[0])[0], 2)
 
         if 1 < kemao < 3:
@@ -699,10 +704,9 @@ def ikinci_elek():
             sil = "evet"
 
         ytablo.field_names = [str(bc), str(" of " + str(len(toplu)))]
-        ytablo.add_row(["kemao", kemao])
         ytablo.add_row(["cp", cp])
+        ytablo.add_row(["kemao", kemao])
         ytablo.add_row(["kema", kema])
-        ytablo.add_row(["ema", ema])
         ytablo.add_row(["ema", ema_ok])
         ytablo.add_row(["m1hacim", m1hacim])
         print(ytablo)
@@ -789,15 +793,18 @@ while True:
     km = 1.03
 
     for i in range(len(kemas)):
-        if kema / kemas[i] > km or kemas[i] / kema > km:
+        fkema = kemas[i]
+        if kema / fkema > km or fkema / kema > km:
             break
-    if kema / kemas[i] > km:
+    if kema / fkema > km:
+        fkemao = round((kema - fkema) / min(kema, fkema) * 100, 2)
         syer = "Tepe"
     else:
+        fkemao = -round((kema - fkema) / min(kema, fkema) * 100, 2)
         syer = "Dip"
 
-    cc = (fbids[0] + fasks[0]) / 2
-    kemao = round((cc / kema - 1) * 100, 2)
+    kemao = round((emak - kema) / min(emak, kema) * 100, 2)
+
     aso = 5
 
     p1 = min(max(mulk / aso, 2), usd)
@@ -993,8 +1000,9 @@ while True:
     # ************- EKRANA PRİNT BÖLÜMÜ -*******************************#
     fiyatlar = PrettyTable()
     fiyatlar.field_names = [str(bolge) + str(" kemao% " + str(kemao)), mal, str("cp " + str(cp))]
-    fiyatlar.add_row([str("max_emao% " + str(max_emao)), str("kema " + str(kema)), str("ema " + str(ema))])
-    fiyatlar.add_row([str(sonislem) + str(" af,sf ") + str(round(sf / af, 2)), round(af, digit), round(sf, digit)])
+    fiyatlar.add_row([str("kema " + str(kema)), str(" emak " + str(emak)), str("emab " + str(emab))])
+    fiyatlar.add_row([str(sonislem), str("fkema " + str(fkema)), str("fkemao %" + str(fkemao))])
+    fiyatlar.add_row([str(" af,sf ") + str(round(sf / af, 2)), round(af, digit), round(sf, digit)])
     fiyatlar.add_row([str(" haf,hsf " + str(round(hsf / haf, 2))), round(haf, digit), round(hsf, digit)])
     fiyatlar.add_row(["son aort, sort ", round(sonaort, digit), round(sonsort, digit)])
     fiyatlar.add_row(["son gaort, gsort ", round(songaort, digit), round(songsort, digit)])
