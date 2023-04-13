@@ -726,11 +726,11 @@ while True:
 
     if bolge == "Yükseliş":
         af = min(kema * 1.01, fbids[0])
-        sf = max(saf * km, fasks[0] * 1.03)
+        sf = max(saf * km, fasks[0] * 1.02, fasks[3]-k)
 
     elif bolge == "Düşüş":
         sf = max(saf * km, fasks[0])
-        af = min(max(ssf / km, kema / km), fbids[0] / 1.03)
+        af = min(max(ssf, kema) / km, fbids[0] / 1.03, fbids[3]+k)
 
     # ************- TAF - TSF ************************************************************#
 
