@@ -729,7 +729,7 @@ while True:
         sf = max(saf * km, fasks[0] * 1.03)
 
     elif bolge == "Düşüş":
-        sf = max(saf * 1.01, fasks[0])
+        sf = max(saf * km, fasks[0])
         af = min(max(ssf / km, kema / km), fbids[0] / 1.03)
 
     # ************- TAF - TSF ************************************************************#
