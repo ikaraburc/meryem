@@ -185,7 +185,13 @@ class coin_trader:
                         str(round(abs(amiktar / 100), mdigit)),
                         '","amount":"', \
                         str(int(amiktar) + float(str(amiktar % max(int(amiktar), 1))[:mdigit + 2])), '","price":"',
-                        f"{afiyat:.{digit}f}", '","time_in_force":"gtc","auto_borrow":false}]'])
+                        f"{afiyat:.{digit}f}", '","time_in_force":"gtc","auto_borrow":false}, \
+                        {"text":"t-123456","currency_pair":"', self.coin,
+                        '","type":"limit","account":"spot","side":"buy","iceberg":"',
+                        str(round(abs(amiktar1 / 100), mdigit)),
+                        '","amount":"', \
+                        str(int(amiktar1) + float(str(amiktar1 % max(int(amiktar1), 1))[:mdigit + 2])), '","price":"',
+                        f"{afiyat1:.{digit}f}", '","time_in_force":"gtc","auto_borrow":false}]'])
 
         sign_headers = gen_sign('POST', prefix + url, query_param, body)
         headers.update(sign_headers)
@@ -202,7 +208,7 @@ class coin_trader:
             else:
                 print("Bağlantı bekleniyor...")
                 continue
-        # print(r)
+        #print(r)
 
     def coklu_sat(self):
 
@@ -219,7 +225,13 @@ class coin_trader:
                         str(round(abs(0.01 / sfiyat), mdigit)),
                         '","amount":"', \
                         str(int(smiktar) + float(str(smiktar % max(int(smiktar), 1))[:mdigit + 2])), '","price":"',
-                        f"{sfiyat:.{digit}f}", '","time_in_force":"gtc","auto_borrow":false}]'])
+                        f"{sfiyat:.{digit}f}", '","time_in_force":"gtc","auto_borrow":false}, \
+                        {"text":"t-123456","currency_pair":"', self.coin,
+                        '","type":"limit","account":"spot","side":"sell","iceberg":"',
+                        str(round(abs(0.01 / sfiyat1), mdigit)),
+                        '","amount":"', \
+                        str(int(smiktar1) + float(str(smiktar1 % max(int(smiktar1), 1))[:mdigit + 2])), '","price":"',
+                        f"{sfiyat1:.{digit}f}", '","time_in_force":"gtc","auto_borrow":false}]'])
 
         sign_headers = gen_sign('POST', prefix + url, query_param, body)
         headers.update(sign_headers)
@@ -236,7 +248,7 @@ class coin_trader:
             else:
                 print("Bağlantı bekleniyor...")
                 continue
-        # print(r)
+        #print(r)
 
     def alimlar_sil(self):
 
@@ -723,11 +735,11 @@ while True:
         bolge = "Yükseliş"
     elif kemao < 0:
         bolge = "Düşüş"
-    elif kemao == 0:
+    else:
         if kema < kema1:
             bolge = "Yükseliş"
         else:
-            bolge = "Düşüş"
+            bolge = "Düşüş"      
 
     # ************- EMA STRATEJİSİ -*******************************#
 
@@ -745,8 +757,8 @@ while True:
         afi, sfi = 3, 0
 
         af = min(max(ssf, kema) / km, fbids[0] / 1.03, fbids[afi] + k)
-        sf = max(saf * km, fasks[sfi])
-
+        sf = max(saf * 1.01, fasks[sfi])
+    
     # ************- TAF - TSF ************************************************************#
     alist = fbids[:afi + 1] + [fasks[0]]
     slist = [fbids[0]] + fasks[:sfi + 1]
@@ -766,7 +778,7 @@ while True:
     sf = round(sf, digit)
 
     if usd >= 1:
-        if af > afiyat or af < afiyat / 1.005:
+        if af > afiyat or af < afiyat / 1.005 or usdt_av > 1:
             T1 = threading.Thread(target=ct.alimlar_sil)
             T2 = threading.Thread(target=ct.bakiye_getir)
             T1.start()
@@ -776,13 +788,15 @@ while True:
 
             afiyat = af
             afiyat1 = round(min(afiyat * 0.93, fbids[10] + k), digit)
+            
             amiktar = (p1 - 0.5) / afiyat
+            amiktar1 = usd - amiktar
 
             ct.coklu_al()
 
     if ceder > 1:
         yedek = 2 / cp
-        if sf > sfiyat * 1.005 or sf < sfiyat:
+        if sf > sfiyat * 1.005 or sf < sfiyat or cam > yedek:
             T1 = threading.Thread(target=ct.satimlar_sil)
             T2 = threading.Thread(target=ct.bakiye_getir)
             T1.start()
@@ -791,7 +805,11 @@ while True:
             T2.join()
 
             sfiyat = sf
+            sfiyat1 = sfiyat *1.05
+            
             smiktar = m1
+            smiktar1 = ctm - m1
+            
             if kzo < (km - 1) * 100:
                 smiktar = m1 - yedek
 
