@@ -422,7 +422,7 @@ class coin_trader:
         anapara = round(abs(usd + agider - sgelir), 2)
         kzt = round(ceder - agider + sgelir, 2)
         harcanan = min(agider, anapara)
-        if harcanan > 0:
+        if agider > 0:
             mf = round((agider - sgelir) / ctm * 1.002, digit)
             mmf = round(anapara / (usd / cp + ctm) * 1.002, digit)
             kzo = round(kzt / harcanan * 100, 2)
@@ -430,9 +430,9 @@ class coin_trader:
             amalko = round((cp / amalf - 1) * 100, 2)
             print(amalf, amalko)
 
-        if (time.time() - tsiftah) > (6 * 24 * 60 * 60 + 20 * 60 * 60) or abs(amalf - mf) / min(amalf, mf) >= 1.03:
-            mf = amalf
-            kzo = -100
+            if (time.time() - tsiftah) > (6 * 24 * 60 * 60 + 20 * 60 * 60) or abs(amalf - mf) / min(amalf, mf) >= 1.03:
+                mf = amalf
+                kzo = -100
 
         saf, ssf = 0, 0
         for a in r:
