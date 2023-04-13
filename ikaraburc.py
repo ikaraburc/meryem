@@ -437,11 +437,11 @@ class coin_trader:
                 kzo = -100
 
             for a in r:
-                if a["side"] == "buy":
+                if agider > 0 and a["side"] == "buy":
                     saf = float(a["price"])
                     break
             for s in r:
-                if s["side"] == "sell":
+                if sgelir > 0 and s["side"] == "sell":
                     ssf = float(s["price"])
                     break
 
