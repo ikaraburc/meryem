@@ -675,6 +675,7 @@ if ceder < 1:
 afiyat = cp * 0.98
 sfiyat = cp * 1.05
 km = 1.03
+kemao = 1
 
 while True:
     ct.toplu_islem()
