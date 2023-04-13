@@ -600,7 +600,7 @@ def ikinci_elek():
         kemao = round((emak - kema) / min(emak, kema) * 100, 2)
 
         if 0 < kemao < 1:
-            if kema1 > kema or cp/min(dmumlar[:48]) < 1.05:
+            if kema1 > kema or cp / min(dmumlar[:48]) < 1.05:
                 ema_ok = "ema uygun"
         else:
             ema_ok = "ema uygun değil"
@@ -725,20 +725,28 @@ while True:
     # ************- EMA STRATEJİSİ -*******************************#
 
     if bolge == "Yükseliş":
+        afi, sfi = 0, 3
         af = min(kema * 1.01, fbids[0])
-        sf = max(saf * km, fasks[0] * 1.02, fasks[3]-k)
+        sf = max(saf * km, fasks[0] * 1.02, fasks[sfi] - k)
 
     elif bolge == "Düşüş":
-        sf = max(saf * km, fasks[0])
-        af = min(max(ssf, kema) / km, fbids[0] / 1.03, fbids[3]+k)
+        afi, sfi = 3, 0
+        sf = max(saf * km, fasks[sfi])
+        af = min(max(ssf, kema) / km, fbids[0] / 1.03, fbids[afi] + k)
 
     # ************- TAF - TSF ************************************************************#
+    alist = fbids[:afi + 1] + [fasks[0]]
+    slist = [fbids[0]] + fasks[:sfi + 1]
 
-    if fasks[0] / af < 1.005:
-        af = fasks[0]
+    for a in range(len(alist) - 1, -1, -1):
+        if alist[len(alist) - 1] <= af and alist[len(alist) - 1] / alist[a] >= 1.005:
+            af = alist[a + 1] + k
+            break
 
-    if sf / fbids[0] < 1.005:
-        sf = fbids[0]
+    for s in range(len(slist) - 1, -1, -1):
+        if slist[len(slist) - 1] >= sf and slist[len(slist) - 1] / slist[s] >= 1.005:
+            sf = slist[s + 1] - k
+            break
 
     # ************- AL SAT EMİRLERİNİ GÖNDER BÖLÜMÜ -*************************************#
     af = round(af, digit)
@@ -783,7 +791,7 @@ while True:
     fiyatlar.field_names = [str(bolge) + str(" kemao% " + str(kemao)), mal, str("cp " + str(cp))]
     fiyatlar.add_row([str("kema " + str(kema)), str(" emak " + str(emak)), str("emab " + str(emab))])
     fiyatlar.add_row([str("af,  sf % " + str(round((sf - af) / af * 100, 2))), round(af, digit), round(sf, digit)])
-    fiyatlar.add_row(["saf,ssf" + str(sonislem), round(saf, digit), round(ssf, digit)])
+    fiyatlar.add_row(["saf,ssf " + str(sonislem), round(saf, digit), round(ssf, digit)])
 
     print(fiyatlar)
 
