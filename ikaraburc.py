@@ -725,14 +725,21 @@ while True:
     # ************- EMA STRATEJİSİ -*******************************#
 
     if bolge == "Yükseliş":
+        p1 = usd
+        m1 = min(ctm, mulk/5/cp)
         afi, sfi = 0, 3
+        
         af = min(kema * 1.01, fbids[0])
         sf = max(saf * km, fasks[0] * 1.02, fasks[sfi] - k)
 
     elif bolge == "Düşüş":
+        p1 = min(usd, mulk/5)
+        m1 = ctm
         afi, sfi = 3, 0
-        sf = max(saf * km, fasks[sfi])
+        
         af = min(max(ssf, kema) / km, fbids[0] / 1.03, fbids[afi] + k)
+        sf = max(saf * km, fasks[sfi])
+        
 
     # ************- TAF - TSF ************************************************************#
     alist = fbids[:afi + 1] + [fasks[0]]
@@ -753,7 +760,7 @@ while True:
     sf = round(sf, digit)
 
     if usd >= 1:
-        if af > afiyat or af < afiyat / 1.005 or usdt_av >= 2:
+        if af > afiyat or af < afiyat / 1.005:
             T1 = threading.Thread(target=ct.alimlar_sil)
             T2 = threading.Thread(target=ct.bakiye_getir)
             T1.start()
@@ -763,15 +770,13 @@ while True:
 
             afiyat = af
             afiyat1 = round(min(afiyat * 0.93, fbids[10] + k), digit)
-
-            p1 = usd
-            amiktar = (usd - 0.5) / afiyat
+            amiktar = (p1 - 0.5) / afiyat
 
             ct.coklu_al()
 
     if ceder > 1:
         yedek = 2 / cp
-        if sf > sfiyat * 1.005 or sf < sfiyat or cam > yedek:
+        if sf > sfiyat * 1.005 or sf < sfiyat:
             T1 = threading.Thread(target=ct.satimlar_sil)
             T2 = threading.Thread(target=ct.bakiye_getir)
             T1.start()
@@ -780,9 +785,9 @@ while True:
             T2.join()
 
             sfiyat = sf
-            smiktar = ctm
+            smiktar = m1
             if kzo < (km - 1) * 100:
-                smiktar = ctm - yedek
+                smiktar = m1 - yedek
 
             ct.coklu_sat()
 
