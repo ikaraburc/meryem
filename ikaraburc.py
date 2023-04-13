@@ -399,6 +399,7 @@ class coin_trader:
         agider, sgelir, limit, amalko, amalf = 0, 0, 0, 0, 0
         mf, mmf, kzo, tsiftah = 0, 0, 0, time.time()
         sonislem = "bos"
+        saf, ssf = 0, 0
         amikk = 0
 
         for x in r:
@@ -430,19 +431,19 @@ class coin_trader:
             amalko = round((cp / amalf - 1) * 100, 2)
             print(amalf, amalko)
 
-            if (time.time() - tsiftah) > (6 * 24 * 60 * 60 + 20 * 60 * 60) or abs(amalf - mf) / min(amalf, mf) >= 1.03:
+            if (time.time() - tsiftah) > (6 * 24 * 60 * 60 + 20 * 60 * 60) or abs(amalf - mf) / min(amalf,
+                                                                                                    mf) * 100 >= 3:
                 mf = amalf
                 kzo = -100
 
-        saf, ssf = 0, 0
-        for a in r:
-            if a["side"] == "buy":
-                saf = float(a["price"])
-                break
-        for s in r:
-            if s["side"] == "sell":
-                ssf = float(s["price"])
-                break
+            for a in r:
+                if a["side"] == "buy":
+                    saf = float(a["price"])
+                    break
+            for s in r:
+                if s["side"] == "sell":
+                    ssf = float(s["price"])
+                    break
 
         bilanco = PrettyTable()
         bilanco.field_names = [str(self.coin).upper(), cp]
@@ -794,8 +795,7 @@ while True:
     fiyatlar.field_names = [str(bolge) + str(" kemao% " + str(kemao)), mal, str("cp " + str(cp))]
     fiyatlar.add_row([str("kema " + str(kema)), str(" emak " + str(emak)), str("emab " + str(emab))])
     fiyatlar.add_row([str("af,  sf % " + str(round((sf - af) / af * 100, 2))), round(af, digit), round(sf, digit)])
-    fiyatlar.add_row(
-        [str("saf,ssf % " + str(round((ssf - saf) / min(saf, ssf) * 100, 2))), round(saf, digit), round(ssf, digit)])
+    fiyatlar.add_row(["saf,ssf" + str(sonislem), round(saf, digit), round(ssf, digit)])
 
     print(fiyatlar)
 
