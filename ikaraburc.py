@@ -738,7 +738,7 @@ while True:
     # ************- EMA STRATEJİSİ -*******************************#
 
     if bolge == "Yükseliş":
-        af = kema * 1.01
+        af = min(kema * 1.01, fbids[0])
         sf = max(saf * km, fasks[0] * 1.03)
 
     elif bolge == "Düşüş":
