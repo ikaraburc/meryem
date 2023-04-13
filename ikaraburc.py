@@ -317,18 +317,22 @@ class coin_trader:
                 print("Bağlantı bekleniyor...")
                 continue
 
-        global tmumlar, dmumlar, m1hacim, emas, kemas, ema, kema, kema1, emak, emab
+        global tmumlar, dmumlar, m1hacim, emas, kemas, ema, kema, kema1, emak, emab, hacimo
 
         tmumlar = [float(i[3]) for i in r]
         dmumlar = [float(i[4]) for i in r]
         kmumlar = [float(i[2]) for i in r]
-        m1hacim = [float(i[1]) for i in r]
+        hacimler = [float(i[1]) for i in r]
 
         tmumlar.reverse()
         dmumlar.reverse()
         kmumlar.reverse()
-        m1hacim.reverse()
-        m1hacim = round(sum(m1hacim[:6]), 2)
+        hacimler.reverse()
+        hk = 12
+
+        m1hacim = round(sum(hacimler[:hk]), 2)
+        hacimg = round(sum(hacimler) / len(hacimler) * hk, 2)
+        hacimo = round(m1hacim / hacimg, 2)
 
         emas = []
         emakp = 4
@@ -599,24 +603,26 @@ def ikinci_elek():
 
         kemao = round((emak - kema) / min(emak, kema) * 100, 2)
 
-        if 0 < kemao < 1:
-            if kema1 > kema or cp / min(dmumlar[:48]) < 1.05:
+        if 1 < kemao < 2:
+            if kema1 > kema or cp / min(dmumlar[:48]) < 1.03:
                 ema_ok = "ema uygun"
         else:
             ema_ok = "ema uygun değil"
             print("ema uygun değil silindi...", bc)
             sil = "evet"
 
-        emmao = round(cp / min(emas[:864], key=lambda em: em[0])[0], 2)
-        if emmao > 1.15:
-            print("son günlerde/saatlerde aşırı yükselmiş silindi...%", emmao, bc)
+        emmao = round(cp / min(emas[:int(len(emas))], key=lambda em: em[0])[0], 2)
+        emmio = round(max(emas[:int(len(emas))], key=lambda em: em[0])[0] / cp, 2)
+
+        if max(emmio, emmao) > 1.20:
+            print("son günlerde/saatlerde aşırı yükselmiş silindi...%", emmao, emmio, bc)
             sil = "evet"
 
         if len(tmumlar) < 800:
             print("Yeni çıkan coin, silindi...", bc)
             sil = "evet"
 
-        if m1hacim < 750:
+        if m1hacim < 750 or hacimo < 1.50:
             print("hacim düşük silindi..", bc)
             sil = "evet"
 
@@ -626,6 +632,7 @@ def ikinci_elek():
         ytablo.add_row(["kema", kema])
         ytablo.add_row(["ema", ema_ok])
         ytablo.add_row(["m1hacim", m1hacim])
+        ytablo.add_row(["hacimo", hacimo])
         print(ytablo)
 
         toplu.remove(list(filter(lambda k: k[0] == bc, toplu))[0])
@@ -726,20 +733,19 @@ while True:
 
     if bolge == "Yükseliş":
         p1 = usd
-        m1 = min(ctm, mulk/5/cp)
+        m1 = min(ctm, mulk / 5 / cp)
         afi, sfi = 0, 3
-        
+
         af = min(kema * 1.01, fbids[0])
         sf = max(saf * km, fasks[0] * 1.02, fasks[sfi] - k)
 
     elif bolge == "Düşüş":
-        p1 = min(usd, mulk/5)
+        p1 = min(usd, mulk / 5)
         m1 = ctm
         afi, sfi = 3, 0
-        
+
         af = min(max(ssf, kema) / km, fbids[0] / 1.03, fbids[afi] + k)
         sf = max(saf * km, fasks[sfi])
-        
 
     # ************- TAF - TSF ************************************************************#
     alist = fbids[:afi + 1] + [fasks[0]]
