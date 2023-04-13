@@ -185,14 +185,7 @@ class coin_trader:
                         str(round(abs(amiktar / 100), mdigit)),
                         '","amount":"', \
                         str(int(amiktar) + float(str(amiktar % max(int(amiktar), 1))[:mdigit + 2])), '","price":"',
-                        f"{afiyat:.{digit}f}", '","time_in_force":"gtc","auto_borrow":false},\
-         {"text":"t-123456","currency_pair":"', self.coin,
-                        '","type":"limit","account":"spot","side":"buy","iceberg":"',
-                        str(round(abs(amiktar1 / 100), mdigit)),
-                        '","amount":"', \
-                        str(int(amiktar1) + float(str(amiktar1 % max(int(amiktar1), 1))[:mdigit + 2])), '","price":"',
-                        f"{afiyat1:.{digit}f}",
-                        '","time_in_force":"gtc","auto_borrow":false}]'])
+                        f"{afiyat:.{digit}f}", '","time_in_force":"gtc","auto_borrow":false}]'])
 
         sign_headers = gen_sign('POST', prefix + url, query_param, body)
         headers.update(sign_headers)
@@ -226,14 +219,7 @@ class coin_trader:
                         str(round(abs(0.01 / sfiyat), mdigit)),
                         '","amount":"', \
                         str(int(smiktar) + float(str(smiktar % max(int(smiktar), 1))[:mdigit + 2])), '","price":"',
-                        f"{sfiyat:.{digit}f}", '","time_in_force":"gtc","auto_borrow":false},\
-         {"text":"t-123456","currency_pair":"', self.coin,
-                        '","type":"limit","account":"spot","side":"sell","iceberg":"',
-                        str(round(abs(smiktar1 / 100), mdigit)),
-                        '","amount":"', \
-                        str(int(smiktar1) + float(str(smiktar1 % max(int(smiktar1), 1))[:mdigit + 2])), '","price":"',
-                        f"{sfiyat1:.{digit}f}",
-                        '","time_in_force":"gtc","auto_borrow":false}]'])
+                        f"{sfiyat:.{digit}f}", '","time_in_force":"gtc","auto_borrow":false}]'])
 
         sign_headers = gen_sign('POST', prefix + url, query_param, body)
         headers.update(sign_headers)
@@ -406,7 +392,7 @@ class coin_trader:
                 print("Bağlantı bekleniyor...")
                 continue
 
-        global bilanco, sonislems, sonislem, sonafiyat, sonsfiyat, mf, kzo, kzt, anapara, harcanan, agider, sgelir
+        global bilanco, sonislem, saf, ssf, mf, kzo, kzt, anapara, harcanan, agider, sgelir, amalf
 
         miktar = ctm
         anapara = mulk
@@ -444,12 +430,19 @@ class coin_trader:
             amalko = round((cp / amalf - 1) * 100, 2)
             print(amalf, amalko)
 
-        if (time.time() - tsiftah) > (6 * 24 * 60 * 60 + 20 * 60 * 60):
+        if (time.time() - tsiftah) > (6 * 24 * 60 * 60 + 20 * 60 * 60) or abs(amalf - mf) / min(amalf, mf) >= 1.03:
             mf = amalf
             kzo = -100
-        if amalf > mf * 1.05 or amalf < mf / 1.05:
-            mf = amalf
-            kzo = -100
+
+        saf, ssf = 0, 0
+        for a in r:
+            if a["side"] == "buy":
+                saf = float(a["price"])
+                break
+        for s in r:
+            if s["side"] == "sell":
+                ssf = float(s["price"])
+                break
 
         bilanco = PrettyTable()
         bilanco.field_names = [str(self.coin).upper(), cp]
@@ -459,72 +452,6 @@ class coin_trader:
         bilanco.add_row(["Apara= " + str(round(anapara, 2)), "Sgelir= " + str(round(sgelir, 2))])
         bilanco.add_row([" Mülk= " + str(round(mulk, 2)), "%" + str(kzo) + " " + str(kzt) + "$"])
         bilanco.align[str(self.coin).upper()] = "l"
-
-        sonafiyat, sonsfiyat = 0, 0
-        sonislems = r[:limit]
-
-        global sonaort, sonsort, songaort, songsort, tut0
-        sonort0, sonort1 = 0, 0
-        sonaort, sonsort = 0, 0
-        songaort, songsort = 0, 0
-        gamik, gsmik = 0, 0
-        gatut, gstut = 0, 0
-        mik0, mik1 = 0, 0
-        tut0, tut1 = 0, 0
-        if ceder >= 1:
-            for i in range(0, len(sonislems)):
-                if sonislems[i]["side"] == "buy":
-                    if gatut < mulk / alk * 0.9:
-                        gamik = gamik + float(sonislems[i]["amount"])
-                        gatut = gatut + float(sonislems[i]["price"]) * float(sonislems[i]["amount"])
-                        songaort = gatut / gamik
-                    else:
-                        break
-
-            for i in range(0, len(sonislems)):
-                if sonislems[i]["side"] == "sell":
-                    if gstut < mulk / slk * 0.9:
-                        gsmik = gsmik + float(sonislems[i]["amount"])
-                        gstut = gstut + float(sonislems[i]["price"]) * float(sonislems[i]["amount"])
-                        songsort = gstut / gsmik
-                    else:
-                        break
-
-            for i in range(len(sonislems)):
-                if sonislems[i]["side"] == sonislem:
-                    mik0 = mik0 + float(sonislems[i]["amount"])
-                    tut0 = tut0 + float(sonislems[i]["amount"]) * float(sonislems[i]["price"])
-                    sonort0 = tut0 / mik0
-                else:
-                    break
-
-            for x in range(len(sonislems)):
-                if sonislems[x]["side"] == sonislem:
-                    continue
-                else:
-                    for i in range(x, len(sonislems)):
-                        if sonislems[i]["side"] == sonislem:
-                            break
-                        mik1 = mik1 + float(sonislems[i]["amount"])
-                        tut1 = tut1 + float(sonislems[i]["amount"]) * float(sonislems[i]["price"])
-                        sonort1 = tut1 / mik1
-                break
-
-            for x in range(len(sonislems)):
-                if sonislems[x]["side"] == "buy":
-                    sonafiyat = float(sonislems[x]["price"])
-                    break
-            for x in range(len(sonislems)):
-                if sonislems[x]["side"] == "sell":
-                    sonsfiyat = float(sonislems[x]["price"])
-                    break
-            if sonislem == "buy":
-                sonaort = sonort0
-                sonsort = sonort1
-
-            elif sonislem == "sell":
-                sonsort = sonort0
-                sonaort = sonort1
 
     def toplu_islem(self):
         T1 = threading.Thread(target=self.coin_fiyat)
@@ -747,17 +674,20 @@ if ceder < 1:
 
 afiyat = cp * 0.98
 sfiyat = cp * 1.05
-kemao = 1
-
-alk, slk = 5, 5
+km = 1.03
 
 while True:
     ct.toplu_islem()
     print(bilanco)
 
-    if harcanan >= mulk / 5:
+    if agider >= mulk / 5:
         alim_tamam = "evet"
     if ceder < 1:
+        if kzo > (km - 1) * 100:
+            alim_tamam = "evet"
+        elif kzo == -100 and cp / amalf > 1.20:
+            alim_tamam = "evet"
+
         if alim_tamam == "evet" or kemao > 5:
             ct.alsat_gecmisi()
             tbot_ozel.send_message(telegram_chat_id, str("Eldeki son mal satıldı. Yeni mal taranıyor..."))
@@ -792,168 +722,38 @@ while True:
                     continue
 
     # ************- STABİL - PUMP - DUMP BÖLGESİ -*******************************#
-    km = 1.03
-
-    for i in range(len(kemas)):
-        fkema = kemas[i]
-        if kema / fkema > km or fkema / kema > km:
-            break
-    if kema / fkema > km:
-        fkemao = round((kema - fkema) / min(kema, fkema) * 100, 2)
-        syer = "Tepe"
-    else:
-        fkemao = -round((kema - fkema) / min(kema, fkema) * 100, 2)
-        syer = "Dip"
 
     kemao = round((emak - kema) / min(emak, kema) * 100, 2)
 
-    aso = 5
-
-    p1 = min(max(mulk / aso, 2), usd)
-    p2 = usd - p1
-
-    m1 = min(max(mulk / aso / cp, 2 / cp), ctm)
-    m2 = ctm - m1
-
-    # ************- HAF + HSF -*******************************#
-
-    haf, hsf = fbids[0], fasks[0]
-    if harcanan > 0:
-        if sonislem == "buy":
-            haf = sonaort
-            if tut0 >= mulk / alk * 0.8:
-                haf = songaort / km
-            hsf = max(songaort, sonafiyat) * km
-
-        elif sonislem == "sell":
-            haf = min(songsort, sonsort) / km
-            hsf = max(max(songaort, sonafiyat) * km, sonsort)
-            if tut0 >= mulk / slk * 0.8:
-                haf = min(songsort, sonsfiyat) / km
-                hsf = max(songaort, songsort) * km
-    af = haf
-    sf = hsf
+    if kemao > 0:
+        bolge = "Yükseliş"
+    elif kemao < 0:
+        bolge = "Düşüş"
+    elif kemao == 0:
+        if kema < kema1:
+            bolge = "Yükseliş"
+        else:
+            bolge = "Düşüş"
 
     # ************- EMA STRATEJİSİ -*******************************#
 
-    if syer == "Dip":
-        if kemao >= 1:
-            bolge = "Dipten yükseliş"
-            asi, afi, ma = 1, 5, 2
-            ssi, sfi, ms = 3, 5, 2
+    if bolge == "Yükseliş":
+        af = kema * 1.01
+        sf = max(saf * km, fasks[0] * 1.03)
 
-            af = min(kema * 1.02, fbids[asi])
-            p1 = usd
-            sf = max(sf, fasks[0] * 1.01, fasks[ssi])
+    elif bolge == "Düşüş":
+        sf = max(min(kema / 1.01, saf * 1.01), fasks[0])
+        af = min(max(ssf / km, kema / km), fbids[0] / 1.03)
 
-        elif 0 <= kemao < 1:
-            bolge = "ALIM YERİ"
-            asi, afi, ma = 0, 2, 2
-            ssi, sfi, ms = 3, 5, 2
+    # ************- TAF - TSF ************************************************************#
 
-            af = fbids[asi]
-            p1 = usd
-            sf = max(sf, fbids[asi] * 1.01, fasks[ssi])
+    if af / fasks[0] < 1.005:
+        af = fasks[0]
 
-        elif kemao < 0:
-            bolge = "Dipten düşüş"
-            asi, afi, ma = 1, 4, 2
-            ssi, sfi, ms = 0, 3, 2
+    if sf / fbids[0] < 1.005:
+        sf = fbids[0]
 
-            af = fbids[asi]
-            sf = max(sf, fasks[ssi])
-            if kemao < -1 and usd < mulk / 4:
-                sf = fasks[ssi]
-                af = fbids[asi]
-
-    elif syer == "Tepe":
-        if kemao > 0:
-            bolge = "Tepeden yükseliş"
-            asi, afi, ma = 2, 5, 2
-            ssi, sfi, ms = 1, 5, 2
-
-            af = min(af, fbids[asi])
-            sf = max(sf, fasks[ssi])
-
-        elif kemao <= 0:
-            bolge = "Tepeden düşüş"
-            asi, afi, ma = 4, 10, 4
-            ssi, sfi, ms = 0, 2, 2
-
-            af = min(af / km, fbids[0] / km, fbids[asi])
-            if kzo >= (km - 1) * 100:
-                sf = max(mf * km, fasks[0])
-                m1 = ctm
-            elif kzo == -100 and fasks[0] >= mf * 1.20:
-                sf = max(songaort * 1.20, fasks[0])
-                m1 = ctm
-            elif ceder > mulk / 2:
-                sf = max(sf, fasks[0])
-                m1 = max(ctm - mulk / 2 / cp, 2 / cp)
-            else:
-                sf = max(sf, fasks[0])
-
-    if ceder <= mulk / 2:
-        if kzo == -100:
-            sf = max(sf * 1.05, mf * 1.20)
-        else:
-            sf = mf * km
-
-    # ************- TAF -*******************************#
-
-    for fa in range(0, afi):
-        if 50 <= masks[fa] * fasks[fa]:
-            break
-    for eai in range(0, afi + 1):
-        if masks[max(ma, fa)] < mbids[eai]:
-            break
-
-    if fbids[eai] == afiyat:
-        taff = fbids[eai + 1] + k
-    else:
-        taff = fbids[eai] + k
-
-    alist = [fasks[0]] + fbids[:eai + 1]
-    if af >= taff and kemao >= 0:
-        for yai in range(eai, - 1, -1):
-            if abs(taff - alist[yai]) / alist[yai] >= 1 / 100:
-                yai = yai + 1
-                break
-        if alist[yai] == afiyat:
-            taf = fbids[yai + 1] + k
-        else:
-            taf = fbids[yai] + k
-
-        af = taf
-
-    # ************- TSF -*******************************#
-
-    for fs in range(0, sfi):
-        if 50 <= mbids[fs] * fbids[fs]:
-            break
-    for esi in range(0, sfi):
-        if mbids[max(ms, fs)] < masks[esi]:
-            break
-
-    if fasks[esi] == sfiyat:
-        tsff = fasks[esi + 1] - k
-    else:
-        tsff = fasks[esi] - k
-
-    slist = [fbids[0]] + fasks[:esi + 1]
-    if sf <= tsff and kemao <= 0:
-        for ysi in range(esi, - 1, -1):
-            if abs(tsff - slist[ysi]) / slist[ysi] >= 1 / 100:
-                ysi = ysi + 1
-                break
-        if slist[ysi] == sfiyat:
-            tsf = slist[ysi + 1] - k
-        else:
-            tsf = slist[ysi] - k
-
-        sf = tsf
-
-    # ************- AL SAT EMİRLERİNİ GÖNDER BÖLÜMÜ -*******************************#
+    # ************- AL SAT EMİRLERİNİ GÖNDER BÖLÜMÜ -*************************************#
     af = round(af, digit)
     sf = round(sf, digit)
 
@@ -969,8 +769,8 @@ while True:
             afiyat = af
             afiyat1 = round(min(afiyat * 0.93, fbids[10] + k), digit)
 
-            amiktar = (p1 - 0.5) / afiyat
-            amiktar1 = (usd - p1) / afiyat1
+            p1 = usd
+            amiktar = (usd - 0.5) / afiyat
 
             ct.coklu_al()
 
@@ -984,15 +784,7 @@ while True:
             T2.join()
 
             sfiyat = sf
-            yedek = 0
-            if -100 < kzo < km:
-                yedek = 2 / cp
-            elif cp <= songaort * 1.20:
-                yedek = 2 / cp
-
-            sfiyat1 = round(max(sf * 1.1, fasks[10] - k), digit)
-            smiktar = m1
-            smiktar1 = ctm - m1 - yedek
+            smiktar = ctm
 
             ct.coklu_sat()
 
@@ -1000,11 +792,9 @@ while True:
     fiyatlar = PrettyTable()
     fiyatlar.field_names = [str(bolge) + str(" kemao% " + str(kemao)), mal, str("cp " + str(cp))]
     fiyatlar.add_row([str("kema " + str(kema)), str(" emak " + str(emak)), str("emab " + str(emab))])
-    fiyatlar.add_row([str(sonislem), str("fkema " + str(fkema)), str("fkemao %" + str(fkemao))])
-    fiyatlar.add_row([str(" af,sf ") + str(round(sf / af, 2)), round(af, digit), round(sf, digit)])
-    fiyatlar.add_row([str(" haf,hsf " + str(round(hsf / haf, 2))), round(haf, digit), round(hsf, digit)])
-    fiyatlar.add_row(["son aort, sort ", round(sonaort, digit), round(sonsort, digit)])
-    fiyatlar.add_row(["son gaort, gsort ", round(songaort, digit), round(songsort, digit)])
+    fiyatlar.add_row([str("af,  sf % " + str(round((sf - af) / af * 100, 2))), round(af, digit), round(sf, digit)])
+    fiyatlar.add_row(
+        [str("saf,ssf % " + str(round((ssf - saf) / min(saf, ssf) * 100, 2))), round(saf, digit), round(ssf, digit)])
 
     print(fiyatlar)
 
