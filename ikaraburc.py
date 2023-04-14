@@ -258,7 +258,7 @@ class coin_trader:
         headers = {'Accept': 'application/json', 'Content-Type': 'application/json'}
 
         url = "/spot/orders/"
-        query_param = 'currency_pair=' + self.coin + "&" + 'side=buy'
+        query_param = 'currency_pair=' + self.coin + "&side=buy"
         # for `gen_sign` implementation, refer to section `Authentication` above
         sign_headers = gen_sign('DELETE', prefix + url, query_param)
         headers.update(sign_headers)
@@ -285,7 +285,7 @@ class coin_trader:
         headers = {'Accept': 'application/json', 'Content-Type': 'application/json'}
 
         url = "/spot/orders/"
-        query_param = 'currency_pair=' + self.coin + "&" + 'side=sell'
+        query_param = 'currency_pair=' + self.coin + "&side=sell"
         # for `gen_sign` implementation, refer to section `Authentication` above
         sign_headers = gen_sign('DELETE', prefix + url, query_param)
         headers.update(sign_headers)
@@ -390,7 +390,8 @@ class coin_trader:
         prefix = "/api/v4"
         headers = {'Accept': 'application/json', 'Content-Type': 'application/json'}
         url = '/spot/my_trades'
-        query_param = 'currency_pair=' + "&limit=1000"
+        tt = int(time.time() - 30 * 24 * 60 * 60)
+        query_param = 'currency_pair=' + str(self.coin) + "&limit=1000"
 
         sign_headers = gen_sign('GET', prefix + url, query_param)
         headers.update(sign_headers)
@@ -744,32 +745,44 @@ while True:
     # ************- EMA STRATEJİSİ -*******************************#
 
     if bolge == "Yükseliş":
-        p1 = usd
-        m1 = min(ctm, mulk / 5 / cp)
-        afi, sfi = 1, 3
+        if kemao < 3:
+            p1 = usd
+            m1 = min(ctm, mulk / 5 / cp)
+            afi, sfi = 2, 3
+            af = min(kema * 1.01, fbids[afi])
+            sf = max(saf * km, fasks[0] * 1.03, fasks[sfi] - k)
+        else:
+            p1 = min(usd, mulk / 5)
+            m1 = min(ctm, mulk / 5 / cp)
+            afi, sfi = 3, 3
+            af = fbids[afi] / 1.03
+            sf = max(saf * km, fbids[0] * 1.03, fasks[sfi] - k)
 
-        af = min(kema * 1.01, fbids[0])
-        sf = max(saf * km, fasks[0] * 1.02, fasks[sfi] - k)
-
-        if kema * km <= fasks[0] < max(tmumlar[:2]) / 1.03 or masks[1] > mbids[6]:
-            sf = fasks[1]
+            if fasks[0] < max(tmumlar[:2]) / 1.03 or masks[1] > mbids[5] or fbids[0] / emab < 1.01:
+                sf = fasks[1]
 
     elif bolge == "Düşüş":
         p1 = min(usd, mulk / 5)
         m1 = ctm
         afi, sfi = 3, 1
 
-        af = min(max(ssf, kema) / km, fbids[0] / 1.05, fbids[afi] + k)
+        af = min(max(ssf, kema) / km, fbids[0] / 1.05, fbids[afi])
         sf = max(saf * 1.01, fasks[sfi])
 
         if mbids[1] > masks[6]:
             afi, sfi = 1, 3
             af = fbids[afi]
             sf = max(saf * km, fasks[sfi])
-
         elif usd < mulk / 2:
-            m1 = max((mulk / 2 - usd) / cp, 2 / cp)
-            sf = fasks[sfi]
+            m1 = max(mulk / 2 - usd, 2) / cp
+            sf = fasks[1]
+
+        if emab / fasks[0] < 1.01 and kemao < -3:
+            p1 = min(usd, mulk / 5)
+            m1 = min(ctm, mulk / 5 / cp)
+            afi, sfi = 3, 3
+            af = fbids[afi]
+            sf = max(saf * km, fasks[0] * 1.03, fasks[sfi])
 
     # ************- TAF - TSF ************************************************************#
 
