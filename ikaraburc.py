@@ -746,7 +746,7 @@ while True:
     if bolge == "Yükseliş":
         p1 = usd
         m1 = min(ctm, mulk / 5 / cp)
-        afi, sfi = 0, 3
+        afi, sfi = 1, 3
 
         af = min(kema * 1.01, fbids[0])
         sf = max(saf * km, fasks[0] * 1.02, fasks[sfi] - k)
@@ -754,25 +754,33 @@ while True:
     elif bolge == "Düşüş":
         p1 = min(usd, mulk / 5)
         m1 = ctm
-        afi, sfi = 3, 0
+        afi, sfi = 3, 1
 
-        af = min(max(ssf, kema) / km, fbids[0] / 1.03, fbids[afi] + k)
+        af = min(max(ssf, kema) / km, fbids[0] / 1.05, fbids[afi] + k)
         sf = max(saf * 1.01, fasks[sfi])
+        if usd < mulk/2:
+            m1 = max((mulk/2-usd)/cp, 2/cp)
+            sf = fasks[sfi]
     
     # ************- TAF - TSF ************************************************************#
     alist = fbids[:afi + 1] + [fasks[0]]
-    slist = [fbids[0]] + fasks[:sfi + 1]
-
-    for a in range(len(alist) - 1, -1, -1):
-        if alist[len(alist) - 1] <= af and alist[len(alist) - 1] / alist[a] >= 1.005:
-            af = alist[a + 1] + k
-            break
-
-    for s in range(len(slist) - 1, -1, -1):
-        if slist[len(slist) - 1] >= sf and slist[len(slist) - 1] / slist[s] >= 1.005:
-            sf = slist[s + 1] - k
-            break
-
+    slist = fbids[:4] + fasks[:sfi + 1]
+    
+    if alist[len(alist) - 1] <= af:
+        for a in range(len(alist) - 1):
+            if alist[len(alist) - 1] / alist[a] <= 1.005:
+                af = alist[a] + k
+                break
+        if af-k == afiyat:
+            af = afiyat
+    if slist[len(slist) - 1] >= sf:
+        for s in range(len(slist)-1):
+            if slist[len(slist)-1] / slist[s] <= 1.005:
+                sf = slist[s] - k
+                break
+        if sf+k == sfiyat:
+            sf = sfiyat
+        
     # ************- AL SAT EMİRLERİNİ GÖNDER BÖLÜMÜ -*************************************#
     af = round(af, digit)
     sf = round(sf, digit)
