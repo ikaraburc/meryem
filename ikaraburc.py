@@ -750,6 +750,8 @@ while True:
 
         af = min(kema * 1.01, fbids[0])
         sf = max(saf * km, fasks[0] * 1.02, fasks[sfi] - k)
+        if kema * km <= fasks[0] < max(tmumlar[:2])/1.03 or masks[1] > mbids[6]:
+            sf = fasks[1]
 
     elif bolge == "Düşüş":
         p1 = min(usd, mulk / 5)
