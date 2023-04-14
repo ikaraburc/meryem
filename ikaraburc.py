@@ -208,7 +208,7 @@ class coin_trader:
             else:
                 print("Bağlantı bekleniyor...")
                 continue
-        #print(r)
+        # print(r)
 
     def coklu_sat(self):
 
@@ -248,7 +248,7 @@ class coin_trader:
             else:
                 print("Bağlantı bekleniyor...")
                 continue
-        #print(r)
+        # print(r)
 
     def alimlar_sil(self):
 
@@ -727,7 +727,7 @@ while True:
                     birinci_elek()
                     continue
 
-    # ************- STABİL - PUMP - DUMP BÖLGESİ -*******************************#
+    # ************- EMA -*******************************#
 
     kemao = round((emak - kema) / min(emak, kema) * 100, 2)
 
@@ -739,7 +739,7 @@ while True:
         if kema < kema1:
             bolge = "Yükseliş"
         else:
-            bolge = "Düşüş"      
+            bolge = "Düşüş"
 
     # ************- EMA STRATEJİSİ -*******************************#
 
@@ -750,7 +750,8 @@ while True:
 
         af = min(kema * 1.01, fbids[0])
         sf = max(saf * km, fasks[0] * 1.02, fasks[sfi] - k)
-        if kema * km <= fasks[0] < max(tmumlar[:2])/1.03 or masks[1] > mbids[6]:
+
+        if kema * km <= fasks[0] < max(tmumlar[:2]) / 1.03 or masks[1] > mbids[6]:
             sf = fasks[1]
 
     elif bolge == "Düşüş":
@@ -760,29 +761,36 @@ while True:
 
         af = min(max(ssf, kema) / km, fbids[0] / 1.05, fbids[afi] + k)
         sf = max(saf * 1.01, fasks[sfi])
-        if usd < mulk/2:
-            m1 = max((mulk/2-usd)/cp, 2/cp)
+
+        if mbids[1] > masks[6]:
+            afi, sfi = 1, 3
+            af = fbids[afi]
+            sf = max(saf * km, fasks[sfi])
+
+        elif usd < mulk / 2:
+            m1 = max((mulk / 2 - usd) / cp, 2 / cp)
             sf = fasks[sfi]
-    
+
     # ************- TAF - TSF ************************************************************#
+
     alist = fbids[:afi + 1] + [fasks[0]]
     slist = fbids[:4] + fasks[:sfi + 1]
-    
+
     if alist[len(alist) - 1] <= af:
         for a in range(len(alist) - 1):
             if alist[len(alist) - 1] / alist[a] <= 1.005:
                 af = alist[a] + k
                 break
-        if af-k == afiyat:
+        if af - k == afiyat:
             af = afiyat
     if slist[len(slist) - 1] >= sf:
-        for s in range(len(slist)-1):
-            if slist[len(slist)-1] / slist[s] <= 1.005:
+        for s in range(len(slist) - 1):
+            if slist[len(slist) - 1] / slist[s] <= 1.005:
                 sf = slist[s] - k
                 break
-        if sf+k == sfiyat:
+        if sf + k == sfiyat:
             sf = sfiyat
-        
+
     # ************- AL SAT EMİRLERİNİ GÖNDER BÖLÜMÜ -*************************************#
     af = round(af, digit)
     sf = round(sf, digit)
@@ -798,7 +806,7 @@ while True:
 
             afiyat = af
             afiyat1 = round(min(afiyat * 0.93, fbids[10] + k), digit)
-            
+
             amiktar = (p1 - 0.5) / afiyat
             amiktar1 = (usd - p1) / afiyat1
 
@@ -815,12 +823,13 @@ while True:
             T2.join()
 
             sfiyat = sf
-            sfiyat1 = sfiyat *1.05
-            
+            sfiyat1 = sfiyat * 1.05
+
             smiktar = m1
             smiktar1 = ctm - m1
-            
-            if kzo < (km - 1) * 100:
+
+            hf = round(max((anapara + harcanan * (km - 1) - usd) / ctm, saf * km), digit)
+            if sf < hf:
                 smiktar = m1 - yedek
 
             ct.coklu_sat()
@@ -831,6 +840,7 @@ while True:
     fiyatlar.add_row([str("kema " + str(kema)), str(" emak " + str(emak)), str("emab " + str(emab))])
     fiyatlar.add_row([str("af,  sf % " + str(round((sf - af) / af * 100, 2))), round(af, digit), round(sf, digit)])
     fiyatlar.add_row(["saf,ssf " + str(sonislem), round(saf, digit), round(ssf, digit)])
+    fiyatlar.add_row(["mülk " + str(round(mulk, 2)), "ctm " + str(round(ctm, mdigit)), "hf " + str(hf)])
 
     print(fiyatlar)
 
