@@ -798,7 +798,7 @@ while True:
             afiyat1 = round(min(afiyat * 0.93, fbids[10] + k), digit)
             
             amiktar = (p1 - 0.5) / afiyat
-            amiktar1 = usd - amiktar
+            amiktar1 = (usd - p1) / afiyat1
 
             ct.coklu_al()
 
