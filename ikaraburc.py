@@ -750,13 +750,13 @@ while True:
             m1 = min(ctm, mulk / 5 / cp)
             afi, sfi = 2, 3
             af = min(kema * 1.01, fbids[afi])
-            sf = max(saf * km, fasks[0] * 1.03, fasks[sfi] - k)
+            sf = max(saf * km, fbids[0] * 1.03, fasks[sfi] - k)
         else:
             p1 = min(usd, mulk / 5)
             m1 = min(ctm, mulk / 5 / cp)
             afi, sfi = 3, 3
             af = fbids[afi] / 1.03
-            sf = max(saf * km, fbids[0] * 1.03, fasks[sfi] - k)
+            sf = max(saf * km, fasks[0] * 1.01, fasks[sfi] - k)
 
             if fasks[0] < max(tmumlar[:2]) / 1.03 or fbids[0] / emab < 1.01:
                 sf = fasks[1]
@@ -776,7 +776,7 @@ while True:
             afi, sfi = 3, 1
             m1 = ctm
 
-            af = min(max(ssf, kema) / km, fbids[0] / 1.05, fbids[afi])
+            af = min(max(ssf, kema) / km, fbids[afi] / km)
             sf = max(saf * 1.01, fasks[sfi])
             if usd < mulk / 2:
                 m1 = max(mulk / 2 - usd, 2) / cp
