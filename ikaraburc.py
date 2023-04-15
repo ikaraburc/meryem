@@ -765,9 +765,10 @@ while True:
             bolge = "Tepeden yükseliş"
             if ceder < mulk / 2:
                 p1 = max(mulk / 2 - ceder, 2)
+            else:
+                af = saf / km
         else:
             bolge = "Dipten yükseliş"
-            p1 = usd
 
     elif bolge == "Düşüş":
         p1 = min(usd, mulk / 5)
