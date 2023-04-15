@@ -758,6 +758,8 @@ while True:
             m1 = min(ctm, mulk / 5 / cp)
             afi, sfi = 2, 3
             af = min(kema * 1.01, fbids[afi])
+            if ssf > 0:
+                af = min(ssf/1.01, fbids[afi])
             sf = max(saf * km, fasks[sfi])
 
         elif yer == "Tepe":
@@ -794,9 +796,9 @@ while True:
             sf = max(saf * 1.01, fasks[sfi])
             m1 = ctm
 
-        if fasks[0] < max(ssf, kema) / 1.02 and emab / fasks[0] < 1.01:
+        if fasks[0] <= max(ssf, kema) / 1.02 and emab / fasks[0] < 1.01:
             p1 = min(usd, mulk / 5)
-            af = fbids[afi]
+            af = min(ssf / 1.01, fbids[afi])
 
     # ************- TAF - TSF ************************************************************#
     m = 3
