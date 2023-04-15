@@ -734,9 +734,9 @@ while True:
         if kema / i >= ykm or i / kema >= ykm:
             break
     if kema / i >= ykm:
-        yer = "Dip"
-    else:
         yer = "Tepe"
+    else:
+        yer = "Dip"
     kemao = round((emak - kema) / min(emak, kema) * 100, 2)
 
     if kemao > 0:
