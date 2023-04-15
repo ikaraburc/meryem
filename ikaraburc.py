@@ -790,7 +790,7 @@ while True:
             afi, sfi = 2, 2
             m1 = min(ctm, mulk / 5 / cp)
 
-            af = min(ssf / 1.01, fbids[afi])
+            af = bids[afi]
             sf = max(saf * 1.01, fasks[sfi])
             if usd < mulk / 4:
                 m1 = max(mulk / 4 - usd, 2) / cp
@@ -800,7 +800,7 @@ while True:
             p1 = min(usd, mulk / 5)
             m1 = min(ctm, mulk / 5 / cp)
             afi, sfi = 3, 3
-            af = min(ssf / 1.01, fbids[afi])
+            af = fbids[afi]
             sf = max(saf * km, fasks[0] * 1.03, fasks[sfi])
 
     # ************- TAF - TSF ************************************************************#
