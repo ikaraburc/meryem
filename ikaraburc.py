@@ -728,11 +728,12 @@ while True:
 
     # ************- EMA -*******************************#
     ykm = 1.02
+    yema = emak
     for i in kemas:
         fkema = i
-        if kema / i >= ykm or i / kema >= ykm:
+        if yema / i >= ykm or i / yema >= ykm:
             break
-    if kema / i >= ykm:
+    if yema / fkema >= ykm:
         yer = "Tepe"
     else:
         yer = "Dip"
@@ -751,57 +752,51 @@ while True:
     # ************- EMA STRATEJİSİ -*******************************#
 
     if bolge == "Yükseliş":
-        if kemao < 3:
+        if yer == "Dip":
+            bolge = "Dipten Yükseliş"
             p1 = usd
             m1 = min(ctm, mulk / 5 / cp)
             afi, sfi = 2, 3
             af = min(kema * 1.01, fbids[afi])
-            sf = max(saf * km, fbids[0] * 1.03, fasks[sfi] - k)
-        else:
-            p1 = min(usd, mulk / 5)
+            sf = max(saf * km, fasks[sfi])
+
+        elif yer == "Tepe":
+            bolge = "Tepeden Yükseliş"
+            afi, sfi = 3, 2
             m1 = min(ctm, mulk / 5 / cp)
-            afi, sfi = 3, 3
-            af = fbids[afi] / 1.03
-            sf = max(saf * km, fasks[0] * 1.01, fasks[sfi] - k)
-
-            if fasks[0] < max(tmumlar[:2]) / 1.03 or fbids[0] / emab < 1.01:
-                sf = fasks[1]
-
-        if yer == "Tepe":
-            bolge = "Tepeden yükseliş"
+            sf = max(saf * km, fbids[0] * 1.01, fasks[sfi])
             if ceder < mulk / 2:
-                p1 = max(mulk / 2 - ceder, 2)
+                p1 = max(mulk / 2 - ceder, 2) / cp
+                af = min(kema * 1.01, fbids[afi])
             else:
-                af = saf / km
-        else:
-            bolge = "Dipten yükseliş"
+                p1 = min(usd, mulk / 5)
+                af = min(saf / km, fbids[afi] / km)
+
+            if fasks[0] >= saf * km:
+                if fasks[0] < max(tmumlar[:2]) / 1.03 or fbids[0] / emab < 1.01:
+                    sf = fasks[1]
 
     elif bolge == "Düşüş":
         p1 = min(usd, mulk / 5)
-        if yer == "Tepe":
-            bolge = "Tepeden Düşüş"
-            afi, sfi = 3, 1
+        afi, sfi = 3, 1
+
+        af = min(max(ssf, kema) / km, fbids[afi] / km)
+        if fasks[0] <= saf:
+            bolge = "Zararlı düşüş"
+            if usd < mulk / 4:
+                sf = fasks[sfi]
+                m1 = max(mulk / 4 - usd, 2) / cp
+            else:
+                sf = max(saf * 1.01, fasks[sfi])
+                m1 = min(mulk / 5 / cp, ctm)
+        else:
+            bolge = "Kârlı düşüş"
+            sf = max(saf * 1.01, fasks[sfi])
             m1 = ctm
 
-            af = min(max(ssf, kema) / km, fbids[afi] / km)
-            sf = max(saf * 1.01, fasks[sfi])
-        else:
-            bolge = "Dipten Düşüş"
-            afi, sfi = 2, 2
-            m1 = min(ctm, mulk / 5 / cp)
-
-            af = bids[afi]
-            sf = max(saf * 1.01, fasks[sfi])
-            if usd < mulk / 4:
-                m1 = max(mulk / 4 - usd, 2) / cp
-                sf = fasks[1]
-
-        if emab / fasks[0] < 1.01 and kemao < -2:
+        if fasks[0] < max(ssf, kema) / 1.02 and emab / fasks[0] < 1.01:
             p1 = min(usd, mulk / 5)
-            m1 = min(ctm, mulk / 5 / cp)
-            afi, sfi = 3, 3
             af = fbids[afi]
-            sf = max(saf * km, fasks[0] * 1.03, fasks[sfi])
 
     # ************- TAF - TSF ************************************************************#
     m = 3
