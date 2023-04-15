@@ -776,6 +776,7 @@ while True:
 
             if fasks[0] >= saf * km:
                 if fasks[0] < max(tmumlar[:2]) / 1.03 or fbids[0] / emab < 1.01:
+                    bolge = "Tepeden Dönüş"
                     sf = fasks[1]
 
     elif bolge == "Düşüş":
@@ -797,6 +798,7 @@ while True:
             m1 = ctm
 
         if fasks[0] <= max(ssf, kema) / 1.02 and emab / fasks[0] < 1.01:
+            bolge = "Dipten Dönüş"
             p1 = min(usd, mulk / 5)
             af = min(ssf / 1.01, fbids[afi])
 
