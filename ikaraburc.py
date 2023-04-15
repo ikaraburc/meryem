@@ -803,13 +803,14 @@ while True:
             sf = max(saf * km, fasks[0] * 1.03, fasks[sfi])
 
     # ************- TAF - TSF ************************************************************#
+    m = 3
     for i in range(4):
-        if max(masks[3], 50 / fbids[3]) < mbids[i] and 1 < kemao:
-            afi = i
+        if max(masks[m], 50 / fbids[m]) < mbids[i]:
+            afi = min(i, afi)
             break
     for i in range(4):
-        if max(mbids[3], 50 / fasks[3]) < masks[i]:
-            sfi = i
+        if max(mbids[m], 50 / fasks[m]) < masks[i]:
+            sfi = min(i, sfi)
             break
 
     alist = [fasks[0]] + fbids[:afi + 1]
@@ -818,14 +819,16 @@ while True:
     slist = ters + fasks[:sfi + 1]
 
     if alist[- 1] <= af:
-        for a in range(len(alist) - 1):
-            if alist[- 1] / alist[a] >= 1.005:
+        for a in range(len(alist) - 1, -1, -1):
+            af = alist[a]
+            if alist[a] / alist[- 1] >= 1.005:
                 af = alist[a + 1] + k
                 break
         if af - k == afiyat:
             af = afiyat
     if slist[- 1] >= sf:
-        for s in range(len(slist) - 1):
+        for s in range(len(slist) - 1, -1, -1):
+            sf = slist[s]
             if slist[- 1] / slist[s] >= 1.005:
                 sf = slist[s + 1] - k
                 break
