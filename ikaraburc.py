@@ -758,24 +758,39 @@ while True:
             af = fbids[afi] / 1.03
             sf = max(saf * km, fbids[0] * 1.03, fasks[sfi] - k)
 
-            if fasks[0] < max(tmumlar[:2]) / 1.03 or masks[1] > mbids[5] or fbids[0] / emab < 1.01:
+            if fasks[0] < max(tmumlar[:2]) / 1.03 or fbids[0] / emab < 1.01:
                 sf = fasks[1]
+
+        if kema > kema1:
+            bolge = "Tepeden yükseliş"
+            if ceder < mulk / 2:
+                p1 = max(mulk / 2 - ceder, 2)
+        else:
+            bolge = "Dipten yükseliş"
+            p1 = usd
 
     elif bolge == "Düşüş":
         p1 = min(usd, mulk / 5)
-        m1 = ctm
-        afi, sfi = 3, 1
+        if kema > kema1:
+            bolge = "Tepeden Düşüş"
+            afi, sfi = 3, 1
+            m1 = ctm
 
-        af = min(max(ssf, kema) / km, fbids[0] / 1.05, fbids[afi])
-        sf = max(saf * 1.01, fasks[sfi])
+            af = min(max(ssf, kema) / km, fbids[0] / 1.05, fbids[afi])
+            sf = max(saf * 1.01, fasks[sfi])
+            if usd < mulk / 2:
+                m1 = max(mulk / 2 - usd, 2) / cp
+                sf = fasks[1]
+        else:
+            bolge = "Dipten Düşüş"
+            afi, sfi = 2, 2
+            m1 = min(ctm, mulk / 5 / cp)
 
-        if mbids[1] > masks[6]:
-            afi, sfi = 1, 3
-            af = fbids[afi]
-            sf = max(saf * km, fasks[sfi])
-        elif usd < mulk / 2:
-            m1 = max(mulk / 2 - usd, 2) / cp
-            sf = fasks[1]
+            af = min(ssf / 1.01, fbids[afi])
+            sf = max(saf * 1.01, fasks[sfi])
+            if usd < mulk / 4:
+                m1 = max(mulk / 4 - usd, 2) / cp
+                sf = fasks[1]
 
         if emab / fasks[0] < 1.01 and kemao < -3:
             p1 = min(usd, mulk / 5)
@@ -785,9 +800,19 @@ while True:
             sf = max(saf * km, fasks[0] * 1.03, fasks[sfi])
 
     # ************- TAF - TSF ************************************************************#
+    for i in range(4):
+        if max(masks[3], 50 / fbids[3]) < mbids[i] and 2 < kemao:
+            afi = i
+            break
+    for i in range(4):
+        if max(mbids[3], 50 / fasks[3]) < masks[i] and fasks[0] < saf:
+            sfi = i
+            break
 
-    alist = fbids[:afi + 1] + [fasks[0]]
-    slist = fbids[:4] + fasks[:sfi + 1]
+    alist = [fasks[0]] + fbids[:afi + 1]
+    ters = fbids[:4]
+    ters.reverse()
+    slist = ters + fasks[:sfi + 1]
 
     if alist[len(alist) - 1] <= af:
         for a in range(len(alist) - 1):
@@ -850,9 +875,10 @@ while True:
     # ************- EKRANA PRİNT BÖLÜMÜ -*******************************#
     fiyatlar = PrettyTable()
     fiyatlar.field_names = [str(bolge) + str(" kemao% " + str(kemao)), mal, str("cp " + str(cp))]
-    fiyatlar.add_row([str("kema " + str(kema)), str(" emak " + str(emak)), str("emab " + str(emab))])
-    fiyatlar.add_row([str("af,  sf % " + str(round((sf - af) / af * 100, 2))), round(af, digit), round(sf, digit)])
-    fiyatlar.add_row(["saf,ssf " + str(sonislem), round(saf, digit), round(ssf, digit)])
+    fiyatlar.add_row(["kema " + str(kema), str(" emak " + str(emak)), str("emab " + str(emab))])
+    fiyatlar.add_row(["af, sf % " + str(round((sf - af) / af * 100, 2)), round(af, digit), round(sf, digit)])
+    fiyatlar.add_row([str(sonislem) + " saf,ssf", round(saf, digit), round(ssf, digit)])
+    fiyatlar.add_row(["usdt " + str(round(usd, 2)), "a " + str(fbids[0]), "s " + str(fasks[0])])
     fiyatlar.add_row(["mülk " + str(round(mulk, 2)), "ctm " + str(round(ctm, mdigit)), "hf " + str(hf)])
 
     print(fiyatlar)
