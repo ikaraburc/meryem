@@ -729,6 +729,7 @@ while True:
     # ************- EMA -*******************************#
     ykm = 1.02
     for i in kemas:
+        fkema = i
         if kema / i >= ykm or i / kema >= ykm:
             break
     if kema / i >= ykm:
@@ -742,7 +743,7 @@ while True:
     elif kemao < 0:
         bolge = "Düşüş"
     else:
-        if kema < kema1:
+        if kema < fkema:
             bolge = "Yükseliş"
         else:
             bolge = "Düşüş"
@@ -783,7 +784,7 @@ while True:
             m1 = ctm
 
             af = min(max(ssf, kema) / km, fbids[afi] / km)
-            sf = max(saf * 1.01, fasks[sfi])            
+            sf = max(saf * 1.01, fasks[sfi])
         else:
             bolge = "Dipten Düşüş"
             afi, sfi = 2, 2
@@ -799,7 +800,7 @@ while True:
             p1 = min(usd, mulk / 5)
             m1 = min(ctm, mulk / 5 / cp)
             afi, sfi = 3, 3
-            af = min(ssf/1.01, fbids[afi])
+            af = min(ssf / 1.01, fbids[afi])
             sf = max(saf * km, fasks[0] * 1.03, fasks[sfi])
 
     # ************- TAF - TSF ************************************************************#
@@ -820,7 +821,7 @@ while True:
 
     if alist[- 1] <= af:
         for a in range(len(alist) - 1, -1, -1):
-            af = alist[a]
+            af = alist[a] + k
             if alist[a] / alist[- 1] >= 1.005:
                 af = alist[a + 1] + k
                 break
@@ -828,7 +829,7 @@ while True:
             af = afiyat
     if slist[- 1] >= sf:
         for s in range(len(slist) - 1, -1, -1):
-            sf = slist[s]
+            sf = slist[s] - k
             if slist[- 1] / slist[s] >= 1.005:
                 sf = slist[s + 1] - k
                 break
@@ -870,10 +871,10 @@ while True:
 
             sfiyat = sf
             sfiyat1 = sfiyat * 1.05
-            
+
             smiktar = m1
             smiktar1 = ctm - m1
-            
+
             if sf < hf:
                 smiktar = m1 - yedek
 
@@ -883,7 +884,7 @@ while True:
     fiyatlar = PrettyTable()
     fiyatlar.field_names = [str(bolge) + str(" kemao% " + str(kemao)), mal, str("cp " + str(cp))]
     fiyatlar.add_row(["kema " + str(kema), str(" emak " + str(emak)), str("emab " + str(emab))])
-    fiyatlar.add_row(["af, sf % " + str(round((sf - af) / af * 100, 2)), round(af, digit), round(sf, digit)])    
+    fiyatlar.add_row(["af, sf % " + str(round((sf - af) / af * 100, 2)), round(af, digit), round(sf, digit)])
     fiyatlar.add_row(["taf,tsf", str(fbids[0]), str(fasks[0])])
     fiyatlar.add_row([str(sonislem) + " saf,ssf", round(saf, digit), round(ssf, digit)])
     fiyatlar.add_row(["mülk " + str(round(mulk, 2)), "ctm " + str(round(ctm, mdigit)), "hf " + str(hf)])
