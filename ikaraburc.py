@@ -796,7 +796,7 @@ while True:
                 m1 = max(mulk / 4 - usd, 2) / cp
                 sf = fasks[1]
 
-        if emab / fasks[0] < 1.01:
+        if emab / fasks[0] < 1.01 and kemao < -2:
             p1 = min(usd, mulk / 5)
             m1 = min(ctm, mulk / 5 / cp)
             afi, sfi = 3, 3
