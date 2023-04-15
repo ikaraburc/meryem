@@ -729,7 +729,14 @@ while True:
                     continue
 
     # ************- EMA -*******************************#
-
+    ykm = 1.02
+    for i in kemas:
+        if kema / i >= ykm or i / kema >= ykm:
+            break
+    if kema / i >= ykm:
+        yer = "Dip"
+    else:
+        yer = "Tepe"
     kemao = round((emak - kema) / min(emak, kema) * 100, 2)
 
     if kemao > 0:
@@ -761,7 +768,7 @@ while True:
             if fasks[0] < max(tmumlar[:2]) / 1.03 or fbids[0] / emab < 1.01:
                 sf = fasks[1]
 
-        if kema > kema1:
+        if yer == "Tepe":
             bolge = "Tepeden yükseliş"
             if ceder < mulk / 2:
                 p1 = max(mulk / 2 - ceder, 2)
@@ -772,7 +779,7 @@ while True:
 
     elif bolge == "Düşüş":
         p1 = min(usd, mulk / 5)
-        if kema > kema1:
+        if yer == "Tepe":
             bolge = "Tepeden Düşüş"
             afi, sfi = 3, 1
             m1 = ctm
@@ -815,17 +822,17 @@ while True:
     ters.reverse()
     slist = ters + fasks[:sfi + 1]
 
-    if alist[len(alist) - 1] <= af:
+    if alist[- 1] <= af:
         for a in range(len(alist) - 1):
-            if alist[len(alist) - 1] / alist[a] <= 1.005:
-                af = alist[a] + k
+            if alist[- 1] / alist[a] >= 1.005:
+                af = alist[a + 1] + k
                 break
         if af - k == afiyat:
             af = afiyat
-    if slist[len(slist) - 1] >= sf:
+    if slist[- 1] >= sf:
         for s in range(len(slist) - 1):
-            if slist[len(slist) - 1] / slist[s] <= 1.005:
-                sf = slist[s] - k
+            if slist[- 1] / slist[s] >= 1.005:
+                sf = slist[s + 1] - k
                 break
         if sf + k == sfiyat:
             sf = sfiyat
