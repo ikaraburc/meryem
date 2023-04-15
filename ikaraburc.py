@@ -786,9 +786,7 @@ while True:
 
             af = min(max(ssf, kema) / km, fbids[afi] / km)
             sf = max(saf * 1.01, fasks[sfi])
-            if usd < mulk / 2:
-                m1 = max(mulk / 2 - usd, 2) / cp
-                sf = fasks[1]
+            
         else:
             bolge = "Dipten Düşüş"
             afi, sfi = 2, 2
@@ -840,7 +838,7 @@ while True:
     # ************- AL SAT EMİRLERİNİ GÖNDER BÖLÜMÜ -*************************************#
     af = round(af, digit)
     sf = round(sf, digit)
-    hf = round(max((anapara + harcanan * (km - 1) - usd) / ctm, saf * km), digit)
+    hf = 0
 
     if usd >= 1:
         if af > afiyat or af < afiyat / 1.005 or usdt_av > 1:
@@ -871,10 +869,10 @@ while True:
 
             sfiyat = sf
             sfiyat1 = sfiyat * 1.05
-
+            
             smiktar = m1
             smiktar1 = ctm - m1
-            
+            hf = round(max((anapara + harcanan * (km - 1) - usd) / ctm, saf * km), digit)
             if sf < hf:
                 smiktar = m1 - yedek
 
