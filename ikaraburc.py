@@ -444,8 +444,6 @@ class coin_trader:
             kzt = round(ceder - agider + sgelir, 2)
             harcanan = min(agider, anapara)
 
-            print(agider)
-
             sonislem = r[0]["side"]
             mf = round((agider - sgelir) / ctm * 1.002, digit)
             mmf = round(anapara / (usd / cp + ctm) * 1.002, digit)
@@ -785,8 +783,7 @@ while True:
             m1 = ctm
 
             af = min(max(ssf, kema) / km, fbids[afi] / km)
-            sf = max(saf * 1.01, fasks[sfi])
-            
+            sf = max(saf * 1.01, fasks[sfi])            
         else:
             bolge = "Dipten Düşüş"
             afi, sfi = 2, 2
@@ -798,11 +795,11 @@ while True:
                 m1 = max(mulk / 4 - usd, 2) / cp
                 sf = fasks[1]
 
-        if emab / fasks[0] < 1.01 and kemao < -3:
+        if emab / fasks[0] < 1.01:
             p1 = min(usd, mulk / 5)
             m1 = min(ctm, mulk / 5 / cp)
             afi, sfi = 3, 3
-            af = fbids[afi]
+            af = min(ssf/1.01, fbids[afi])
             sf = max(saf * km, fasks[0] * 1.03, fasks[sfi])
 
     # ************- TAF - TSF ************************************************************#
@@ -857,7 +854,8 @@ while True:
 
             ct.coklu_al()
 
-    if ceder > 1:
+    if ceder >= 1:
+        hf = round(max((anapara + harcanan * (km - 1) - usd) / ctm, saf * km), digit)
         yedek = 2 / cp
         if sf > sfiyat * 1.005 or sf < sfiyat or cam > yedek:
             T1 = threading.Thread(target=ct.satimlar_sil)
@@ -872,7 +870,7 @@ while True:
             
             smiktar = m1
             smiktar1 = ctm - m1
-            hf = round(max((anapara + harcanan * (km - 1) - usd) / ctm, saf * km), digit)
+            
             if sf < hf:
                 smiktar = m1 - yedek
 
