@@ -804,11 +804,11 @@ while True:
 
     # ************- TAF - TSF ************************************************************#
     for i in range(4):
-        if max(masks[3], 50 / fbids[3]) < mbids[i] and 2 < kemao:
+        if max(masks[3], 50 / fbids[3]) < mbids[i] and 1 < kemao:
             afi = i
             break
     for i in range(4):
-        if max(mbids[3], 50 / fasks[3]) < masks[i] and fasks[0] < saf:
+        if max(mbids[3], 50 / fasks[3]) < masks[i]:
             sfi = i
             break
 
@@ -880,9 +880,9 @@ while True:
     fiyatlar = PrettyTable()
     fiyatlar.field_names = [str(bolge) + str(" kemao% " + str(kemao)), mal, str("cp " + str(cp))]
     fiyatlar.add_row(["kema " + str(kema), str(" emak " + str(emak)), str("emab " + str(emab))])
-    fiyatlar.add_row(["af, sf % " + str(round((sf - af) / af * 100, 2)), round(af, digit), round(sf, digit)])
+    fiyatlar.add_row(["af, sf % " + str(round((sf - af) / af * 100, 2)), round(af, digit), round(sf, digit)])    
+    fiyatlar.add_row(["taf,tsf", str(fbids[0]), str(fasks[0])])
     fiyatlar.add_row([str(sonislem) + " saf,ssf", round(saf, digit), round(ssf, digit)])
-    fiyatlar.add_row(["usdt " + str(round(usd, 2)), "a " + str(fbids[0]), "s " + str(fasks[0])])
     fiyatlar.add_row(["mülk " + str(round(mulk, 2)), "ctm " + str(round(ctm, mdigit)), "hf " + str(hf)])
 
     print(fiyatlar)
