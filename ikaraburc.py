@@ -840,6 +840,7 @@ while True:
     # ************- AL SAT EMİRLERİNİ GÖNDER BÖLÜMÜ -*************************************#
     af = round(af, digit)
     sf = round(sf, digit)
+    hf = round(max((anapara + harcanan * (km - 1) - usd) / ctm, saf * km), digit)
 
     if usd >= 1:
         if af > afiyat or af < afiyat / 1.005 or usdt_av > 1:
@@ -873,8 +874,7 @@ while True:
 
             smiktar = m1
             smiktar1 = ctm - m1
-
-            hf = round(max((anapara + harcanan * (km - 1) - usd) / ctm, saf * km), digit)
+            
             if sf < hf:
                 smiktar = m1 - yedek
 
