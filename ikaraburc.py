@@ -783,7 +783,7 @@ while True:
         p1 = min(usd, mulk / 5)
         afi, sfi = 3, 1
 
-        af = min(max(ssf, kema) / km, fbids[afi] / km)
+        af = min(max(ssf, kema) / km, fbids[afi],fbids[0]/km)
         if fasks[0] <= saf:
             bolge = "Zararlı düşüş"
             if usd < mulk / 4:
