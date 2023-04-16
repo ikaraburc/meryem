@@ -70,10 +70,10 @@ class coin_trader:
 
                 continue
 
-        global cp, c24, tepe24, k
+        global cp, c24, tepe24, k, cpa, cps
 
         cp, tepe24, c24 = float(r[0]["last"]), float(r[0]["high_24h"]), float(r[0]["change_percentage"])
-
+        cpa, cps = float(r[0]["highest_bid"]), float(r[0]["lowest_ask"])
         k = 1 / 10 ** digit
         if (cp + k) / cp >= 1.01:
             k = 0
@@ -474,7 +474,7 @@ class coin_trader:
             global saort, ssort
             samik, satut, saort = 0, 0, 0
             ssmik, sstut, ssort = 0, 0, 0
-            
+
             if agider > 0:
                 for a in r:
                     if a["side"] == "buy":
@@ -640,19 +640,16 @@ def ikinci_elek():
 
         T1 = threading.Thread(target=ct.coin_digit)
         T2 = threading.Thread(target=ct.coin_fiyat)
-        T3 = threading.Thread(target=ct.tahta_getir)
         T4 = threading.Thread(target=ct.mumlar)
         T5 = threading.Thread(target=coins_fiyatlar)
 
         T1.start()
         T2.start()
-        T3.start()
         T4.start()
         T5.start()
 
         T1.join()
         T2.join()
-        T3.join()
         T4.join()
         T5.join()
 
@@ -667,7 +664,7 @@ def ikinci_elek():
         if skyer == "Tepe":
             if 0 <= kemao <= 2 and cp / min(emaks[:24]) < 1.05:
                 ema_ok = "ema uygun"
-        if kemao < -3 and fasks[0] >= emab:
+        if kemao < -3 and cps >= emab:
             ema_ok = "ema uygun"
 
         if ema_ok == "ema uygun değil":
@@ -701,8 +698,7 @@ def ikinci_elek():
 
         if sil != "evet":
             uygunlar.append(bc)
-            print(uygunlar)
-            break
+        print(uygunlar)
 
     import pprint
 
@@ -719,7 +715,7 @@ def ikinci_elek():
 emirleri_sil()
 son_coin()
 
-ct = coin_trader(str(scoin))
+ct = coin_trader(str("MATCH_USDT"))
 ct.coin_digit()
 ct.coin_fiyat()
 ct.bakiye_getir()
