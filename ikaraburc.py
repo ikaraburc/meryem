@@ -698,7 +698,8 @@ def ikinci_elek():
 
         if sil != "evet":
             uygunlar.append(bc)
-        print(uygunlar)
+            print(uygunlar)
+            break
 
     import pprint
 
@@ -781,18 +782,12 @@ while True:
         if skyer == "Dip":
             bolge = "Dipten Yükseliş"
             p1 = usd
-            m1 = min(ctm, mulk / 5 / cp)
-            afi, sfi = 2, 3
-
+            afi = 2
             af = min(kema * 1.01, fbids[afi])
-            sf = max(saf * km, fbids[0] * 1.01, fasks[sfi])
 
         elif skyer == "Tepe":
             bolge = "Tepeden Yükseliş"
-            afi, sfi = 3, 2
-            m1 = min(ctm, mulk / 5 / cp)
-            sf = max(saf * km, fbids[0] * 1.01, fasks[sfi])
-
+            afi = 3
             if harcanan < mulk / 2:
                 p1 = max(mulk / 2 - ceder, 2)
                 af = min(kema * 1.01, fbids[afi])
@@ -800,6 +795,12 @@ while True:
                 p1 = min(usd, mulk / 5)
                 af = fbids[afi] / km
 
+        m1 = min(ctm, mulk / 5 / cp)
+        sfi = 2
+        sf = max(saf * km, fasks[0] * 1.01, fasks[sfi])
+        if fasks[0]  / saf >= 1.05:
+            sf = max(saf * km, fbids[0] * 1.01, fasks[sfi])
+                
         if ceder > 1 and hf <= fasks[0]:
             if fasks[0] < max(tmumlar[:2]) / 1.03 or (fbids[0] / 1.01 <= emab):
                 bolge = "Tepeden Dönüş"
