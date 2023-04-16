@@ -471,6 +471,30 @@ class coin_trader:
                     if s["side"] == "sell":
                         ssf = float(s["price"])
                         break
+            global saort, ssort
+            samik, satut, saort = 0, 0, 0
+            ssmik, sstut, ssort = 0, 0, 0
+            
+            if agider > 0:
+                for a in r:
+                    if a["side"] == "buy":
+                        samik = samik + float(a["amount"])
+                        satut = satut + float(a["price"]) * float(a["amount"])
+                        saort = round(satut / samik, digit)
+                        if samik >= mulk / 2:
+                            break
+            if sgelir > 0:
+                for s in r:
+                    if s["side"] == "sell":
+                        ssmik = ssmik + float(s["amount"])
+                        sstut = sstut + float(s["price"]) * float(s["amount"])
+                        ssort = round(sstut / ssmik, digit)
+                        if ssmik >= mulk / 2:
+                            break
+
+            saf = max(saf, saort)
+            ssf = min(ssf, ssort)
+
             hf = round(max((anapara + harcanan * (km - 1) - usd) / ctm, saf * km), digit)
 
             if time.time() - tsiftah >= 6 * 24 * 60 * 60:
@@ -765,13 +789,13 @@ while True:
             afi, sfi = 2, 3
 
             af = min(kema * 1.01, fbids[afi])
-            sf = max(hf, fbids[0] * 1.01, fasks[sfi])
+            sf = max(saf * km, fasks[0] * 1.01, fasks[sfi])
 
         elif skyer == "Tepe":
             bolge = "Tepeden Yükseliş"
             afi, sfi = 3, 2
             m1 = min(ctm, mulk / 5 / cp)
-            sf = max(hf, fbids[0] * 1.01, fasks[sfi])
+            sf = max(saf * km, fasks[0] * 1.01, fasks[sfi])
 
             if harcanan < mulk / 2:
                 p1 = max(mulk / 2 - ceder, 2)
@@ -803,11 +827,11 @@ while True:
                     sf = fasks[sfi]
                     m1 = max(mulk / 4 - usd, 2) / cp
                 else:
-                    sf = max(hf, fasks[sfi])
+                    sf = max(saf * km, fasks[sfi])
                     m1 = min(mulk / 5 / cp, ctm)
             else:
                 bolge = "Kârlı düşüş"
-                sf = max(hf, fasks[sfi])
+                sf = max(saf * km, fasks[sfi])
                 m1 = ctm
 
         if emab <= fasks[0] <= max(ssf, kema) / 1.02:
@@ -815,7 +839,7 @@ while True:
             bolge = "Dipten Dönüş"
             p1 = min(usd, mulk / 5)
             af = min(ssf / 1.01, fbids[afi])
-            sf = max(hf, fasks[sfi])
+            sf = max(saf * km, fasks[sfi])
 
     # ************- TAF - TSF ************************************************************#
     m = 3
