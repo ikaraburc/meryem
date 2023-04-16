@@ -664,8 +664,6 @@ def ikinci_elek():
         if skyer == "Tepe":
             if 0 <= kemao <= 2 and cp / min(emaks[:24]) < 1.05:
                 ema_ok = "ema uygun"
-        if kemao < -3 and cps >= emab:
-            ema_ok = "ema uygun"
 
         if ema_ok == "ema uygun değil":
             ema_oko = "XXXXX"
