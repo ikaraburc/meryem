@@ -329,7 +329,7 @@ class coin_trader:
                 print("Bağlantı bekleniyor...")
                 continue
 
-        global tmumlar, dmumlar, kmumlar, hacimler, emas, kemas, ema, kema, kema1, emak, emab, hacimo
+        global tmumlar, dmumlar, kmumlar, hacimler, hacimo
 
         tmumlar = [float(i[3]) for i in r]
         dmumlar = [float(i[4]) for i in r]
@@ -344,56 +344,51 @@ class coin_trader:
         hacimg = round(sum(hacimler) / len(hacimler) * hk, 2)
         hacimo = round(sum(hacimler[:12]) / hacimg, 2)
 
-        emas = []
+        global emaks, emabs, emak, emab, kemas, kema, kema1, kemao
         emakp = 4
         emabp = 12
-
-        emak = round(sum(kmumlar[0:emakp]) / emakp, digit)
-        emab = round(sum(kmumlar[0:emabp]) / emabp, digit)
-
+        emaks = []
+        emabs = []
         for i in range(1000 - emabp):
-            emas.append(
-                [round(sum(kmumlar[i:i + emakp]) / emakp, digit), round(sum(kmumlar[i:i + emabp]) / emabp, digit)])
+            emaks.append(round(sum(kmumlar[i:i + emakp]) / emakp, digit))
+            emabs.append(round(sum(kmumlar[i:i + emabp]) / emabp, digit))
 
+        kyer = 0
         kemas = []
-        if emas[0][0] < emas[0][1]:
-            kyer = -1
-        else:
-            kyer = 1
-        for i in range(len(emas)):
-            if emas[i][0] < emas[i][1]:
+        for i in range(len(emabs)):
+            if emaks[i] < emabs[i]:
                 if kyer == 1:
-                    kemas.append(emas[i][0])
+                    kemas.append(emabs[i])
                 kyer = -1
             else:
                 if kyer == -1:
-                    kemas.append(emas[i][0])
+                    kemas.append(emabs[i])
                 kyer = 1
 
-        emak = emas[0][0]
-        emab = emas[0][1]
-
+        emak = emaks[0]
+        emab = emabs[0]
         kema = kemas[0]
         kema1 = kemas[1]
-        global yer, kemao, bolge
+        kemao = round((emak - kema) / min(emak, kema) * 100, 2)
+
+        global skyer, bolge
+
         ykm = 1.03
-        yema = emak
+        yema = kema
         for i in kemas:
-            fkema = i
             if yema / i >= ykm or i / yema >= ykm:
                 break
-        if yema / fkema >= ykm:
-            yer = "Tepe"
+        if yema / i >= ykm:
+            skyer = "Tepe"
         else:
-            yer = "Dip"
-        kemao = round((emak - kema) / min(emak, kema) * 100, 2)
+            skyer = "Dip"
 
         if kemao > 0:
             bolge = "Yükseliş"
         elif kemao < 0:
             bolge = "Düşüş"
-        else:
-            if kema < fkema:
+        elif kemao == 0:
+            if emak < i:
                 bolge = "Yükseliş"
             else:
                 bolge = "Düşüş"
@@ -404,7 +399,6 @@ class coin_trader:
         prefix = "/api/v4"
         headers = {'Accept': 'application/json', 'Content-Type': 'application/json'}
         url = '/spot/my_trades'
-        tt = int(time.time() - 30 * 24 * 60 * 60)
         query_param = 'currency_pair=' + str(self.coin) + "&limit=1000"
 
         sign_headers = gen_sign('GET', prefix + url, query_param)
@@ -435,6 +429,7 @@ class coin_trader:
         global bilanco, sonislem, saf, ssf, mf, kzo, kzt, anapara, harcanan, agider, sgelir, hf, km
 
         miktar = ctm
+        amiktar = 0
         anapara = mulk
         agider, sgelir, harcanan = 0, 0, 0
         km, hf = 1.03, 0
@@ -444,8 +439,10 @@ class coin_trader:
         if ceder >= 1:
             for x in r:
                 if x["side"] == "buy":
+                    amiktar = amiktar + float(x["amount"])
                     miktar = miktar - float(x["amount"])
                     agider = agider + float(x["amount"]) * float(x["price"])
+                    tsiftah = int(x["create_time"])
                     if x["fee_currency"] == coin_adi:
                         miktar = miktar + float(x["fee"])
                     if miktar * float(x["price"]) < 1:
@@ -474,8 +471,13 @@ class coin_trader:
                     if s["side"] == "sell":
                         ssf = float(s["price"])
                         break
-
             hf = round(max((anapara + harcanan * (km - 1) - usd) / ctm, saf * km), digit)
+
+            if time.time() - tsiftah >= 6 * 24 * 60 * 60:
+                harcanan = mulk
+                anapara = mulk
+                amalf = round(agider / amiktar, digit)
+                hf = round(max((anapara + harcanan * (km - 1) - usd) / ctm, amalf * 1.20, saf * km), digit)
 
         bilanco = PrettyTable()
         bilanco.field_names = [str(self.coin).upper(), cp]
@@ -590,14 +592,14 @@ def birinci_elek():
 
 
 def ikinci_elek():
-    global bc, ytablo
+    global bc, bc_tablo
 
-    ytablo = PrettyTable()
+    bc_tablo = PrettyTable()
     uygunlar = []
     bc = "boş"
     for i in range(len(toplu)):
         degisim = []
-        ytablo.clear()
+        bc_tablo.clear()
         for s in range(len(toplu)):
             for n in coin_liste:
                 if toplu[s][0] == n["currency_pair"]:
@@ -608,7 +610,7 @@ def ikinci_elek():
         bc = bch[0]
 
         sil = "hayır"
-        ytablo.clear()
+        bc_tablo.clear()
 
         ct = coin_trader(bc)
 
@@ -630,32 +632,46 @@ def ikinci_elek():
         T4.join()
         T5.join()
 
-        if 0 < kemao < 2 and yer == "Dip":
+        ema_ok = "ema uygun değil"
+        ema_oko = "OK"
+        hacim_ok = "OK"
+        hacimo_ok = "OK"
+
+        if skyer == "Dip":
+            if 0 <= kemao <= 2:
+                ema_ok = "ema uygun"
+        if skyer == "Tepe":
+            if 0 <= kemao <= 2 and cp / min(emaks[:24]) < 1.05:
+                ema_ok = "ema uygun"
+        if kemao < -3 and fasks[0] >= emab:
             ema_ok = "ema uygun"
-        elif 0 < kemao < 2 and cp / min(kmumlar[:24]) < 1.05:
-            ema_ok = "ema uygun"
-        else:
-            ema_ok = "ema uygun değil"
-            print("ema uygun değil silindi...", bc)
+
+        if ema_ok == "ema uygun değil":
+            ema_oko = "XXXXX"
             sil = "evet"
 
         if len(tmumlar) < 800:
             print("Yeni çıkan coin, silindi...", bc)
             sil = "evet"
 
-        m1hacim = round(sum(hacimler[:7]), 2)
-        if m1hacim < 750 or hacimo < 1.50:
-            print("hacim düşük silindi..", bc)
+        m1hacim = round(sum(hacimler[:12]), 2)
+        if m1hacim < 1000:
+            hacim_ok = "XXXXX"
             sil = "evet"
 
-        ytablo.field_names = [str(bc), str(" of " + str(len(toplu)))]
-        ytablo.add_row(["cp", cp])
-        ytablo.add_row(["kemao", kemao])
-        ytablo.add_row(["kema", kema])
-        ytablo.add_row(["ema", ema_ok])
-        ytablo.add_row(["m1hacim", m1hacim])
-        ytablo.add_row(["hacimo", hacimo])
-        print(ytablo)
+        if hacimo < 1.50:
+            hacimo_ok = "XXXXX"
+            sil = "evet"
+
+        bc_tablo.field_names = [str(bc), "of " + str(len(toplu))]
+        bc_tablo.add_row(["yer", [skyer, cp]])
+        bc_tablo.add_row(["kemao", [kemao, ema_oko]])
+        bc_tablo.add_row(["m1hacim", [m1hacim, hacim_ok]])
+        bc_tablo.add_row(["hacimo", [hacimo, hacimo_ok]])
+        bc_tablo.add_row(["kema", kema])
+        bc_tablo.add_row(["emak", emak])
+        bc_tablo.add_row(["emab", emab])
+        print(bc_tablo)
 
         toplu.remove(list(filter(lambda k: k[0] == bc, toplu))[0])
 
@@ -683,6 +699,7 @@ ct = coin_trader(str(scoin))
 ct.coin_digit()
 ct.coin_fiyat()
 ct.bakiye_getir()
+ct.mumlar()
 
 alim_tamam = "evet"
 if ceder < 1:
@@ -691,7 +708,6 @@ if ceder < 1:
 
 afiyat = cp * 0.98
 sfiyat = cp * 1.05
-kemao = 1
 
 while True:
     ct.toplu_islem()
@@ -730,6 +746,7 @@ while True:
                     yeni_tara = "hayır"
                     alim_tamam = "hayır"
                     tbot_ozel.send_message(telegram_chat_id, str(bilanco))
+                    tbot_ozel.send_message(telegram_chat_id, str(bc_tablo))
                     tbot_ozel.send_message(telegram_chat_id, str("https://www.gate.io/tr/trade-old/" + str(bc)))
                     break
                 else:
@@ -737,58 +754,69 @@ while True:
                     continue
 
     # ************- EMA STRATEJİSİ -*******************************#
+    af = min(hf, fbids[5])
+    sf = max(hf, fasks[5])
 
     if bolge == "Yükseliş":
-        if yer == "Dip":
+        if skyer == "Dip":
             bolge = "Dipten Yükseliş"
             p1 = usd
             m1 = min(ctm, mulk / 5 / cp)
             afi, sfi = 2, 3
-            af = min(kema * 1.01, fbids[afi])
-            if ssf > 0:
-                af = min(ssf / 1.01, fbids[afi])
-            sf = max(hf, fasks[sfi])
 
-        elif yer == "Tepe":
+            af = min(kema * 1.01, fbids[afi])
+            sf = max(hf, fbids[0] * 1.01, fasks[sfi])
+
+        elif skyer == "Tepe":
             bolge = "Tepeden Yükseliş"
             afi, sfi = 3, 2
             m1 = min(ctm, mulk / 5 / cp)
             sf = max(hf, fbids[0] * 1.01, fasks[sfi])
-            if ceder < mulk / 2:
+
+            if harcanan < mulk / 2:
                 p1 = max(mulk / 2 - ceder, 2)
-                af = min(kema * 1.01, fbids[afi] / km)
+                af = min(kema * 1.01, fbids[afi])
             else:
                 p1 = min(usd, mulk / 5)
-                af = min(saf / km, fbids[afi] / km)
+                af = fbids[afi] / km
 
-            if fasks[0] >= hf and ceder > 1:
-                if fasks[0] < max(tmumlar[:2]) / 1.03 or fbids[0] / emab < 1.01:
-                    bolge = "Tepeden Dönüş"
-                    sf = fasks[1]
+        if ceder > 1 and hf <= fasks[0]:
+            if fasks[0] < max(tmumlar[:2]) / 1.03 or (fbids[0] / 1.01 <= emab):
+                bolge = "Tepeden Dönüş"
+                sf = fasks[1]
 
     elif bolge == "Düşüş":
         p1 = min(usd, mulk / 5)
-        afi, sfi = 3, 1
+        afi, sfi = 5, 1
 
-        af = min(max(ssf, kema) / km, fbids[afi] / km)
-        if fasks[0] <= saf:
-            bolge = "Zararlı düşüş"
-            if usd < mulk / 4:
-                sf = fasks[sfi]
-                m1 = max(mulk / 4 - usd, 2) / cp
-            else:
-                sf = max(hf, fasks[sfi])
-                m1 = min(mulk / 5 / cp, ctm)
+        if skyer == "Tepe":
+            bolge = "Tepeden Düşüş"
+            af = fbids[afi] / km
         else:
-            bolge = "Kârlı düşüş"
-            sf = max(hf, fasks[sfi])
-            m1 = ctm
+            bolge = "Dipten Düşüş"
+            af = min(fbids[afi], fasks[0] / 1.01)
 
-        if fasks[0] <= max(ssf, kema) / 1.02 and emab / fasks[0] < 1.01:
+        if ceder > 1:
+            if fasks[0] <= saf:
+                bolge = "Zararlı düşüş"
+                if usd < mulk / 4:
+                    sf = fasks[sfi]
+                    m1 = max(mulk / 4 - usd, 2) / cp
+                else:
+                    sf = max(hf, fasks[sfi])
+                    m1 = min(mulk / 5 / cp, ctm)
+            else:
+                bolge = "Kârlı düşüş"
+                sf = max(hf, fasks[sfi])
+                m1 = ctm
+
+        if emab <= fasks[0] <= max(ssf, kema) / 1.02:
+            afi, sfi = 3, 3
             bolge = "Dipten Dönüş"
             p1 = min(usd, mulk / 5)
             af = min(ssf / 1.01, fbids[afi])
             sf = max(hf, fasks[sfi])
+
     # ************- TAF - TSF ************************************************************#
     m = 3
     for i in range(4):
