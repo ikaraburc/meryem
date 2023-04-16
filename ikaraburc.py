@@ -715,7 +715,7 @@ def ikinci_elek():
 emirleri_sil()
 son_coin()
 
-ct = coin_trader(str("MATCH_USDT"))
+ct = coin_trader(str(scoin))
 ct.coin_digit()
 ct.coin_fiyat()
 ct.bakiye_getir()
