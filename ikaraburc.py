@@ -329,7 +329,7 @@ class coin_trader:
                 print("Bağlantı bekleniyor...")
                 continue
 
-        global tmumlar, dmumlar, kmumlar, m1hacim, emas, kemas, ema, kema, kema1, emak, emab, hacimo
+        global tmumlar, dmumlar, kmumlar, hacimler, emas, kemas, ema, kema, kema1, emak, emab, hacimo
 
         tmumlar = [float(i[3]) for i in r]
         dmumlar = [float(i[4]) for i in r]
@@ -341,10 +341,8 @@ class coin_trader:
         kmumlar.reverse()
         hacimler.reverse()
         hk = 12
-
-        m1hacim = round(sum(hacimler[:hk]), 2)
         hacimg = round(sum(hacimler) / len(hacimler) * hk, 2)
-        hacimo = round(m1hacim / hacimg, 2)
+        hacimo = round(sum(hacimler[:12]) / hacimg, 2)
 
         emas = []
         emakp = 4
@@ -401,7 +399,6 @@ class coin_trader:
                 bolge = "Düşüş"
 
     def alsat_gecmisi(self):
-
         # emirleri listele
         host = "https://api.gateio.ws"
         prefix = "/api/v4"
@@ -583,8 +580,7 @@ def birinci_elek():
                 and "5L" not in coin_liste[i]["currency_pair"] \
                 and float(coin_liste[i]["last"]) > 0 \
                 and float(coin_liste[i]["low_24h"]) > 0 \
-                and float(coin_liste[i]["change_percentage"]) > 0 \
-                and 750000 > float(coin_liste[i]["quote_volume"]) > 25000 \
+                and 750000 > float(coin_liste[i]["quote_volume"]) > 15000 \
                 and float(coin_liste[i]["last"]) / float(coin_liste[i]["low_24h"]) > 1.10:
             toplu.append([coin_liste[i]["currency_pair"], float(coin_liste[i]["last"])])
 
@@ -634,9 +630,10 @@ def ikinci_elek():
         T4.join()
         T5.join()
 
-        if 0 < kemao < 2:
-            if yer == "Dip" or cp / min(kmumlar[:36]) < 1.05:
-                ema_ok = "ema uygun"
+        if 0 < kemao < 2 and yer == "Dip":
+            ema_ok = "ema uygun"
+        elif 0 < kemao < 2 and cp / min(kmumlar[:24]) < 1.05:
+            ema_ok = "ema uygun"
         else:
             ema_ok = "ema uygun değil"
             print("ema uygun değil silindi...", bc)
@@ -646,6 +643,7 @@ def ikinci_elek():
             print("Yeni çıkan coin, silindi...", bc)
             sil = "evet"
 
+        m1hacim = round(sum(hacimler[:7]), 2)
         if m1hacim < 750 or hacimo < 1.50:
             print("hacim düşük silindi..", bc)
             sil = "evet"
@@ -663,8 +661,7 @@ def ikinci_elek():
 
         if sil != "evet":
             uygunlar.append(bc)
-            print(uygunlar)
-            break
+        print(uygunlar)
 
     import pprint
 
