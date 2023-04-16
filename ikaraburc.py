@@ -329,7 +329,7 @@ class coin_trader:
                 print("Bağlantı bekleniyor...")
                 continue
 
-        global tmumlar, dmumlar, m1hacim, emas, kemas, ema, kema, kema1, emak, emab, hacimo
+        global tmumlar, dmumlar, kmumlar, m1hacim, emas, kemas, ema, kema, kema1, emak, emab, hacimo
 
         tmumlar = [float(i[3]) for i in r]
         dmumlar = [float(i[4]) for i in r]
@@ -353,14 +353,9 @@ class coin_trader:
         emak = round(sum(kmumlar[0:emakp]) / emakp, digit)
         emab = round(sum(kmumlar[0:emabp]) / emabp, digit)
 
-        if emak > emab:
-            for i in range(1000 - emabp):
-                emas.append(
-                    [round(sum(kmumlar[i:i + emakp]) / emakp, digit), round(sum(kmumlar[i:i + emabp]) / emabp, digit)])
-        else:
-            for i in range(1000 - emabp):
-                emas.append(
-                    [round(sum(kmumlar[i:i + emakp]) / emakp, digit), round(sum(kmumlar[i:i + emabp]) / emabp, digit)])
+        for i in range(1000 - emabp):
+            emas.append(
+                [round(sum(kmumlar[i:i + emakp]) / emakp, digit), round(sum(kmumlar[i:i + emabp]) / emabp, digit)])
 
         kemas = []
         if emas[0][0] < emas[0][1]:
@@ -382,6 +377,28 @@ class coin_trader:
 
         kema = kemas[0]
         kema1 = kemas[1]
+        global yer, kemao, bolge
+        ykm = 1.03
+        yema = emak
+        for i in kemas:
+            fkema = i
+            if yema / i >= ykm or i / yema >= ykm:
+                break
+        if yema / fkema >= ykm:
+            yer = "Tepe"
+        else:
+            yer = "Dip"
+        kemao = round((emak - kema) / min(emak, kema) * 100, 2)
+
+        if kemao > 0:
+            bolge = "Yükseliş"
+        elif kemao < 0:
+            bolge = "Düşüş"
+        else:
+            if kema < fkema:
+                bolge = "Yükseliş"
+            else:
+                bolge = "Düşüş"
 
     def alsat_gecmisi(self):
 
@@ -418,11 +435,12 @@ class coin_trader:
                 print("Bağlantı bekleniyor...")
                 continue
 
-        global bilanco, sonislem, saf, ssf, mf, kzo, kzt, anapara, harcanan, agider, sgelir
+        global bilanco, sonislem, saf, ssf, mf, kzo, kzt, anapara, harcanan, agider, sgelir, hf, km
 
         miktar = ctm
         anapara = mulk
         agider, sgelir, harcanan = 0, 0, 0
+        km, hf = 1.03, 0
         mf, mmf, kzo, kzt = 0, 0, 0, 0
         saf, ssf, sonislem = 0, 0, "boş"
 
@@ -449,14 +467,18 @@ class coin_trader:
             mmf = round(anapara / (usd / cp + ctm) * 1.002, digit)
             kzo = round(kzt / harcanan * 100, 2)
 
-            for a in r:
-                if agider > 0 and a["side"] == "buy":
-                    saf = float(a["price"])
-                    break
-            for s in r:
-                if sgelir > 0 and s["side"] == "sell":
-                    ssf = float(s["price"])
-                    break
+            if agider > 0:
+                for a in r:
+                    if a["side"] == "buy":
+                        saf = float(a["price"])
+                        break
+            if sgelir > 0:
+                for s in r:
+                    if s["side"] == "sell":
+                        ssf = float(s["price"])
+                        break
+
+            hf = round(max((anapara + harcanan * (km - 1) - usd) / ctm, saf * km), digit)
 
         bilanco = PrettyTable()
         bilanco.field_names = [str(self.coin).upper(), cp]
@@ -562,7 +584,7 @@ def birinci_elek():
                 and float(coin_liste[i]["last"]) > 0 \
                 and float(coin_liste[i]["low_24h"]) > 0 \
                 and float(coin_liste[i]["change_percentage"]) > 0 \
-                and 500000 > float(coin_liste[i]["quote_volume"]) > 15000 \
+                and 750000 > float(coin_liste[i]["quote_volume"]) > 25000 \
                 and float(coin_liste[i]["last"]) / float(coin_liste[i]["low_24h"]) > 1.10:
             toplu.append([coin_liste[i]["currency_pair"], float(coin_liste[i]["last"])])
 
@@ -611,31 +633,10 @@ def ikinci_elek():
         T3.join()
         T4.join()
         T5.join()
-        ykm = 1.03
 
-        yema = emak
-        for i in kemas:
-            fkema = i
-            if yema / i >= ykm or i / yema >= ykm:
-                break
-        if yema / fkema >= ykm:
-            yer = "Tepe"
-        else:
-            yer = "Dip"
-
-        kemao = round((emak - kema) / min(emak, kema) * 100, 2)
-        if kemao > 0:
-            bolge = "Yükseliş"
-        elif kemao < 0:
-            bolge = "Düşüş"
-        else:
-            if kema < fkema:
-                bolge = "Yükseliş"
-            else:
-                bolge = "Düşüş"
-
-        if 0 < kemao < 2 and yer == "Dip":
-            ema_ok = "ema uygun"
+        if 0 < kemao < 2:
+            if yer == "Dip" or cp / min(kmumlar[:36]) < 1.05:
+                ema_ok = "ema uygun"
         else:
             ema_ok = "ema uygun değil"
             print("ema uygun değil silindi...", bc)
@@ -692,7 +693,6 @@ if ceder < 1:
 
 afiyat = cp * 0.98
 sfiyat = cp * 1.05
-km = 1.03
 kemao = 1
 
 while True:
@@ -738,29 +738,6 @@ while True:
                     birinci_elek()
                     continue
 
-    # ************- EMA -*******************************#
-    ykm = 1.03
-    yema = emak
-    for i in kemas:
-        fkema = i
-        if yema / i >= ykm or i / yema >= ykm:
-            break
-    if yema / fkema >= ykm:
-        yer = "Tepe"
-    else:
-        yer = "Dip"
-    kemao = round((emak - kema) / min(emak, kema) * 100, 2)
-
-    if kemao > 0:
-        bolge = "Yükseliş"
-    elif kemao < 0:
-        bolge = "Düşüş"
-    else:
-        if kema < fkema:
-            bolge = "Yükseliş"
-        else:
-            bolge = "Düşüş"
-
     # ************- EMA STRATEJİSİ -*******************************#
 
     if bolge == "Yükseliş":
@@ -771,22 +748,22 @@ while True:
             afi, sfi = 2, 3
             af = min(kema * 1.01, fbids[afi])
             if ssf > 0:
-                af = min(ssf/1.01, fbids[afi])
-            sf = max(saf * km, fasks[sfi])
+                af = min(ssf / 1.01, fbids[afi])
+            sf = max(hf, fasks[sfi])
 
         elif yer == "Tepe":
             bolge = "Tepeden Yükseliş"
             afi, sfi = 3, 2
             m1 = min(ctm, mulk / 5 / cp)
-            sf = max(saf * km, fbids[0] * 1.01, fasks[sfi])
+            sf = max(hf, fbids[0] * 1.01, fasks[sfi])
             if ceder < mulk / 2:
                 p1 = max(mulk / 2 - ceder, 2)
-                af = min(kema * 1.01, fbids[afi])
+                af = min(kema * 1.01, fbids[afi] / km)
             else:
                 p1 = min(usd, mulk / 5)
                 af = min(saf / km, fbids[afi] / km)
 
-            if fasks[0] >= saf * km and ceder > 1:
+            if fasks[0] >= hf and ceder > 1:
                 if fasks[0] < max(tmumlar[:2]) / 1.03 or fbids[0] / emab < 1.01:
                     bolge = "Tepeden Dönüş"
                     sf = fasks[1]
@@ -795,25 +772,25 @@ while True:
         p1 = min(usd, mulk / 5)
         afi, sfi = 3, 1
 
-        af = min(max(ssf, kema) / km, fbids[afi],fbids[afi]/km)
+        af = min(max(ssf, kema) / km, fbids[afi] / km)
         if fasks[0] <= saf:
             bolge = "Zararlı düşüş"
             if usd < mulk / 4:
                 sf = fasks[sfi]
                 m1 = max(mulk / 4 - usd, 2) / cp
             else:
-                sf = max(saf * 1.01, fasks[sfi])
+                sf = max(hf, fasks[sfi])
                 m1 = min(mulk / 5 / cp, ctm)
         else:
             bolge = "Kârlı düşüş"
-            sf = max(saf * 1.01, fasks[sfi])
+            sf = max(hf, fasks[sfi])
             m1 = ctm
 
         if fasks[0] <= max(ssf, kema) / 1.02 and emab / fasks[0] < 1.01:
             bolge = "Dipten Dönüş"
             p1 = min(usd, mulk / 5)
             af = min(ssf / 1.01, fbids[afi])
-            sf = max(saf * km, fasks[sfi])
+            sf = max(hf, fasks[sfi])
     # ************- TAF - TSF ************************************************************#
     m = 3
     for i in range(4):
@@ -850,7 +827,6 @@ while True:
     # ************- AL SAT EMİRLERİNİ GÖNDER BÖLÜMÜ -*************************************#
     af = round(af, digit)
     sf = round(sf, digit)
-    hf = 0
 
     if usd >= 1:
         if af > afiyat or af < afiyat / 1.005 or usdt_av > 1:
@@ -870,7 +846,6 @@ while True:
             ct.coklu_al()
 
     if ceder >= 1:
-        hf = round(max((anapara + harcanan * (km - 1) - usd) / ctm, saf * km), digit)
         yedek = 2 / cp
         if sf > sfiyat * 1.005 or sf < sfiyat or cam > yedek:
             T1 = threading.Thread(target=ct.satimlar_sil)
@@ -903,4 +878,3 @@ while True:
     print(fiyatlar)
 
     continue
-  
