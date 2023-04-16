@@ -794,17 +794,17 @@ while True:
             else:
                 p1 = min(usd, mulk / 5)
                 af = fbids[afi] / km
-
-        m1 = min(ctm, mulk / 5 / cp)
-        sfi = 2
-        sf = max(saf * km, fasks[0] * 1.01, fasks[sfi])
-        if fasks[0]  / saf >= 1.05:
-            sf = max(saf * km, fbids[0] * 1.01, fasks[sfi])
+        if ceder > 1:
+            m1 = min(ctm, mulk / 5 / cp)
+            sfi = 2
+            sf = max(saf * km, fasks[0] * 1.01, fasks[sfi])
+            if fasks[0]  / saf >= 1.05:
+                sf = max(saf * km, fbids[0] * 1.01, fasks[sfi])
                 
-        if ceder > 1 and hf <= fasks[0]:
-            if fasks[0] < max(tmumlar[:2]) / 1.03 or (fbids[0] / 1.01 <= emab):
-                bolge = "Tepeden Dönüş"
-                sf = fasks[1]
+            if hf <= fasks[0]:
+                if fasks[0] < max(tmumlar[:2]) / 1.03 or (fbids[0] / 1.01 <= emab):
+                    bolge = "Tepeden Dönüş"
+                    sf = fasks[1]
 
     elif bolge == "Düşüş":
         p1 = min(usd, mulk / 5)
