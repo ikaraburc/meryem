@@ -792,9 +792,9 @@ while True:
             else:
                 p1 = min(usd, mulk / 5)
                 af = fbids[afi] / km
+        sfi = 2
         if ceder > 1:
-            m1 = min(ctm, mulk / 5 / cp)
-            sfi = 2
+            m1 = min(ctm, mulk / 5 / cp)            
             sf = max(saf * km, fasks[0] * 1.01, fasks[sfi])
             if fasks[0]  / saf >= 1.05:
                 sf = max(saf * km, fbids[0] * 1.01, fasks[sfi])
