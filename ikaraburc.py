@@ -789,13 +789,13 @@ while True:
             afi, sfi = 2, 3
 
             af = min(kema * 1.01, fbids[afi])
-            sf = max(saf * km, fasks[0] * 1.01, fasks[sfi])
+            sf = max(saf * km, fbids[0] * 1.01, fasks[sfi])
 
         elif skyer == "Tepe":
             bolge = "Tepeden Yükseliş"
             afi, sfi = 3, 2
             m1 = min(ctm, mulk / 5 / cp)
-            sf = max(saf * km, fasks[0] * 1.01, fasks[sfi])
+            sf = max(saf * km, fbids[0] * 1.01, fasks[sfi])
 
             if harcanan < mulk / 2:
                 p1 = max(mulk / 2 - ceder, 2)
