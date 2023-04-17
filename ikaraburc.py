@@ -793,7 +793,7 @@ while True:
                 p1 = min(usd, mulk / 5)
                 af = fbids[afi] / km
         if ssf > 0:
-            af = min(ssf/1.01, fbids[afi])
+            af = min(af, ssf/1.01, fbids[afi])
         sfi = 2
         if ceder > 1:
             m1 = min(ctm, mulk / 5 / cp)
