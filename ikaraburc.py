@@ -802,7 +802,7 @@ while True:
                 sf = max(saf * km, hf, fbids[0] * 1.01, fasks[sfi])
 
             if hf <= fasks[0]:
-                if fasks[0] < max(tmumlar[:2]) / 1.03 or (fbids[0] / 1.01 <= emab):
+                if fasks[0] < max(tmumlar[:2]) / 1.03 or (fbids[0] <= emab):
                     bolge = "Tepeden Dönüş"
                     sf = fasks[1]
 
