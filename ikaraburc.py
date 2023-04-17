@@ -794,11 +794,11 @@ while True:
                 af = fbids[afi] / km
         sfi = 2
         if ceder > 1:
-            m1 = min(ctm, mulk / 5 / cp)            
+            m1 = min(ctm, mulk / 5 / cp)
             sf = max(saf * km, fasks[0] * 1.01, fasks[sfi])
-            if fasks[0]  / saf >= 1.05:
+            if fasks[0] / saf >= 1.05:
                 sf = max(saf * km, fbids[0] * 1.01, fasks[sfi])
-                
+
             if hf <= fasks[0]:
                 if fasks[0] < max(tmumlar[:2]) / 1.03 or (fbids[0] / 1.01 <= emab):
                     bolge = "Tepeden Dönüş"
@@ -806,28 +806,31 @@ while True:
 
     elif bolge == "Düşüş":
         p1 = min(usd, mulk / 5)
-        afi, sfi = 5, 1
 
         if skyer == "Tepe":
+            afi = 5
             bolge = "Tepeden Düşüş"
             af = fbids[afi] / km
         else:
+            afi = 3
             bolge = "Dipten Düşüş"
             af = min(fbids[afi], fasks[0] / 1.01)
 
         if ceder > 1:
-            if fasks[0] <= saf:
-                bolge = "Zararlı düşüş"
+            if fasks[0] >= saf * km:
+                sfi = 1
+                bolge = "Kârlı düşüş"
+                sf = max(saf * km, fasks[sfi])
+                m1 = ctm
+            else:
+                sfi = 2
+                bolge = "Kârsız düşüş"
                 if usd < mulk / 4:
                     sf = fasks[sfi]
                     m1 = max(mulk / 4 - usd, 2) / cp
                 else:
                     sf = max(saf * km, fasks[sfi])
                     m1 = min(mulk / 5 / cp, ctm)
-            else:
-                bolge = "Kârlı düşüş"
-                sf = max(saf * km, fasks[sfi])
-                m1 = ctm
 
         if emab <= fasks[0] <= max(ssf, kema) / 1.02:
             afi, sfi = 3, 3
