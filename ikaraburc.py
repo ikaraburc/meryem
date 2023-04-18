@@ -159,16 +159,16 @@ class coin_trader:
                 print("Bağlantı bekleniyor...")
                 continue
 
-        global fbids, fasks, mbids, masks
+        global taf, tsf, tam, tsm
 
-        mbids = [float(x[1]) for x in r["bids"]]
-        masks = [float(x[1]) for x in r["asks"]]
+        tam = [float(x[1]) for x in r["bids"]]
+        tsm = [float(x[1]) for x in r["asks"]]
 
-        mbids = [sum(mbids[:i]) for i in range(1, len(mbids))]
-        masks = [sum(masks[:i]) for i in range(1, len(masks))]
+        tam = [sum(tam[:i]) for i in range(1, len(tam))]
+        tsm = [sum(tsm[:i]) for i in range(1, len(tsm))]
 
-        fbids = [float(x[0]) for x in r["bids"]]
-        fasks = [float(x[0]) for x in r["asks"]]
+        taf = [float(x[0]) for x in r["bids"]]
+        tsf = [float(x[0]) for x in r["asks"]]
 
     def coklu_al(self):
         # Alış emri girilmesi.........
@@ -371,24 +371,25 @@ class coin_trader:
         kema1 = kemas[1]
         kemao = round((emak - kema) / min(emak, kema) * 100, 2)
 
-        global skyer, bolge
+        global sky, skd, bolge
 
         ykm = 1.03
         yema = kema
         for i in kemas:
-            if yema / i >= ykm or i / yema >= ykm:
+            skd = i
+            if yema / skd >= ykm or skd / yema >= ykm:
                 break
-        if yema / i >= ykm:
-            skyer = "Tepe"
+        if yema / skd >= ykm:
+            sky = "Tepe"
         else:
-            skyer = "Dip"
+            sky = "Dip"
 
         if kemao > 0:
             bolge = "Yükseliş"
         elif kemao < 0:
             bolge = "Düşüş"
         elif kemao == 0:
-            if emak < i:
+            if emak < skd:
                 bolge = "Yükseliş"
             else:
                 bolge = "Düşüş"
@@ -658,10 +659,10 @@ def ikinci_elek():
         hacim_ok = "OK"
         hacimo_ok = "OK"
 
-        if skyer == "Dip":
+        if sky == "Dip":
             if 0 <= kemao <= 2:
                 ema_ok = "ema uygun"
-        if skyer == "Tepe":
+        if sky == "Tepe":
             if 0 <= kemao <= 2 and cp / min(emaks[:24]) < 1.05:
                 ema_ok = "ema uygun"
 
@@ -683,7 +684,7 @@ def ikinci_elek():
             sil = "evet"
 
         bc_tablo.field_names = [str(bc), "of " + str(len(toplu))]
-        bc_tablo.add_row(["yer", [skyer, cp]])
+        bc_tablo.add_row(["yer", [sky, cp]])
         bc_tablo.add_row(["kemao", [kemao, ema_oko]])
         bc_tablo.add_row(["m1hacim", [m1hacim, hacim_ok]])
         bc_tablo.add_row(["hacimo", [hacimo, hacimo_ok]])
@@ -773,89 +774,90 @@ while True:
                     continue
 
     # ************- EMA STRATEJİSİ -*******************************#
-    af = min(hf, fbids[5])
-    sf = max(hf, fasks[5])
+    af = min(hf, taf[5])
+    sf = max(hf, tsf[5])
 
     if bolge == "Yükseliş":
-        if skyer == "Dip":
+        if sky == "Dip":
             bolge = "Dipten Yükseliş"
             p1 = usd
             afi = 2
-            af = min(kema * 1.01, fbids[afi])
+            af = min(kema * 1.01, taf[afi])
 
-        elif skyer == "Tepe":
+        elif sky == "Tepe":
             bolge = "Tepeden Yükseliş"
             afi = 3
             if harcanan < mulk / 2:
                 p1 = max(mulk / 2 - ceder, 2)
-                af = min(kema * 1.01, fbids[afi])
+                af = min(kema * 1.01, taf[afi])
             else:
                 p1 = min(usd, mulk / 5)
-                af = fbids[afi] / km
+                af = taf[afi] / km
         if ssf > 0:
-            af = min(af, ssf/1.01, fbids[afi])
+            af = min(af, ssf / 1.01, taf[afi])
         sfi = 2
         if ceder > 1:
             m1 = min(ctm, mulk / 5 / cp)
-            sf = max(saf * km, hf, fasks[0] * 1.01, fasks[sfi])
-            if fasks[0] / saf >= 1.05:
-                sf = max(saf * km, hf, fbids[0] * 1.01, fasks[sfi])
+            sf = max(saf * km, hf, tsf[0] * 1.01, tsf[sfi])
+            if tsf[0] / saf >= 1.05:
+                sf = max(saf * km, hf, taf[0] * 1.01, tsf[sfi])
 
-            if hf <= fasks[0]:
-                if fasks[0] < max(tmumlar[:2]) / 1.03 or (fbids[0] <= emab):
+            if tsf[0] >= hf:
+                if tsf[0] < max(tmumlar[:2]) / 1.02 or (taf[0] <= emab):
+                    sfi = 2
                     bolge = "Tepeden Dönüş"
-                    sf = fasks[1]
+                    sf = tsf[sfi]
 
     elif bolge == "Düşüş":
         p1 = min(usd, mulk / 5)
 
-        if skyer == "Tepe":
+        if sky == "Tepe":
             afi = 5
             bolge = "Tepeden Düşüş"
-            af = fbids[afi] / km
+            af = taf[afi] / km
         else:
             afi = 3
             bolge = "Dipten Düşüş"
-            af = min(fbids[afi], fasks[0] / 1.01)
+            af = min(taf[afi], tsf[0] / 1.01)
 
         if ceder > 1:
-            if fasks[0] >= saf * km:
+            if tsf[0] >= saf * km:
                 sfi = 1
                 bolge = "Kârlı düşüş"
-                sf = max(saf * km, fasks[sfi])
+                sf = max(saf * km, tsf[sfi])
                 m1 = ctm
             else:
                 sfi = 2
                 bolge = "Kârsız düşüş"
                 if usd < mulk / 4:
-                    sf = fasks[sfi]
+                    sf = tsf[sfi]
                     m1 = max(mulk / 4 - usd, 2) / cp
                 else:
-                    sf = max(saf * km, fasks[sfi])
+                    sf = max(saf * km, tsf[sfi])
                     m1 = min(mulk / 5 / cp, ctm)
 
-        if emab <= fasks[0] <= max(ssf, kema) / 1.02:
+        if emab <= tsf[0] < skd:
             afi, sfi = 3, 3
             bolge = "Dipten Dönüş"
             p1 = min(usd, mulk / 5)
-            af = min(ssf / 1.01, fbids[afi])
-            sf = max(saf * km, fasks[sfi])
+            af = min(ssf / 1.01, taf[afi])
+            sf = max(saf * km, tsf[sfi])
 
     # ************- TAF - TSF ************************************************************#
     m = 3
     for i in range(4):
-        if max(masks[m], 50 / fbids[m]) < mbids[i]:
+        if max(tsm[m], 50 / taf[m]) < tam[i]:
             afi = min(i, afi)
             break
     for i in range(4):
-        if max(mbids[m], 50 / fasks[m]) < masks[i]:
+        if max(tam[m], 50 / tsf[m]) < tsm[i]:
             sfi = min(i, sfi)
             break
 
-    alist = [fasks[0]] + fbids[:afi + 1]
-    ters = fbids[:4]
+    alist = [tsf[0]] + taf[:afi + 1]
+    ters = taf[:4]
     ters.reverse()
-    slist = ters + fasks[:sfi + 1]
+    slist = ters + tsf[:sfi + 1]
 
     if alist[- 1] <= af:
         for a in range(len(alist) - 1, -1, -1):
@@ -888,7 +890,7 @@ while True:
             T2.join()
 
             afiyat = af
-            afiyat1 = round(min(afiyat * 0.93, fbids[10] + k), digit)
+            afiyat1 = round(min(afiyat * 0.93, taf[10] + k), digit)
 
             amiktar = (p1 - 0.5) / afiyat
             amiktar1 = (usd - p1) / afiyat1
@@ -921,7 +923,7 @@ while True:
     fiyatlar.field_names = [str(bolge) + str(" kemao% " + str(kemao)), mal, str("cp " + str(cp))]
     fiyatlar.add_row(["kema " + str(kema), str(" emak " + str(emak)), str("emab " + str(emab))])
     fiyatlar.add_row(["af, sf % " + str(round((sf - af) / af * 100, 2)), round(af, digit), round(sf, digit)])
-    fiyatlar.add_row(["taf,tsf", str(fbids[0]), str(fasks[0])])
+    fiyatlar.add_row(["taf0,tsf0", str(taf[0]), str(tsf[0])])
     fiyatlar.add_row([str(sonislem) + " saf,ssf", round(saf, digit), round(ssf, digit)])
     fiyatlar.add_row(["mülk " + str(round(mulk, 2)), "ctm " + str(round(ctm, mdigit)), "hf " + str(hf)])
 
