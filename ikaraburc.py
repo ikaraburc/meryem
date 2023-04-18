@@ -793,7 +793,8 @@ while True:
             else:
                 p1 = min(usd, mulk / 5)
                 af = taf[afi] / km
-        if ssf > 0:
+
+        if ssf > 0 and ceder > mulk / 2:
             af = min(af, ssf / 1.01, taf[afi])
         sfi = 2
         if ceder > 1:
@@ -821,14 +822,23 @@ while True:
             af = min(taf[afi], tsf[0] / 1.01)
 
         if ceder > 1:
-            if tsf[0] >= saf * km:
+            if tsf[0] >= max(saf * km, hf):
                 sfi = 1
-                bolge = "Kârlı düşüş"
-                sf = max(saf * km, tsf[sfi])
+                bolge = "Tam kârlı düşüş"
+                sf = max(saf * km, hf, tsf[sfi])
                 m1 = ctm
+            elif tsf[0] >= saf * km:
+                sf = 2
+                bolge = "Az kârlı, düşüş"
+                if usd < mulk / 2:
+                    sf = tsf[sfi]
+                    m1 = max(mulk / 2 - usd, 2) / cp
+                else:
+                    sf = max(saf * km, tsf[sfi])
+                    m1 = min(mulk / 5 / cp, ctm)
             else:
-                sfi = 2
-                bolge = "Kârsız düşüş"
+                bolge = "Kârsız Düşüş"
+                sfi = 3
                 if usd < mulk / 4:
                     sf = tsf[sfi]
                     m1 = max(mulk / 4 - usd, 2) / cp
@@ -841,7 +851,7 @@ while True:
             bolge = "Dipten Dönüş"
             p1 = min(usd, mulk / 5)
             af = min(ssf / 1.01, taf[afi])
-            sf = max(saf * km, tsf[sfi])
+            sf = max(saf * km, hf, tsf[sfi])
 
     # ************- TAF - TSF ************************************************************#
     m = 3
@@ -908,7 +918,7 @@ while True:
             T2.join()
 
             sfiyat = sf
-            sfiyat1 = sfiyat * 1.05
+            sfiyat1 = max(sfiyat * 1.05, hf, tsf[7] - k)
 
             smiktar = m1
             smiktar1 = ctm - m1
