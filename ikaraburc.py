@@ -697,7 +697,8 @@ def ikinci_elek():
 
         if sil != "evet":
             uygunlar.append(bc)
-        print(uygunlar)
+            print(uygunlar)
+            break
 
     import pprint
 
