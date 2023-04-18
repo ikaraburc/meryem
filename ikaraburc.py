@@ -828,7 +828,7 @@ while True:
                 sf = max(saf * km, hf, tsf[sfi])
                 m1 = ctm
             elif tsf[0] >= saf * km:
-                sf = 2
+                sfi = 2
                 bolge = "Az kârlı, düşüş"
                 if usd < mulk / 2:
                     sf = tsf[sfi]
