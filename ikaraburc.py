@@ -607,8 +607,8 @@ def birinci_elek():
                 and "5L" not in coin_liste[i]["currency_pair"] \
                 and float(coin_liste[i]["last"]) > 0 \
                 and float(coin_liste[i]["low_24h"]) > 0 \
-                and 750000 > float(coin_liste[i]["quote_volume"]) > 15000 \
-                and float(coin_liste[i]["last"]) / float(coin_liste[i]["low_24h"]) > 1.10:
+                and 750000 > float(coin_liste[i]["quote_volume"]) > 25000 \
+                and 1.50 > float(coin_liste[i]["last"]) / float(coin_liste[i]["low_24h"]) > 1.05:
             toplu.append([coin_liste[i]["currency_pair"], float(coin_liste[i]["last"])])
 
     print("coin sayısı ", len(toplu))
@@ -660,10 +660,10 @@ def ikinci_elek():
         hacimo_ok = "OK"
 
         if sky == "Dip":
-            if 0 <= kemao <= 2:
+            if 0 < kemao <= 2:
                 ema_ok = "ema uygun"
         if sky == "Tepe":
-            if 0 <= kemao <= 2 and cp / min(emaks[:24]) < 1.05:
+            if 0 < kemao <= 2 and cp / min(emaks[:12]) < 1.05:
                 ema_ok = "ema uygun"
 
         if ema_ok == "ema uygun değil":
@@ -697,8 +697,7 @@ def ikinci_elek():
 
         if sil != "evet":
             uygunlar.append(bc)
-            print(uygunlar)
-            break
+        print(uygunlar)
 
     import pprint
 
