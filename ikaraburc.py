@@ -494,8 +494,8 @@ class coin_trader:
                         if ssmik >= mulk / 2:
                             break
 
-            saf = max(saf, saort)
-            ssf = min(ssf, ssort)
+            saf = round(max(saf, saort), digit)
+            ssf = round(min(ssf, ssort), digit)
 
             hf = round(max((anapara + harcanan * (km - 1) - usd) / ctm, saf * km), digit)
 
@@ -607,6 +607,7 @@ def birinci_elek():
                 and "5S" not in coin_liste[i]["currency_pair"] \
                 and "5L" not in coin_liste[i]["currency_pair"] \
                 and float(coin_liste[i]["last"]) > 0 \
+                and float(coin_liste[i]["change_percentage"]) > -5 \
                 and float(coin_liste[i]["low_24h"]) > 0 \
                 and float(coin_liste[i]["quote_volume"]) > 25000 \
                 and float(coin_liste[i]["last"]) / float(coin_liste[i]["low_24h"]) > 1.05:
@@ -679,7 +680,7 @@ def ikinci_elek():
         if m1hacim < max(min(mulk/2,1000), 500):
             hacim_ok = "XXXXX"
             sil = "evet"
-        if cp / dip24 < 1.10 and hacimo < 1.50:
+        if cp / dip24 < 1.10 and hacimo < 2:
             hacimo_ok = "XXXXX"
             sil = "evet"
 
@@ -850,7 +851,7 @@ while True:
                     sf = max(saf * km, tsf[sfi])
                     m1 = min(mulk / 5 / cp, ctm)
 
-        if emab <= tsf[3]:
+        if emab <= tsf[3] and taf[0] > min(dmumlar[:2]) * 1.02:
             afi, sfi = 3, 3
             bolge = "Dipten Dönüş"
             p1 = min(usd, mulk / 5)
@@ -910,6 +911,11 @@ while True:
 
             amiktar = (p1 - 0.5) / afiyat
             amiktar1 = (usd - p1) / afiyat1
+            if min(amiktar, amiktar1) > 0:
+                am1 = min(amiktar, amiktar1)
+                am2 = max(amiktar, amiktar1)
+                amiktar = am1
+                amiktar1 = am2
 
             ct.coklu_al()
 
@@ -928,6 +934,11 @@ while True:
 
             smiktar = m1
             smiktar1 = ctm - m1
+            if min(smiktar, smiktar1) > 0:
+                sm1 = min(smiktar, smiktar1)
+                sm2 = max(smiktar, smiktar1)
+                smiktar = sm1
+                smiktar1 = sm2
 
             if sf < hf:
                 smiktar = m1 - yedek
@@ -936,12 +947,12 @@ while True:
 
     # ************- EKRANA PRİNT BÖLÜMÜ -*******************************#
     fiyatlar = PrettyTable()
-    fiyatlar.field_names = [str(bolge) + str(" kemao% " + str(kemao)), "skd " + str(skd), str("cp " + str(cp))]
-    fiyatlar.add_row(["af, sf % " + str(round((sf - af) / af * 100, 2)), round(af, digit), round(sf, digit)])
-    fiyatlar.add_row(["kema " + str(kema), str(" emak " + str(emak)), str("emab " + str(emab))])
-    fiyatlar.add_row(["taf0,tsf0", str(taf[0]), str(tsf[0])])
-    fiyatlar.add_row([str(sonislem) + " saf,ssf", round(saf, digit), round(ssf, digit)])
-    fiyatlar.add_row(["mülk " + str(round(mulk, 2)), "ctm " + str(round(ctm, mdigit)), "hf " + str(hf)])
+    fiyatlar.field_names = [str(bolge) + str(" kemao% " + str(kemao)),mal, str("cp " + str(cp))]
+    fiyatlar.add_row([" skd " + str(skd), "  af " + str(round(af, digit)), "  sf " + str(round(sf, digit))])
+    fiyatlar.add_row(["kema " + str(kema), str("emak " + str(emak)), str("emab " + str(emab))])
+    fiyatlar.add_row(["hf " + str(hf), "taf0 " + str(taf[0]), "tsf0 " + str(tsf[0])])
+    fiyatlar.add_row([str(sonislem)," saf " + str(saf), " ssf " + str(ssf)])
+    fiyatlar.add_row(["mülk " + str(round(mulk, 2)),"ceder " + str(round(ceder, 2)), "ctm " + str(round(ctm, mdigit))])
 
     print(fiyatlar)
 
