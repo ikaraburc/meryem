@@ -850,7 +850,7 @@ while True:
                     sf = max(saf * km, tsf[sfi])
                     m1 = min(mulk / 5 / cp, ctm)
 
-        if emab <= tsf[3] < skd / km:
+        if emab <= tsf[3]:
             afi, sfi = 3, 3
             bolge = "Dipten Dönüş"
             p1 = min(usd, mulk / 5)
