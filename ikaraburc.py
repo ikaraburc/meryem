@@ -70,9 +70,10 @@ class coin_trader:
 
                 continue
 
-        global cp, c24, tepe24, k, cpa, cps
+        global cp, c24, tepe24, dip24, k, cpa, cps
 
-        cp, tepe24, c24 = float(r[0]["last"]), float(r[0]["high_24h"]), float(r[0]["change_percentage"])
+        cp, tepe24, dip24, c24 = float(r[0]["last"]), float(r[0]["high_24h"]), float(r[0]["low_24h"]), float(
+            r[0]["change_percentage"])
         cpa, cps = float(r[0]["highest_bid"]), float(r[0]["lowest_ask"])
         k = 1 / 10 ** digit
         if (cp + k) / cp >= 1.01:
@@ -607,8 +608,8 @@ def birinci_elek():
                 and "5L" not in coin_liste[i]["currency_pair"] \
                 and float(coin_liste[i]["last"]) > 0 \
                 and float(coin_liste[i]["low_24h"]) > 0 \
-                and 750000 > float(coin_liste[i]["quote_volume"]) > 25000 \
-                and 1.50 > float(coin_liste[i]["last"]) / float(coin_liste[i]["low_24h"]) > 1.05:
+                and float(coin_liste[i]["quote_volume"]) > 25000 \
+                and float(coin_liste[i]["last"]) / float(coin_liste[i]["low_24h"]) > 1.05:
             toplu.append([coin_liste[i]["currency_pair"], float(coin_liste[i]["last"])])
 
     print("coin sayısı ", len(toplu))
@@ -675,11 +676,10 @@ def ikinci_elek():
             sil = "evet"
 
         m1hacim = round(sum(hacimler[:12]), 2)
-        if m1hacim < 1000:
+        if m1hacim < max(min(mulk/2,1000), 500):
             hacim_ok = "XXXXX"
             sil = "evet"
-
-        if hacimo < 1.50:
+        if cp / dip24 < 1.10 and hacimo < 1.50:
             hacimo_ok = "XXXXX"
             sil = "evet"
 
@@ -774,7 +774,7 @@ while True:
                     continue
 
     # ************- EMA STRATEJİSİ -*******************************#
-    af = min(hf, taf[5])
+    af = taf[5]
     sf = max(hf, tsf[5])
 
     if bolge == "Yükseliş":
@@ -802,16 +802,16 @@ while True:
             sf = max(saf * km, hf, tsf[0] * 1.01, tsf[sfi])
             if tsf[0] / saf >= 1.05:
                 sf = max(saf * km, hf, taf[0] * 1.01, tsf[sfi])
-            
-            if tsf[0] < max(tmumlar[:2]) / 1.02 or (taf[0] <= emab):   
+
+            if tsf[0] < max(tmumlar[:2]) / 1.02 or (taf[0] <= emab):
                 bolge = "Tepeden Dönüş"
                 sfi = 2
-                if tsf[0] >= hf:                    
+                if tsf[0] >= hf:
                     m1 = ctm
                     sf = tsf[sfi]
-                elif tsf[0] >= saf * km and ceder > mulk/2:
-                    m1 = (mulk/2-usd)/cp
-                    sf = tsf[sfi]                
+                elif tsf[0] >= saf * km and ceder > mulk / 2:
+                    m1 = (mulk / 2 - usd) / cp
+                    sf = tsf[sfi]
 
     elif bolge == "Düşüş":
         p1 = min(usd, mulk / 5)
@@ -854,7 +854,9 @@ while True:
             afi, sfi = 3, 3
             bolge = "Dipten Dönüş"
             p1 = min(usd, mulk / 5)
-            af = min(ssf / 1.01, taf[afi])
+            if ssf > 0:
+                af = min(ssf / 1.01, taf[afi])
+
             sf = max(saf * km, hf, tsf[sfi])
 
     # ************- TAF - TSF ************************************************************#
@@ -936,7 +938,7 @@ while True:
     fiyatlar = PrettyTable()
     fiyatlar.field_names = [str(bolge) + str(" kemao% " + str(kemao)), "skd " + str(skd), str("cp " + str(cp))]
     fiyatlar.add_row(["af, sf % " + str(round((sf - af) / af * 100, 2)), round(af, digit), round(sf, digit)])
-    fiyatlar.add_row(["kema " + str(kema), str(" emak " + str(emak)), str("emab " + str(emab))])    
+    fiyatlar.add_row(["kema " + str(kema), str(" emak " + str(emak)), str("emab " + str(emab))])
     fiyatlar.add_row(["taf0,tsf0", str(taf[0]), str(tsf[0])])
     fiyatlar.add_row([str(sonislem) + " saf,ssf", round(saf, digit), round(ssf, digit)])
     fiyatlar.add_row(["mülk " + str(round(mulk, 2)), "ctm " + str(round(ctm, mdigit)), "hf " + str(hf)])
