@@ -839,7 +839,7 @@ while True:
                     sf = tsf[sfi]
                     m1 = max(mulk / 2 - usd, 2) / cp
                 else:
-                    sf = max(saf * km, tsf[sfi])
+                    sf = max(saf * km, hf, tsf[sfi])
                     m1 = min(mulk / 5 / cp, ctm)
             else:
                 bolge = "Kârsız Düşüş"
@@ -848,7 +848,7 @@ while True:
                     sf = tsf[sfi]
                     m1 = max(mulk / 4 - usd, 2) / cp
                 else:
-                    sf = max(saf * km, tsf[sfi])
+                    sf = max(saf * km, hf, tsf[sfi])
                     m1 = min(mulk / 5 / cp, ctm)
 
         if emab <= tsf[3] and taf[0] > min(dmumlar[:2]) * 1.02:
