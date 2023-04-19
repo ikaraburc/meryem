@@ -911,10 +911,10 @@ while True:
 
             amiktar = (p1 - 0.5) / afiyat
             amiktar1 = (usd - p1) / afiyat1
-            if min(amiktar, amiktar1) > 0:
-                am1 = min(amiktar, amiktar1)
-                am2 = max(amiktar, amiktar1)
-                amiktar = am1
+            if min(p1, usd-p1) > 0:
+                am1 = min(p1, usd-p1)/afiyat
+                am2 = max(p1, usd-p1)/afiyat1
+                amiktar = am1 - 0.5
                 amiktar1 = am2
 
             ct.coklu_al()
