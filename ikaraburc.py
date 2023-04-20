@@ -694,8 +694,9 @@ def ikinci_elek():
             hacimo_ok = "XXXXX"
             sil = "evet"
 
-        if cp < ema50:
+        if max(ema4, cp, tsf[0]) < ema50:
             ema50_ok = "XXXXX"
+            sil = "evet"
 
         bc_tablo.field_names = [str(bc), "of " + str(len(toplu))]
         bc_tablo.add_row(["yer", [sky, cp]])
