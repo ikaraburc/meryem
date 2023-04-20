@@ -616,7 +616,6 @@ def birinci_elek():
                 and "5S" not in coin_liste[i]["currency_pair"] \
                 and "5L" not in coin_liste[i]["currency_pair"] \
                 and float(coin_liste[i]["last"]) > 0 \
-                and float(coin_liste[i]["change_percentage"]) > -5 \
                 and float(coin_liste[i]["low_24h"]) > 0 \
                 and float(coin_liste[i]["quote_volume"]) > 25000 \
                 and float(coin_liste[i]["last"]) / float(coin_liste[i]["low_24h"]) > 1.05:
@@ -694,7 +693,7 @@ def ikinci_elek():
             hacimo_ok = "XXXXX"
             sil = "evet"
 
-        if max(ema4, cp, tsf[0]) < ema50:
+        if max(ema4, cp) < ema50:
             ema50_ok = "XXXXX"
             sil = "evet"
 
@@ -878,11 +877,11 @@ while True:
     m = 3
     for i in range(4):
         if max(tsm[m], 50 / taf[m]) < tam[i]:
-            afi = min(max(0,i-1), afi)
+            afi = min(max(0, i - 1), afi)
             break
     for i in range(4):
         if max(tam[m], 50 / tsf[m]) < tsm[i]:
-            sfi = min(max(0,i-1), sfi)
+            sfi = min(max(0, i - 1), sfi)
             break
 
     alist = [tsf[0]] + taf[:afi + 1]
