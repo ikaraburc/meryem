@@ -961,13 +961,14 @@ while True:
     # ************- EKRANA PRİNT BÖLÜMÜ -*******************************#
 
     fiyatlar = PrettyTable()
-    fiyatlar.field_names = [str(bolge) + str(" kemao% " + str(kemao)), "Trend=" + str(trend) + str(" % " + str(trendy)),
-                            str("cp " + str(cp))]
-    fiyatlar.add_row(["kema " + str(kema), "  af " + str(round(af, digit)), "  sf " + str(round(sf, digit))])
+    fiyatlar.field_names = [str(bolge), str(trend), str("cp " + str(cp))]
+    fiyatlar.add_row(["kemao% " + str(kemao), "trend% " + str(trendy), "hf    " + str(hf)])
+    fiyatlar.add_row(["kema " + str(kema), "af    " + str(round(af, digit)), "sf    " + str(round(sf, digit))])
     fiyatlar.add_row([str("ema4 " + str(ema4)), str("ema12 " + str(ema12)), str("ema50 " + str(ema50))])
-    fiyatlar.add_row(["hf " + str(hf), "taf0 " + str(taf[0]), "tsf0 " + str(tsf[0])])
-    fiyatlar.add_row(["usd " + str(round(usd, 2)) + " " + str(sonislem), " saf " + str(saf), " ssf " + str(ssf)])
-    fiyatlar.add_row(["ceder " + str(round(ceder, 2)), "mülk " + str(round(mulk, 2)), "ctm " + str(round(ctm, mdigit))])
+    fiyatlar.add_row(["usd " + str(round(usd, 2)), "taf0  " + str(taf[0]), "tsf0  " + str(tsf[0])])
+    fiyatlar.add_row(["ceder " + str(round(ceder, 2)), "saf   " + str(saf), "ssf   " + str(ssf)])
+    fiyatlar.add_row(["mülk " + str(round(mulk, 2)), "ctm " + str(round(ctm, mdigit)),
+                      str(sonislem) + " hf% " + str(round((hf / cp - 1) * 100, 2))])
 
     print(fiyatlar)
 
