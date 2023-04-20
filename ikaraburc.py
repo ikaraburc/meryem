@@ -921,11 +921,6 @@ while True:
 
             amiktar = (p1 - 0.5) / afiyat
             amiktar1 = (usd - p1) / afiyat1
-            if min(p1, usd - p1) > 0:
-                am1 = min(p1, usd - p1) / afiyat
-                am2 = max(p1, usd - p1) / afiyat1
-                amiktar = am1 - 0.5
-                amiktar1 = am2
 
             ct.coklu_al()
 
@@ -944,11 +939,6 @@ while True:
 
             smiktar = m1
             smiktar1 = ctm - m1
-            if min(smiktar, smiktar1) > 0:
-                sm1 = min(smiktar, smiktar1)
-                sm2 = max(smiktar, smiktar1)
-                smiktar = sm1
-                smiktar1 = sm2
 
             if sf < hf:
                 smiktar = m1 - yedek
@@ -963,7 +953,7 @@ while True:
     fiyatlar.add_row(["kema " + str(kema), "af    " + str(round(af, digit)), "sf    " + str(round(sf, digit))])
     fiyatlar.add_row([str("ema4 " + str(ema4)), str("ema12 " + str(ema12)), str("ema50 " + str(ema50))])
     fiyatlar.add_row(["usd " + str(round(usd, 2)), "taf0  " + str(taf[0]), "tsf0  " + str(tsf[0])])
-    fiyatlar.add_row(["ceder " + str(round(ceder, 2)), "saf   " + str(saf), "ssf    " + str(ssf)])
+    fiyatlar.add_row(["ceder " + str(round(ceder, 2)), "saf   " + str(saf), "ssf   " + str(ssf)])
     fiyatlar.add_row(["mülk " + str(round(mulk, 2)), "ctm " + str(round(ctm, mdigit)),
                       str(sonislem) + " hf% " + str(round((hf / cp - 1) * 100, 2))])
 
