@@ -878,11 +878,11 @@ while True:
     m = 3
     for i in range(4):
         if max(tsm[m], 50 / taf[m]) < tam[i]:
-            afi = min(i, afi)
+            afi = min(max(0,i-1), afi)
             break
     for i in range(4):
         if max(tam[m], 50 / tsf[m]) < tsm[i]:
-            sfi = min(i, sfi)
+            sfi = min(max(0,i-1), sfi)
             break
 
     alist = [tsf[0]] + taf[:afi + 1]
@@ -890,22 +890,18 @@ while True:
     ters.reverse()
     slist = ters + tsf[:sfi + 1]
 
-    if alist[- 1] <= af:
+    if alist[- 1] <= af * 1.005:
         for a in range(len(alist) - 1, -1, -1):
             af = alist[a] + k
             if alist[a] / alist[- 1] >= 1.005:
                 af = alist[a + 1] + k
                 break
-        if af - k == afiyat:
-            af = afiyat
-    if slist[- 1] >= sf:
+    if slist[- 1] >= sf / 1.005:
         for s in range(len(slist) - 1, -1, -1):
             sf = slist[s] - k
             if slist[- 1] / slist[s] >= 1.005:
                 sf = slist[s + 1] - k
                 break
-        if sf + k == sfiyat:
-            sf = sfiyat
 
     # ************- AL SAT EMİRLERİNİ GÖNDER BÖLÜMÜ -*************************************#
     af = round(af, digit)
@@ -967,7 +963,7 @@ while True:
     fiyatlar.add_row(["kema " + str(kema), "af    " + str(round(af, digit)), "sf    " + str(round(sf, digit))])
     fiyatlar.add_row([str("ema4 " + str(ema4)), str("ema12 " + str(ema12)), str("ema50 " + str(ema50))])
     fiyatlar.add_row(["usd " + str(round(usd, 2)), "taf0  " + str(taf[0]), "tsf0  " + str(tsf[0])])
-    fiyatlar.add_row(["ceder " + str(round(ceder, 2)), "saf   " + str(saf), "ssf   " + str(ssf)])
+    fiyatlar.add_row(["ceder " + str(round(ceder, 2)), "saf   " + str(saf), "ssf    " + str(ssf)])
     fiyatlar.add_row(["mülk " + str(round(mulk, 2)), "ctm " + str(round(ctm, mdigit)),
                       str(sonislem) + " hf% " + str(round((hf / cp - 1) * 100, 2))])
 
