@@ -832,21 +832,25 @@ while True:
                     sf = tsf[sfi]
 
     elif bolge == "Düşüş":
-
-        if tsf[0] >= max(saf * km, hf) or ceder <= mulk / 2:
-            sfi = 1
-            m1 = ctm
-            sf = max(saf * km, hf, tsf[sfi])
-        else:
-            if tsf[0] <= saf and usd < mulk/4:
-                sfi = 1
+        if sky == "Dip":
+            sfi = 3
+            if tsf[0] < saf * 0.98 and usd < mulk/4:
                 m1 = min((mulk / 4 - usd + 5) / cp, ctm)
                 sf = tsf[sfi]
             else:
-                sfi = 1
-                m1 = min((mulk / 2 - usd + 5) / cp, ctm)
-                sf = max(saf * km, tsf[sfi])
-
+                m1 = min(mulk/5/cp, ctm)
+                sf = max(hf, saf * km, tsf[sfi])
+                
+        elif sky == "Tepe":
+            sfi = 1
+            m1 = min((mulk/2-usd+5)/cp, ctm)
+            sf = tsf[sfi]
+            
+        if tsf[1] >= max(hf, saf * km) or ceder <= mulk/2:
+            sfi = 1
+            m1 = ctm
+            sf = max(hf, saf * km, tsf[sfi])
+            
         p1 = min(usd, mulk / 5)
         if sky == "Tepe":
             afi = 5
