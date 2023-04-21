@@ -838,16 +838,14 @@ while True:
             m1 = ctm
             sf = max(saf * km, hf, tsf[sfi])
         else:
-            if tsf[0] >= saf:
-                if ceder > mulk / 2:
-                    sfi = 1
-                    m1 = min((mulk / 2 - usd + 5) / cp, ctm)
-                    sf = max(saf * km, tsf[sfi])
+            if tsf[0] <= saf and usd < mulk/4:
+                sfi = 1
+                m1 = min((mulk / 4 - usd + 5) / cp, ctm)
+                sf = tsf[sfi]
             else:
-                if usd < mulk / 4:
-                    sfi = 1
-                    m1 = min((mulk / 4 - usd + 5) / cp, ctm)
-                    sf = tsf[sfi]
+                sfi = 1
+                m1 = min((mulk / 2 - usd + 5) / cp, ctm)
+                sf = max(saf * km, tsf[sfi])
 
         p1 = min(usd, mulk / 5)
         if sky == "Tepe":
