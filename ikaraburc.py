@@ -651,16 +651,19 @@ def ikinci_elek():
 
         T1 = threading.Thread(target=ct.coin_digit)
         T2 = threading.Thread(target=ct.coin_fiyat)
+        T3 = threading.Thread(target=ct.tahta_getir)
         T4 = threading.Thread(target=ct.mumlar)
         T5 = threading.Thread(target=coins_fiyatlar)
 
         T1.start()
         T2.start()
+        T3.start()
         T4.start()
         T5.start()
 
         T1.join()
         T2.join()
+        T3.join()
         T4.join()
         T5.join()
 
@@ -685,7 +688,7 @@ def ikinci_elek():
             sil = "evet"
 
         m1hacim = round(sum(hacimler[:12]), 2)
-        if m1hacim < max(min(mulk / 2, 1000), 500):
+        if m1hacim < max(min(mulk / 2, 1000), 500) or tam[10] < mulk / 2:
             hacim_ok = "XXXXX"
             sil = "evet"
 
@@ -829,38 +832,32 @@ while True:
                     sf = tsf[sfi]
 
     elif bolge == "Düşüş":
+
+        if tsf[0] >= max(saf * km, hf) or ceder <= mulk / 2:
+            sfi = 1
+            m1 = ctm
+            sf = max(saf * km, hf, tsf[sfi])
+        else:
+            if tsf[0] >= saf:
+                if ceder > mulk / 2:
+                    sfi = 1
+                    m1 = min((mulk / 2 - usd + 5) / cp, ctm)
+                    sf = max(saf * km, tsf[sfi])
+            else:
+                if usd < mulk / 4:
+                    sfi = 1
+                    m1 = min((mulk / 4 - usd + 5) / cp, ctm)
+                    sf = tsf[sfi]
+
         p1 = min(usd, mulk / 5)
         if sky == "Tepe":
             afi = 5
             bolge = "Tepeden Düşüş"
-            af = min(ssf,taf[afi]) / km
+            af = min(ssf, taf[afi]) / km
         elif sky == "Dip":
             afi = 3
             bolge = "Dipten Düşüş"
-            af = min(taf[afi],ssf/1.01, tsf[0] / 1.01)
-
-        if tsf[0] >= max(saf * km, hf):
-            sfi = 1
-            sf = max(saf * km, hf, tsf[sfi])
-            m1 = ctm
-        else:
-            if sky == "Tepe" and ceder > mulk / 2:
-                sfi = 1
-                m1 = min((mulk / 2 - usd + 5) / cp, ctm)
-                sf = max(saf * km, tsf[sfi])
-            elif sky == "Dip" and usd < mulk / 4:
-                sfi = 1
-                m1 = min((mulk / 4 - usd + 5) / cp, ctm)
-                sf = tsf[sfi]
-
-        if ema12 / max(ema4, tsf[2]) <= 1.01 and (sky == "Dip" or taf[0] <= kema / km):
-            afi, sfi = 3, 3
-            bolge = "Dipten Dönüş"
-            p1 = min(usd, mulk / 5)
-            if ssf > 0:
-                af = min(ssf / 1.01, taf[afi])
-
-            sf = max(saf * km, hf, tsf[sfi])
+            af = min(taf[afi], ssf / 1.02)
 
     # ************- TAF - TSF ************************************************************#
     m = 3
@@ -936,14 +933,13 @@ while True:
     # ************- EKRANA PRİNT BÖLÜMÜ -*******************************#
 
     fiyatlar = PrettyTable()
-    fiyatlar.field_names = [str(bolge), str(trend), str("cp " + str(cp))]
-    fiyatlar.add_row(["kemao% " + str(kemao), "trend% " + str(trendy), "hf    " + str(hf)])
+    fiyatlar.field_names = [str(bolge) + " ma% " + str(kemao), str(trend) + " t% " + str(trendy), str("cp " + str(cp))]
     fiyatlar.add_row(["kema " + str(kema), "af    " + str(round(af, digit)), "sf    " + str(round(sf, digit))])
     fiyatlar.add_row([str("ema4 " + str(ema4)), str("ema12 " + str(ema12)), str("ema50 " + str(ema50))])
     fiyatlar.add_row(["usd " + str(round(usd, 2)), "taf0  " + str(taf[0]), "tsf0  " + str(tsf[0])])
     fiyatlar.add_row(["ceder " + str(round(ceder, 2)), "saf   " + str(saf), "ssf   " + str(ssf)])
-    fiyatlar.add_row(["mülk " + str(round(mulk, 2)), "ctm " + str(round(ctm, mdigit)),
-                      str(sonislem) + " hf% " + str(round((hf / cp - 1) * 100, 2))])
+    fiyatlar.add_row(["mülk " + str(round(mulk, 2)), "hf " + str(hf),
+                      "hf% " + str(round((hf / cp - 1) * 100, 2)) + " " + str(sonislem)])
 
     print(fiyatlar)
 
