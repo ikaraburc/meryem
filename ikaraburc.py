@@ -829,31 +829,6 @@ while True:
                     sf = tsf[sfi]
 
     elif bolge == "Düşüş":
-        if ceder > 1:
-            if tsf[0] >= max(saf * km, hf):
-                sfi = 1
-                bolge = "Tam kârlı düşüş"
-                sf = max(saf * km, hf, tsf[sfi])
-                m1 = ctm
-            elif tsf[0] >= saf * km:
-                sfi = 2
-                bolge = "Az kârlı, düşüş"
-                if usd < mulk / 2:
-                    sf = tsf[sfi]
-                    m1 = max(mulk / 2 - usd, 2) / cp
-                else:
-                    sf = max(saf * km, hf, tsf[sfi])
-                    m1 = min(mulk / 5 / cp, ctm)
-            else:
-                bolge = "Kârsız Düşüş"
-                sfi = 3
-                if usd < mulk / 4:
-                    sf = tsf[sfi]
-                    m1 = max(mulk / 4 - usd, 2) / cp
-                else:
-                    sf = max(saf * km, hf, tsf[sfi])
-                    m1 = min(mulk / 5 / cp, ctm)
-
         p1 = min(usd, mulk / 5)
         if sky == "Tepe":
             afi = 5
@@ -863,6 +838,20 @@ while True:
             afi = 3
             bolge = "Dipten Düşüş"
             af = min(taf[afi], tsf[0] / 1.01)
+
+        if tsf[0] >= max(saf * km, hf):
+            sfi = 1
+            sf = max(saf * km, hf, tsf[sfi])
+            m1 = ctm
+        else:
+            if sky == "Tepe" and ceder > mulk / 2:
+                sfi = 1
+                m1 = min((mulk / 2 - usd + 5) / cp, ctm)
+                sf = max(saf * km, tsf[sfi])
+            elif sky == "Dip" and usd < mulk / 4:
+                sfi = 1
+                m1 = min((mulk / 4 - usd + 5) / cp, ctm)
+                sf = tsf[sfi]
 
         if ema12 / max(ema4, tsf[2]) <= 1.01 and (sky == "Dip" or taf[0] <= kema / km):
             afi, sfi = 3, 3
