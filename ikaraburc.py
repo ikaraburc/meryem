@@ -696,7 +696,7 @@ def ikinci_elek():
             hacimo_ok = "XXXXX"
             sil = "evet"
 
-        if max(ema4, cp) < ema50:
+        if min(dmumlar[:4]) < ema50:
             ema50_ok = "XXXXX"
             sil = "evet"
 
