@@ -833,11 +833,11 @@ while True:
         if sky == "Tepe":
             afi = 5
             bolge = "Tepeden Düşüş"
-            af = taf[afi] / km
+            af = min(ssf,taf[afi]) / km
         elif sky == "Dip":
             afi = 3
             bolge = "Dipten Düşüş"
-            af = min(taf[afi], tsf[0] / 1.01)
+            af = min(taf[afi],ssf/1.01, tsf[0] / 1.01)
 
         if tsf[0] >= max(saf * km, hf):
             sfi = 1
