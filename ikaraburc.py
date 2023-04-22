@@ -836,7 +836,7 @@ while True:
             sfi = 3
             if tsf[0] < saf * 0.98 and usd < mulk/4:
                 m1 = min((mulk / 4 - usd + 5) / cp, ctm)
-                sf = tsf[sfi]
+                sf = max(kema/km, tsf[sfi])
             else:
                 m1 = min(mulk/5/cp, ctm)
                 sf = max(hf, saf * km, tsf[sfi])
@@ -844,7 +844,7 @@ while True:
         elif sky == "Tepe":
             sfi = 1
             m1 = min((mulk/2-usd+5)/cp, ctm)
-            sf = tsf[sfi]
+            sf = max(skd * km, tsf[sfi])
             
         if tsf[1] >= max(hf, saf * km) or ceder <= mulk/2:
             sfi = 1
@@ -938,7 +938,7 @@ while True:
     fiyatlar.field_names = [str(bolge) + " ma% " + str(kemao), str(trend) + " t% " + str(trendy), str("cp " + str(cp))]
     fiyatlar.add_row(["kema " + str(kema), "af    " + str(round(af, digit)), "sf    " + str(round(sf, digit))])
     fiyatlar.add_row([str("ema4 " + str(ema4)), str("ema12 " + str(ema12)), str("ema50 " + str(ema50))])
-    fiyatlar.add_row(["usd " + str(round(usd, 2)), "taf0  " + str(taf[0]), "tsf0  " + str(tsf[0])])
+    fiyatlar.add_row(["skd " + str(skd), "taf0  " + str(taf[0]), "tsf0  " + str(tsf[0])])
     fiyatlar.add_row(["ceder " + str(round(ceder, 2)), "saf   " + str(saf), "ssf   " + str(ssf)])
     fiyatlar.add_row(["mülk " + str(round(mulk, 2)), "hf " + str(hf),
                       "hf% " + str(round((hf / cp - 1) * 100, 2)) + " " + str(sonislem)])
