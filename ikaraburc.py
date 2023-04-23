@@ -864,7 +864,7 @@ while True:
             if alist[a] / alist[- 1] >= 1.005:
                 af = alist[a + 1] + k
                 break
-        if af - k == afiyat and afiyat < alist[-1]:
+        if af - k == afiyat and afiyat > alist[-1]:
             af = alist[alist.index(af - k) + 1] + k
 
     if slist[- 1] >= sf / 1.005:
