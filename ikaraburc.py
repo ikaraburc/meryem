@@ -505,7 +505,7 @@ class coin_trader:
 
             saf = round(max(saf, saort), digit)
             ssf = round(min(ssf, ssort), digit)
-
+         
             hf = round(max((anapara + harcanan * (km - 1) - usd) / ctm, saf * km), digit)
 
             if time.time() - tsiftah >= 6 * 24 * 60 * 60:
@@ -800,56 +800,55 @@ while True:
             bolge = "Dipten Yükseliş"
             p1 = usd
             afi = 3
-            af = min(kema * 1.01, taf[afi])
+            af = kema * 1.01
 
         elif sky == "Tepe":
             bolge = "Tepeden Yükseliş"
             afi = 4
             if harcanan < mulk / 2:
                 p1 = max(mulk / 2 - ceder, 2)
-                af = min(kema * 1.01, taf[afi])
+                af = kema * 1.01
             else:
                 p1 = min(usd, mulk / 5)
                 af = taf[afi] / km
 
-        if ssf > 0 and ceder > mulk / 2:
-            af = min(af, ssf / 1.01, taf[afi])
+        if ssf > 0:
+            af = min(kema * 1.01, ssf / 1.01)
         sfi = 2
         if ceder > 1:
             m1 = min(ctm, mulk / 5 / cp)
-            sf = max(saf * km, hf, tsf[0] * 1.02, tsf[sfi])
+            sf = max(saf * km, hf, tsf[0] * 1.02)
             if tsf[0] / hf >= 1.05:
-                sf = max(saf * km, hf, taf[0] * 1.02, tsf[sfi])
+                sf = max(saf * km, hf, taf[0] * 1.02)
 
             if (tsf[0] < max(tmumlar[:2]) / 1.02 or min(ema4, taf[0]) / ema12 <= 1.01) and tsf[0] >= kema * km:
                 bolge = "Tepeden Dönüş"
-                sfi = 2
                 if tsf[0] >= hf:
                     m1 = ctm
-                    sf = tsf[sfi]
+                    sf = tsf[0]
                 elif tsf[0] >= saf * km and ceder > mulk / 2:
                     m1 = (mulk / 2 - usd) / cp
-                    sf = tsf[sfi]
+                    sf = tsf[0]
 
     elif bolge == "Düşüş":
         if sky == "Dip":
             sfi = 3
             if tsf[0] < saf * 0.98 and usd < mulk/4:
                 m1 = min((mulk / 4 - usd + 5) / cp, ctm)
-                sf = max(kema/km, tsf[sfi])
+                sf = max(kema/km, tsf[0])
             else:
                 m1 = min(mulk/5/cp, ctm)
-                sf = max(hf, saf * km, tsf[sfi])
+                sf = max(hf, saf * km, tsf[0])
                 
         elif sky == "Tepe":
             sfi = 1
             m1 = min((mulk/2-usd+5)/cp, ctm)
-            sf = max(skd * km, tsf[sfi])
+            sf = max(skd * km, tsf[0])
             
         if tsf[1] >= max(hf, saf * km) or ceder <= mulk/2:
             sfi = 1
             m1 = ctm
-            sf = max(hf, saf * km, tsf[sfi])
+            sf = max(hf, saf * km, tsf[0])
             
         p1 = min(usd, mulk / 5)
         if sky == "Tepe":
@@ -857,18 +856,18 @@ while True:
             bolge = "Tepeden Düşüş"
             af = min(ssf, taf[afi]) / km
         elif sky == "Dip":
-            afi = 3
+            afi = 4
             bolge = "Dipten Düşüş"
-            af = min(taf[afi], ssf / 1.02)
-
+            af = min(taf[0], ssf / 1.02)
+        
     # ************- TAF - TSF ************************************************************#
     m = 3
     for i in range(4):
-        if max(tsm[m], 50 / taf[m]) < tam[i]:
+        if max(tsm[m], 50 / tsf[m]) < tam[i]:
             afi = min(max(0, i - 1), afi)
             break
     for i in range(4):
-        if max(tam[m], 50 / tsf[m]) < tsm[i]:
+        if max(tam[m], 50 / taf[m]) < tsm[i]:
             sfi = min(max(0, i - 1), sfi)
             break
 
