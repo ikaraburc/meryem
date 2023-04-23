@@ -797,8 +797,8 @@ while True:
             af = min(kema * 1.01, taf[0])
             if ssf > 0:
                 af = min(taf[0], ssf / 1.01)
-
-        sfi = 2
+                
+        sfi = 4
         if ceder > 1:
             m1 = min(ctm, mulk / 5 / cp)
             sf = max(ksf, tsf[0] * 1.02)
@@ -806,6 +806,7 @@ while True:
                 sf = max(ksf, taf[0] * 1.02)
 
             if (tsf[0] < max(tmumlar[:2]) / 1.02 or min(ma4, taf[0]) / ma12 <= 1.01) and tsf[0] >= kema * km:
+                sfi = 2
                 bolge = "Tepeden aDönüş"
                 if tsf[0] >= hf:
                     m1 = ctm
@@ -819,12 +820,16 @@ while True:
             sfi = 1
             m1 = ctm
             sf = max(ksf, tsf[0])
+        elif tsf[0] >= saf*km:
+            sfi = 2
+            m1 = min((mulk / 2 - usd + 5) / cp, ctm)
+            sf = max(saf * 1.015, tsf[0])
         elif tsf[0] > saf:
             sfi = 2
             m1 = min((mulk / 2 - usd + 5) / cp, ctm)
             sf = max(saf * 1.015, tsf[0])
-        elif tsf[0] < saf / 1.01 and usd < mulk / 4 and tsf[1] < ma12:
-            sfi = 3
+        elif tsf[0] < saf / 1.01 and usd < mulk / 4:
+            sfi = 2
             sf = tsf[0]
             m1 = min((mulk / 4 - usd + 5) / cp, ctm)
         else:
@@ -844,7 +849,7 @@ while True:
 
     # ************- TAF - TSF ************************************************************#
     m = 3
-    for i in range(4):
+    for i in range(5):
         if max(tsm[m], 50 / tsf[m]) < tam[i]:
             afi = min(max(0, i - 1), afi)
             break
