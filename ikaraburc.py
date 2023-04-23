@@ -709,7 +709,8 @@ def ikinci_elek():
 
         if sil != "evet":
             uygunlar.append(bc)
-        print(uygunlar)
+            print(uygunlar)
+            break
 
     import pprint
 
@@ -790,9 +791,9 @@ while True:
     ksf = max(hf, saf * km)
 
     if bolge == "Yükseliş":
+        afi = 3
         if usd > 1:
-            p1 = usd
-            afi = 3
+            p1 = usd            
             af = min(kema * 1.01, taf[0])
             if ssf > 0:
                 af = min(taf[0], ssf / 1.01)
@@ -863,7 +864,7 @@ while True:
             if alist[a] / alist[- 1] >= 1.005:
                 af = alist[a + 1] + k
                 break
-        if af - k == afiyat:
+        if af - k == afiyat and afiyat < alist[-1]:
             af = alist[alist.index(af - k) + 1] + k
 
     if slist[- 1] >= sf / 1.005:
@@ -872,7 +873,7 @@ while True:
             if slist[- 1] / slist[s] >= 1.005:
                 sf = slist[s + 1] - k
                 break
-        if sf + k == sfiyat:
+        if sf + k == sfiyat and sfiyat < slist[-1]:
             sf = slist[slist.index(sf + k) + 1] - k
 
     # ************- AL SAT EMİRLERİNİ GÖNDER BÖLÜMÜ -*************************************#
