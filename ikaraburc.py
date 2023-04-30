@@ -617,7 +617,7 @@ def birinci_elek():
                 and "5L" not in coin_liste[i]["currency_pair"] \
                 and float(coin_liste[i]["last"]) > 0 \
                 and float(coin_liste[i]["low_24h"]) > 0 \
-                and float(coin_liste[i]["quote_volume"]) > 25000 \
+                and float(coin_liste[i]["quote_volume"]) > 50000 \
                 and float(coin_liste[i]["last"]) / float(coin_liste[i]["low_24h"]) > 1.05:
             toplu.append([coin_liste[i]["currency_pair"], float(coin_liste[i]["last"])])
 
@@ -686,7 +686,7 @@ def ikinci_elek():
             hacim_ok = "XXXXX"
             sil = "evet"
 
-        if hacimo < 2:
+        if hacimo < 1.5:
             hacimo_ok = "XXXXX"
             sil = "evet"
 
@@ -802,8 +802,8 @@ while True:
         if ceder > 1:
             m1 = min(ctm, mulk / 5 / cp)
             sf = max(ksf, tsf[0] * 1.02)
-            if tsf[0] / hf >= 1.05:
-                sf = max(ksf, taf[0] * 1.02)
+            if tsf[0] >= ksf:
+                sf = ksf
 
             if (tsf[0] < max(tmumlar[:2]) / 1.02 or min(ma4, taf[0]) / ma12 <= 1.01) and tsf[0] >= kema * km:
                 sfi = 2
@@ -816,22 +816,24 @@ while True:
                     sf = tsf[0]
 
     elif bolge == "Düşüş":
-        if tsf[0] >= ksf:
-            sfi = 1
-            m1 = ctm
-            sf = max(ksf, tsf[0])
-        elif tsf[0] >= saf*km:
-            sfi = 2
-            m1 = min((mulk / 2 - usd + 5) / cp, ctm)
-            sf = max(saf * 1.015, tsf[0])
-        elif tsf[0] > saf:
-            sfi = 2
-            m1 = min((mulk / 2 - usd + 5) / cp, ctm)
-            sf = max(saf * 1.015, tsf[0])
-        elif tsf[0] < saf / 1.01 and usd < mulk / 4:
-            sfi = 2
-            sf = tsf[0]
-            m1 = min((mulk / 4 - usd + 5) / cp, ctm)
+        
+        if ceder > mulk/2:
+            if tsf[0] >= ksf:
+                sfi = 1
+                m1 = ctm
+                sf = max(ksf, tsf[0])
+            elif tsf[0] >= saf*km:
+                sfi = 2
+                m1 = min((mulk / 2 - usd + 5) / cp, ctm)
+                sf = max(saf * 1.015, tsf[0])
+            elif tsf[0] > saf:
+                sfi = 2
+                m1 = min((mulk / 2 - usd + 5) / cp, ctm)
+                sf = max(saf * 1.015, tsf[0])
+            else:
+                sfi = 2
+                sf = saf * km
+                m1 = min(mulk/5/cp, ctm)
         else:
             sfi = 2
             m1 = ctm
@@ -846,6 +848,14 @@ while True:
             afi = 4
             bolge = "Dipten Düşüş"
             af = min(taf[0] / 1.01, ssf / 1.02)
+            if tsf[0] >= ma12:
+                afi = 4
+                bolge = "Dipten Ydönüş"
+                af = min(taf[0], ssf/1.01)
+                if ceder > mulk/2:
+                    m1 = min(mulk/5/cp, ctm)
+                    sf = saf * km
+            
 
     # ************- TAF - TSF ************************************************************#
     m = 3
@@ -858,7 +868,7 @@ while True:
             sfi = min(max(0, i - 1), sfi)
             break
 
-    alist = [tsf[0]] + taf[:afi + 1]
+    alist = tsf[:3] + taf[:afi + 1]
     ters = taf[:4]
     ters.reverse()
     slist = ters + tsf[:sfi + 1]
@@ -886,7 +896,7 @@ while True:
     sf = round(sf, digit)
 
     if usd >= 1:
-        if af > afiyat or af < afiyat / 1.005 or usdt_av > 1:
+        if af > afiyat or af < afiyat/1.005 or usdt_av > 1:
             T1 = threading.Thread(target=ct.alimlar_sil)
             T2 = threading.Thread(target=ct.bakiye_getir)
             T1.start()
