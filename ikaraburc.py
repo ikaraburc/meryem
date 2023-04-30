@@ -830,6 +830,10 @@ while True:
                 sfi = 2
                 m1 = min((mulk / 2 - usd + 5) / cp, ctm)
                 sf = max(saf * 1.015, tsf[0])
+            elif sky == "Tepe":
+                sfi = 2
+                m1 = min((mulk / 2 - usd + 5) / cp, ctm)
+                sf = max(kema /1.01, tsf[0])
             else:
                 sfi = 2
                 sf = saf * km
