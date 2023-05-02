@@ -798,22 +798,20 @@ while True:
             if ssf > 0:
                 af = min(taf[0], ssf / 1.01)
                 
-        sfi = 4
+        sfi = 3
         if ceder > 1:
             m1 = min(ctm, mulk / 5 / cp)
-            sf = max(ksf, tsf[0] * 1.02)
-            if tsf[0] >= ksf:
-                sf = ksf
+            sf = max(ksf, taf[0] * 1.02)
 
             if (tsf[0] < max(tmumlar[:2]) / 1.02 or min(ma4, taf[0]) / ma12 <= 1.01) and tsf[0] >= kema * km:
                 sfi = 2
                 bolge = "Tepeden aDönüş"
-                if tsf[0] >= hf:
+                if tsf[0] >= ksf:
                     m1 = ctm
-                    sf = tsf[0]
-                elif tsf[0] >= saf * km and ceder > mulk / 2:
+                    sf = max(tsf[0], ksf)
+                elif tsf[0] > saf and ceder > mulk / 2:
                     m1 = (mulk / 2 - usd) / cp
-                    sf = tsf[0]
+                    sf = max(tsf[0], saf * 1.01)
 
     elif bolge == "Düşüş":
         
@@ -845,9 +843,11 @@ while True:
 
         p1 = min(usd, mulk / 5)
         if sky == "Tepe":
-            afi = 7
+            afi = 5
             bolge = "Tepeden Düşüş"
-            af = min(ssf, taf[afi]) / km
+            af = taf[afi] / km
+            if ssf > 0:
+                af = min(ssf, taf[afi]) / km
         elif sky == "Dip":
             afi = 4
             bolge = "Dipten Düşüş"
@@ -867,7 +867,7 @@ while True:
         if max(tsm[m], 50 / tsf[m]) < tam[i]:
             afi = min(max(0, i - 1), afi)
             break
-    for i in range(4):
+    for i in range(5):
         if max(tam[m], 50 / taf[m]) < tsm[i]:
             sfi = min(max(0, i - 1), sfi)
             break
