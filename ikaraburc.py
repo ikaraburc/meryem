@@ -387,6 +387,12 @@ class coin_trader:
             bolge = "Yükseliş"
         elif kemao < 0:
             bolge = "Düşüş"
+        else:
+            if ma12s[0] > ma12s[11]:
+                bolge = "Yükseliş"
+            else:
+                bolge = "Düşüş"
+                
         kemao = round(kemao, 2)
 
         trendy = round((ma4 - ma50) / min(ma4, ma50) * 100, 2)
@@ -820,7 +826,9 @@ while True:
         
         afi = 4
         p1 = min(usd, mulk / 5)
-        af = min(taf[2] / km, ssf / 1.01)
+        af = taf[2]/km
+        if ssf > 0:
+            af = min(taf[2] / km, ssf / 1.01)
         if tsf[0] >= ma12:
             afi = 2
             bolge = "Dipten Ydönüş"
