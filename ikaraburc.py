@@ -385,10 +385,10 @@ class coin_trader:
         elif kemao < 0:
             bolge = "Düşüş"
         else:
-            if ma12s[0] > ma12s[11]:
-                bolge = "Yükseliş"
-            else:
+            if ma4s[2] > ma12s[2]:
                 bolge = "Düşüş"
+            else:
+                bolge = "Yükseliş"
 
         kemao = round(kemao, 2)
 
@@ -777,15 +777,15 @@ while True:
     ksf = max(hf, saf * km)
 
     if bolge == "Yükseliş":
-        afi = 1
+        afi = 2
         p1 = usd
         af = min(kema, taf[0])
 
-        sfi = 3
+        sfi = 2
         m1 = min(ctm, mulk / 10 / cp)
         sf = max(ksf, tsf[0] * 1.02)
 
-        if tsf[0] > kema * km and (tsf[0] <= max(tmumlar[:2]) * 0.98 or min(ma4, taf[0]) < ma12):
+        if kemao > 2 and (tsf[0] <= max(tmumlar[:2]) * 0.98 or min(ma4, taf[0]) < ma12):
             sfi = 1
             bolge = "Tepeden aDönüş"
             if tsf[0] >= ksf:
@@ -793,22 +793,22 @@ while True:
                 sf = max(tsf[0], ksf)
             elif ceder > mulk / 2:
                 m1 = (mulk / 2 - usd) / cp
-                sf = max(tsf[0], kema * km)
+                sf = tsf[0]
 
     elif bolge == "Düşüş":
         if tsf[0] >= ksf or ceder <= mulk / 2:
             sfi = 0
             m1 = ctm
             sf = max(ksf, tsf[0])
-        elif tsf[0] <= saf * 0.99:
-            sfi = 1
+        elif tsf[0] <= saf * 0.98:
+            sfi = 2
             m1 = min((mulk / 2 - usd + 5) / cp, ctm)
-            sf = tsf[0]
+            sf = max(saf * 0.98, tsf[0])
         else:
             sfi = 0
             m1 = min((mulk / 2 - usd + 5) / cp, ctm)
             sf = max(kema1 * 1.01, tsf[0])
-        
+
         afi = 3
         p1 = min(usd, mulk / 5)
         af = taf[2] / km
@@ -858,7 +858,6 @@ while True:
                 break
         if sf + k == sfiyat and sfiyat < slist[-1]:
             sf = slist[slist.index(sf + k) + 1] - k
-
 
     # ************- AL SAT EMİRLERİNİ GÖNDER BÖLÜMÜ -*************************************#
     af = round(af, digit)
