@@ -785,7 +785,7 @@ while True:
         m1 = min(ctm, mulk / 10 / cp)
         sf = max(ksf, tsf[0] * 1.02)
 
-        if tsf[0] > kema * km and (tsf[0] < max(tmumlar[:2]) / 1.02 or min(ma4, taf[0]) < ma12):
+        if tsf[0] > kema * km and (tsf[0] <= max(tmumlar[:2]) * 0.98 or min(ma4, taf[0]) < ma12):
             sfi = 1
             bolge = "Tepeden aDönüş"
             if tsf[0] >= ksf:
@@ -797,14 +797,18 @@ while True:
 
     elif bolge == "Düşüş":
         if tsf[0] >= ksf or ceder <= mulk / 2:
-            sfi = 1
+            sfi = 0
             m1 = ctm
             sf = max(ksf, tsf[0])
-        else:
+        elif tsf[0] <= saf * 0.99:
             sfi = 1
             m1 = min((mulk / 2 - usd + 5) / cp, ctm)
+            sf = tsf[0]
+        else:
+            sfi = 0
+            m1 = min((mulk / 2 - usd + 5) / cp, ctm)
             sf = max(kema1 * 1.01, tsf[0])
-
+        
         afi = 3
         p1 = min(usd, mulk / 5)
         af = taf[2] / km
@@ -812,7 +816,9 @@ while True:
         if tsf[0] >= ma12:
             afi = 2
             bolge = "Dipten Ydönüş"
-            af = min(taf[0], ssf / 1.01)
+            af = taf[0]
+            if ssf > 0:
+                af = min(taf[0], ssf / 1.01)
             if ceder > mulk / 2:
                 sfi = 2
                 m1 = min(mulk / 5 / cp, ctm)
@@ -830,7 +836,7 @@ while True:
     if alist[- 1] <= af:
         for a in range(len(alist) - 1, -1, -1):
             af = alist[a] + k
-            if alist[a] / alist[- 1] >= 1.005:
+            if alist[a] / alist[-1] >= 1.005:
                 af = alist[a + 1] + k
                 break
         if af - k == afiyat and afiyat > alist[-1]:
@@ -853,16 +859,6 @@ while True:
         if sf + k == sfiyat and sfiyat < slist[-1]:
             sf = slist[slist.index(sf + k) + 1] - k
 
-    if tsf[0] >= taf[0] * 1.02 and ceder > mulk / 2:
-        m1 = min(ctm, mulk / 10 / cp)
-        sf = tsf[0] - k
-        if sf + k == sfiyat:
-            sf = sfiyat
-
-        p1 = min(usd, mulk / 10)
-        af = taf[0] + k
-        if af - k == afiyat:
-            af = afiyat
 
     # ************- AL SAT EMİRLERİNİ GÖNDER BÖLÜMÜ -*************************************#
     af = round(af, digit)
@@ -901,7 +897,7 @@ while True:
             smiktar = m1
             smiktar1 = ctm - m1
 
-            if sf < hf:
+            if sf < ksf:
                 smiktar = m1 - yedek
 
             ct.coklu_sat()
