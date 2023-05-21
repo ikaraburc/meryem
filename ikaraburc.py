@@ -609,9 +609,12 @@ def birinci_elek():
                 and float(coin_liste[i]["last"]) > 0 \
                 and float(coin_liste[i]["low_24h"]) > 0 \
                 and float(coin_liste[i]["last"]) / float(coin_liste[i]["low_24h"]) > 1.15:
-            toplu.append([coin_liste[i]["currency_pair"], float(coin_liste[i]["last"])])
+            toplu.append([coin_liste[i]["currency_pair"], float(coin_liste[i]["last"]),
+                          round(float(coin_liste[i]["last"]) / float(coin_liste[i]["low_24h"]), 2)])
 
     print("coin sayısı ", len(toplu))
+    toplu.sort(key=lambda x: x[2])
+    toplu.reverse()
     import pprint
     pprint.pp(toplu)
 
@@ -623,19 +626,9 @@ def ikinci_elek():
     uygunlar = []
     bc = "boş"
     for i in range(len(toplu)):
-        degisim = []
-        bc_tablo.clear()
-        for s in range(len(toplu)):
-            for n in coin_liste:
-                if toplu[s][0] == n["currency_pair"]:
-                    degisim.append([toplu[s][0], round(float(n["last"]) / toplu[s][1], 2)])
-
-        bch = max(degisim, key=lambda x: x[1])
-        print(bch)
-        bc = bch[0]
-
         sil = "hayır"
         bc_tablo.clear()
+        bc = toplu[0][0]
 
         ct = coin_trader(bc)
 
@@ -643,19 +636,16 @@ def ikinci_elek():
         T2 = threading.Thread(target=ct.coin_fiyat)
         T3 = threading.Thread(target=ct.tahta_getir)
         T4 = threading.Thread(target=ct.mumlar)
-        T5 = threading.Thread(target=coins_fiyatlar)
 
         T1.start()
         T2.start()
         T3.start()
         T4.start()
-        T5.start()
 
         T1.join()
         T2.join()
         T3.join()
         T4.join()
-        T5.join()
 
         for i in ma4s:
             if i / ma4 > 1.03 or ma4 / i > 1.03:
@@ -669,7 +659,7 @@ def ikinci_elek():
             pzn_o = "XXXXX"
             sil = "evet"
 
-        if 0 < kemao <= 2:
+        if 0 <= kemao <= 2 or (kemao < 0 and tsf[0] >= ma12):
             ema_ok = "OK"
         else:
             ema_ok = "XXXXX"
@@ -691,7 +681,7 @@ def ikinci_elek():
         bc_tablo.add_row(["m1hacim", [m1hacim, hacim_ok]])
         print(bc_tablo)
 
-        toplu.remove(list(filter(lambda k: k[0] == bc, toplu))[0])
+        toplu.pop(0)
 
         if sil != "evet":
             uygunlar.append(bc)
@@ -706,7 +696,6 @@ def ikinci_elek():
     else:
         print("COİN BULUNAMADI....")
         bc = "boş"
-
 
 # ***********************************************************************************************************************************************************
 
@@ -777,13 +766,15 @@ while True:
     ksf = max(hf, saf * km)
 
     if bolge == "Yükseliş":
-        afi = 2
+        afi = 1
         p1 = usd
-        af = min(kema, taf[0])
+        af = max(kema, taf[3]/km)
 
         sfi = 2
         m1 = min(ctm, mulk / 10 / cp)
-        sf = max(ksf, tsf[0] * 1.02)
+        sf = max(ksf, tsf[0]) * km
+        if ceder >= mulk/2: 
+            sf = max(kema, tsf[0]) * km
 
         if kemao > 2 and (tsf[0] <= max(tmumlar[:2]) * 0.98 or min(ma4, taf[0]) < ma12):
             sfi = 1
@@ -810,7 +801,7 @@ while True:
             sf = max(kema1 * 1.01, tsf[0])
 
         afi = 3
-        p1 = min(usd, mulk / 5)
+        p1 = min(usd, mulk / 10)
         af = taf[2] / km
 
         if tsf[0] >= ma12:
@@ -873,7 +864,7 @@ while True:
             T2.join()
 
             afiyat = af
-            afiyat1 = round(min(afiyat * 0.93, taf[10] + k), digit)
+            afiyat1 = round(min(afiyat * 0.93, taf[9] + k), digit)
 
             amiktar = (p1 - 0.5) / afiyat
             amiktar1 = (usd - p1) / afiyat1
@@ -891,7 +882,7 @@ while True:
             T2.join()
 
             sfiyat = sf
-            sfiyat1 = max(sfiyat * 1.05, ksf, tsf[7] - k)
+            sfiyat1 = max(sfiyat * 1.05, ksf, tsf[9] - k)
 
             smiktar = m1
             smiktar1 = ctm - m1
