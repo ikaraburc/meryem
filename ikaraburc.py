@@ -647,16 +647,16 @@ def ikinci_elek():
         T3.join()
         T4.join()
 
-        for i in ma4s:
+        for i in ma12s:
             if i / ma4 > 1.03 or ma4 / i > 1.03:
                 break
 
         if i / ma4 > 1.03:
-            pzn = "Dip"
-            pzn_o = "OK"
+            yer = "Dip"
+            yer_o = "OK"
         else:
-            pzn = "Tepe"
-            pzn_o = "XXXXX"
+            yer = "Tepe"
+            yer_o = "XXXXX"
             sil = "evet"
 
         if 0 <= kemao <= 2 or (kemao < 0 and tsf[0] >= ma12):
@@ -669,6 +669,12 @@ def ikinci_elek():
             print("Yeni çıkan coin, silindi...", bc)
             sil = "evet"
 
+        trend_ok = "OK"
+        trendo = round((ma4 - ma50) / ma50, 2)
+        if trendo < 0:
+            trend_ok = "XXXXX"
+            sil = "evet"
+
         m1hacim = round(sum(hacimler[:12]), 2)
         hacim_ok = "OK"
         if m1hacim < 1000 or tam[9] < mulk / 2:
@@ -676,8 +682,9 @@ def ikinci_elek():
             sil = "evet"
 
         bc_tablo.field_names = [str(bc), "of " + str(len(toplu))]
-        bc_tablo.add_row(["pzn", [pzn, pzn_o]])
+        bc_tablo.add_row(["yer", [yer, yer_o]])
         bc_tablo.add_row(["kemao", [kemao, ema_ok]])
+        bc_tablo.add_row(["Trend", [trendo, trend_ok]])
         bc_tablo.add_row(["m1hacim", [m1hacim, hacim_ok]])
         print(bc_tablo)
 
@@ -696,6 +703,7 @@ def ikinci_elek():
     else:
         print("COİN BULUNAMADI....")
         bc = "boş"
+
 
 # ***********************************************************************************************************************************************************
 
@@ -768,12 +776,12 @@ while True:
     if bolge == "Yükseliş":
         afi = 1
         p1 = usd
-        af = max(kema, taf[3]/km)
+        af = max(kema, taf[3] / km)
 
         sfi = 2
         m1 = min(ctm, mulk / 10 / cp)
         sf = max(ksf, tsf[0]) * km
-        if ceder >= mulk/2: 
+        if ceder >= mulk / 2:
             sf = max(kema, tsf[0]) * km
 
         if kemao > 2 and (tsf[0] <= max(tmumlar[:2]) * 0.98 or min(ma4, taf[0]) < ma12):
@@ -814,7 +822,8 @@ while True:
                 sfi = 2
                 m1 = min(mulk / 5 / cp, ctm)
                 sf = saf * km
-
+    if ceder <= mulk / 2:
+        sf = max(ksf, sf, tsf[0])
     # ************- TAF *************************************************************#
     m = 2
     for i in range(5):
