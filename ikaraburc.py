@@ -776,33 +776,44 @@ while True:
     if bolge == "Yükseliş":
         afi = 1
         p1 = usd
+        if kemao >= 5:
+            p1 = min(usd, mulk/5)
         af = max(kema, taf[3] / km)
 
         sfi = 2
         m1 = min(ctm, mulk / 10 / cp)
-        sf = max(ksf, tsf[0]) * km
+        sf = max(ksf, tsf[0] * km)
         if ceder >= mulk / 2:
             sf = max(kema, tsf[0]) * km
 
-        if kemao > 2 and (tsf[0] <= max(tmumlar[:2]) * 0.98 or min(ma4, taf[0]) < ma12):
-            sfi = 1
+        if kemao > 2 and (tsf[0] <= max(tmumlar[:2]) * 0.98 or min(ma4, taf[0]) < ma12):            
             bolge = "Tepeden aDönüş"
             if tsf[0] >= ksf:
+                sfi = 1
                 m1 = ctm
-                sf = max(tsf[0], ksf)
-            elif ceder > mulk / 2:
-                m1 = (mulk / 2 - usd) / cp
+                sf = max(ksf, tsf[0])
+            elif ceder <= mulk / 2:
+                sfi = 2
+                m1 = min(ctm, mulk / 10 / cp)
+                sf = tsf[0] * km
+            else:
+                sfi = 2
+                m1 = min((mulk / 2 - usd + 5) / cp, ctm)
                 sf = tsf[0]
 
     elif bolge == "Düşüş":
-        if tsf[0] >= ksf or ceder <= mulk / 2:
+        if tsf[0] >= ksf:
             sfi = 0
             m1 = ctm
             sf = max(ksf, tsf[0])
+        elif ceder <= mulk / 2:
+            sfi = 3
+            m1 = min(ctm, mulk / 10 / cp)
+            sf = tsf[0] * km
         elif tsf[0] <= saf * 0.98:
-            sfi = 2
+            sfi = 3
             m1 = min((mulk / 2 - usd + 5) / cp, ctm)
-            sf = max(saf * 0.98, tsf[0])
+            sf = tsf[0] * 1.02
         else:
             sfi = 0
             m1 = min((mulk / 2 - usd + 5) / cp, ctm)
@@ -810,7 +821,7 @@ while True:
 
         afi = 3
         p1 = min(usd, mulk / 10)
-        af = taf[2] / km
+        af = taf[3] / km
 
         if tsf[0] >= ma12:
             afi = 2
@@ -822,8 +833,7 @@ while True:
                 sfi = 2
                 m1 = min(mulk / 5 / cp, ctm)
                 sf = saf * km
-    if ceder <= mulk / 2:
-        sf = max(ksf, sf, tsf[0])
+
     # ************- TAF *************************************************************#
     m = 2
     for i in range(5):
@@ -909,8 +919,7 @@ while True:
     fiyatlar.add_row(
         ["kema0/1 % " + str(round((kema / kema1 - 1) * 100, 2)), "taf0  " + str(taf[0]), "tsf0  " + str(tsf[0])])
     fiyatlar.add_row(["ceder " + str(round(ceder, 2)), "saf   " + str(saf), "ssf   " + str(ssf)])
-    fiyatlar.add_row(["mülk " + str(round(mulk, 2)), "hf " + str(hf),
-                      "hf% " + str(round((hf / cp - 1) * 100, 2)) + " " + str(sonislem)])
+    fiyatlar.add_row(["mülk " + str(round(mulk, 2)), "ksf " + str(ksf), "ksf% " + str(round((ksf / cp - 1) * 100, 2)) + " " + str(sonislem)])
 
     print(fiyatlar)
 
