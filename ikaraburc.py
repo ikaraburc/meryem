@@ -778,7 +778,7 @@ while True:
         p1 = usd
         if kemao >= 5:
             p1 = min(usd, mulk/5)
-        af = max(kema, taf[3] / km)
+        af = max(kema, taf[2] / km)
 
         sfi = 2
         m1 = min(ctm, mulk / 10 / cp)
@@ -790,7 +790,7 @@ while True:
             bolge = "Tepeden aDönüş"
             if tsf[0] >= ksf:
                 sfi = 1
-                m1 = ctm
+                m1 = min(ctm, mulk / 4 / cp)
                 sf = max(ksf, tsf[0])
             elif ceder <= mulk / 2:
                 sfi = 2
@@ -821,7 +821,7 @@ while True:
 
         afi = 3
         p1 = min(usd, mulk / 10)
-        af = taf[3] / km
+        af = taf[2] / km
 
         if tsf[0] >= ma12:
             afi = 2
