@@ -371,21 +371,16 @@ class coin_trader:
         ma50 = ma50s[0]
         kema = kemas[0]
         kema1 = kemas[1]
-        kemao = (ma4 - kema) / min(ma4, kema) * 100
+        kemao = (ma4 - ma12) / min(ma4, ma12) * 100
 
         global sky, skd, bolge, trend, trendy
-
-        if kema >= kema1 * 1.015:
-            sky = "Tepe"
-        else:
-            sky = "Dip"
 
         if kemao > 0:
             bolge = "Yükseliş"
         elif kemao < 0:
             bolge = "Düşüş"
         else:
-            if ma4s[2] > ma12s[2]:
+            if ma4s[1] > ma12s[1]:
                 bolge = "Düşüş"
             else:
                 bolge = "Yükseliş"
@@ -777,8 +772,11 @@ while True:
         afi = 1
         p1 = usd
         if kemao >= 5:
-            p1 = min(usd, mulk/5)
+            p1 = min(usd, mulk / 5)
         af = max(kema, taf[2] / km)
+        if kema >= kema1 and ssf > 0:
+            afi = 3
+            af = min(kema, ssf / 1.015, taf[1])
 
         sfi = 2
         m1 = min(ctm, mulk / 10 / cp)
@@ -786,7 +784,7 @@ while True:
         if ceder >= mulk / 2:
             sf = max(kema, tsf[0]) * km
 
-        if kemao > 2 and (tsf[0] <= max(tmumlar[:2]) * 0.98 or min(ma4, taf[0]) < ma12):            
+        if kemao > 2 and (tsf[0] <= max(tmumlar[:2]) * 0.98 or min(ma4, taf[0]) < ma12):
             bolge = "Tepeden aDönüş"
             if tsf[0] >= ksf:
                 sfi = 1
@@ -832,7 +830,7 @@ while True:
             if ceder > mulk / 2:
                 sfi = 2
                 m1 = min(mulk / 5 / cp, ctm)
-                sf = saf * km
+                sf = max(saf * km, tsf[0])
 
     # ************- TAF *************************************************************#
     m = 2
@@ -919,7 +917,8 @@ while True:
     fiyatlar.add_row(
         ["kema0/1 % " + str(round((kema / kema1 - 1) * 100, 2)), "taf0  " + str(taf[0]), "tsf0  " + str(tsf[0])])
     fiyatlar.add_row(["ceder " + str(round(ceder, 2)), "saf   " + str(saf), "ssf   " + str(ssf)])
-    fiyatlar.add_row(["mülk " + str(round(mulk, 2)), "ksf " + str(ksf), "ksf% " + str(round((ksf / cp - 1) * 100, 2)) + " " + str(sonislem)])
+    fiyatlar.add_row(["mülk " + str(round(mulk, 2)), "ksf " + str(ksf),
+                      "ksf% " + str(round((ksf / cp - 1) * 100, 2)) + " " + str(sonislem)])
 
     print(fiyatlar)
 
