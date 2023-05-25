@@ -767,14 +767,22 @@ while True:
     af = taf[5]
     sf = max(hf, tsf[5])
     ksf = max(hf, saf * km)
+    for i in ma12s:
+        if i / ma12 >= 1.03 or ma12 / i >= 1.03:
+            break
 
+        if i / ma12 >= 1.03:
+            yer = "Dip"
+        else:
+            yer = "Tepe"
+            
     if bolge == "Yükseliş":
         afi = 1
         p1 = usd
         if kemao >= 5:
             p1 = min(usd, mulk / 5)
         af = max(kema, taf[2] / km)
-        if kema >= kema1 and ssf > 0:
+        if yer == "Tepe" and ssf > 0:
             afi = 3
             af = min(kema, ssf / 1.015, taf[1])
 
@@ -808,14 +816,14 @@ while True:
             sfi = 3
             m1 = min(ctm, mulk / 10 / cp)
             sf = tsf[0] * km
-        elif tsf[0] <= saf * 0.98:
+        elif yer == "Dip":
             sfi = 3
             m1 = min((mulk / 2 - usd + 5) / cp, ctm)
             sf = tsf[0] * 1.02
         else:
             sfi = 0
             m1 = min((mulk / 2 - usd + 5) / cp, ctm)
-            sf = max(kema1 * 1.01, tsf[0])
+            sf = max(kema / 1.01, tsf[0])
 
         afi = 3
         p1 = min(usd, mulk / 10)
