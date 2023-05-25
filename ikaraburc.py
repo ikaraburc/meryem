@@ -821,9 +821,9 @@ while True:
             m1 = min((mulk / 2 - usd + 5) / cp, ctm)
             sf = tsf[0] * 1.02
         else:
-            sfi = 0
+            sfi = 2
             m1 = min((mulk / 2 - usd + 5) / cp, ctm)
-            sf = max(kema / 1.01, tsf[0])
+            sf = tsf[0]
 
         afi = 3
         p1 = min(usd, mulk / 10)
