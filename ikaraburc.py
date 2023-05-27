@@ -643,10 +643,10 @@ def ikinci_elek():
         T4.join()
 
         for i in ma12s:
-            if i / ma4 > 1.03 or ma4 / i > 1.03:
+            if i / ma12 > 1.03 or ma12 / i > 1.03:
                 break
 
-        if i / ma4 > 1.03:
+        if i / ma12 > 1.03:
             yer = "Dip"
             yer_o = "OK"
         else:
@@ -782,9 +782,6 @@ while True:
         if kemao >= 5:
             p1 = min(usd, mulk / 5)
         af = max(kema, taf[2] / km)
-        if yer == "Tepe" and ssf > 0:
-            afi = 3
-            af = min(kema, ssf / 1.015, taf[1])
 
         sfi = 2
         m1 = min(ctm, mulk / 10 / cp)
@@ -823,22 +820,17 @@ while True:
         else:
             sfi = 2
             m1 = min((mulk / 2 - usd + 5) / cp, ctm)
-            sf = tsf[0]
+            sf = max(kema/km, tsf[0])
 
         afi = 3
         p1 = min(usd, mulk / 10)
         af = taf[2] / km
 
-        if tsf[0] >= ma12:
-            afi = 2
-            bolge = "Dipten Ydönüş"
-            af = taf[0]
-            if ssf > 0:
-                af = min(taf[0], ssf / 1.01)
-            if ceder > mulk / 2:
-                sfi = 2
-                m1 = min(mulk / 5 / cp, ctm)
-                sf = max(saf * km, tsf[0])
+        if tsf[0] >= ma12 and ceder > mulk / 2:
+            bolge == "Dipten Ydönüş"
+            sfi = 2
+            m1 = min(mulk / 5 / cp, ctm)
+            sf = max(saf * km, tsf[0])
 
     # ************- TAF *************************************************************#
     m = 2
