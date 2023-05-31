@@ -349,7 +349,7 @@ class coin_trader:
         ma4s = []
         ma12s = []
         ma50s = []
-        for i in range(1000 - ma12p):
+        for i in range(len(kmumlar) - ma50p):
             ma4s.append(round(sum(kmumlar[i:i + ma4p]) / ma4p, digit))
             ma12s.append(round(sum(kmumlar[i:i + ma12p]) / ma12p, digit))
             ma50s.append(round(sum(kmumlar[i:i + ma50p]) / ma50p, digit))
@@ -375,19 +375,16 @@ class coin_trader:
 
         global sky, skd, bolge, trend, trendy, yer
 
-        if kemao > 0:
+        if kemao > 0.5:
             bolge = "Yükseliş"
-        elif kemao < 0:
+        elif kemao < -0.5:
             bolge = "Düşüş"
         else:
-            if ma4s[1] > ma12s[1]:
-                bolge = "Düşüş"
-            else:
-                bolge = "Yükseliş"
+            bolge = "Yatay"
 
         kemao = round(kemao, 2)
         km = 1.03
-        for i in ma12s:
+        for i in kemas:
             if ma12 / i >= km or i / ma12 >= km:
                 break
 
@@ -648,41 +645,29 @@ def ikinci_elek():
         T2.join()
         T3.join()
 
-        for i in ma12s:
-            if i / ma12 > 1.03 or ma12 / i > 1.03:
-                break
-
-        if yer == "Dip":            
-            yer_o = "OK"
-        else:
-            yer = "Tepe"
-            yer_o = "XXXXX"
-            sil = "evet"
-
-        if 0 <= kemao <= 2:
+        if 0 <= kemao <= 2 and yer == "Dip":
             ema_ok = "OK"
         else:
             ema_ok = "XXXXX"
             sil = "evet"
 
+        trend_ok = "OK"
         if len(tmumlar) < 800:
             print("Yeni çıkan coin, silindi...", bc)
             sil = "evet"
+        else:        
+            trendo = round((ma4 - ma50) / ma50, 2)
+            if trendo < 0:
+                trend_ok = "XXXXX"
+                sil = "evet"
 
-        trend_ok = "OK"
-        trendo = round((ma4 - ma50) / ma50, 2)
-        if trendo < 0:
-            trend_ok = "XXXXX"
-            sil = "evet"
-
-        m1hacim = round(sum(hacimler[:12]), 2)
+        m1hacim = round(sum(hacimler[:36])/3, 2)
         hacim_ok = "OK"
         if m1hacim < 2000:
             hacim_ok = "XXXXX"
             sil = "evet"
 
         bc_tablo.field_names = [str(bc), "of " + str(len(toplu))]
-        bc_tablo.add_row(["yer", [yer, yer_o]])
         bc_tablo.add_row(["kemao", [kemao, ema_ok]])
         bc_tablo.add_row(["Trend", [trendo, trend_ok]])
         bc_tablo.add_row(["m1hacim", [m1hacim, hacim_ok]])
@@ -774,21 +759,13 @@ while True:
     ksf = max(hf, saf * km)
 
     if bolge == "Yükseliş":
-        if yer == "Dip":
-            p1 = usd
-            af = min(kema * 1.01, taf[0])
-        else:            
-            p1 = min(usd, mulk / 5)
-            af = taf[2] / km
-            if ssf > 0:
-                af = min(taf[0], ssf/1.01)
+        p1 = usd
+        af = max(kema * 1.02, taf[2]/km)
         
         m1 = min(ctm, mulk / 10 / cp)
         sf = max(kema, tsf[0]) * km
-        if ceder < mulk / 2:
-            sf = max(ksf, tsf[0] * km)
 
-        if yer == "Tepe" and tsf[0] <= max(tmumlar[:2]) * 0.98:
+        if kema * km <= tsf[0] <= max(tmumlar[:2]) * 0.98:
             bolge = "Tepeden aDönüş"
             sf = tsf[0]
             if ceder < mulk / 2:
@@ -796,17 +773,25 @@ while True:
 
     elif bolge == "Düşüş":
         m1 = min(ctm, mulk / 10 / cp)
-        if yer == "Dip":
-            sf = tsf[0] * 1.02
+        if yer == "Tepe":            
+            sf = tsf[0]
         else:
-            if tsf[0] >= ksf:
-                m1 = ctm
-                sf = tsf[0]
-            else:
-                sf = max(kema / km, tsf[0])
+            sf = taf[0] * 1.02
 
         p1 = min(usd, mulk / 10)
         af = taf[2] / km
+        
+        if yer == "Dip" and tsf[1] >= ma12:
+            bolge = "Dipten Ydönüş"
+            sf = tsf[0] * 1.02
+            af = tsf[0] / 1.02           
+    else:
+        p1 = min(usd, mulk / 10)
+        af = taf[0] / 1.02
+        
+        m1 = min(ctm, mulk / 10 / cp)
+        sf = tsf[0] * 1.02
+        
 
     # ************- TAF *************************************************************#
     m = 2
