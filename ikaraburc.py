@@ -371,7 +371,7 @@ class coin_trader:
         ma50 = ma50s[0]
         kema = kemas[0]
         kema1 = kemas[1]
-        kemao = (ma4 - ma12) / min(ma4, ma12) * 100
+        kemao = (ma4 - kema) / min(ma4, kema) * 100
 
         global sky, skd, bolge, trend, trendy, yer
 
@@ -652,6 +652,7 @@ def ikinci_elek():
             sil = "evet"
 
         trend_ok = "OK"
+        trendo = 0
         if len(tmumlar) < 800:
             print("Yeni çıkan coin, silindi...", bc)
             sil = "evet"
