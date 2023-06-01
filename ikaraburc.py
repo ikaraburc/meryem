@@ -385,7 +385,7 @@ class coin_trader:
         kemao = round(kemao, 2)
         km = 1.03
         for i in kemas:
-            if ma12 / i >= km or i / ma12 >= km:
+            if kema / i >= km or i / kema >= km:
                 break
 
         if ma12 / i >= km:
@@ -644,23 +644,21 @@ def ikinci_elek():
         T1.join()
         T2.join()
         T3.join()
-
+        
         if 0 <= kemao <= 2 and yer == "Dip":
             ema_ok = "OK"
         else:
             ema_ok = "XXXXX"
             sil = "evet"
 
-        trend_ok = "OK"
-        trendo = 0
         if len(tmumlar) < 800:
             print("Yeni çıkan coin, silindi...", bc)
             sil = "evet"
-        else:        
-            trendo = round((ma4 - ma50) / ma50, 2)
-            if trendo < 0:
-                trend_ok = "XXXXX"
-                sil = "evet"
+        
+        yero = "OK" 
+        if yer == "Tepe":
+            yero = "XXXXX"
+            sil = "evet"
 
         m1hacim = round(sum(hacimler[:36])/3, 2)
         hacim_ok = "OK"
@@ -669,9 +667,10 @@ def ikinci_elek():
             sil = "evet"
 
         bc_tablo.field_names = [str(bc), "of " + str(len(toplu))]
+        bc_tablo.add_row(["yer", [yer, yero]])
         bc_tablo.add_row(["kemao", [kemao, ema_ok]])
-        bc_tablo.add_row(["Trend", [trendo, trend_ok]])
         bc_tablo.add_row(["m1hacim", [m1hacim, hacim_ok]])
+        
         print(bc_tablo)
 
         toplu.pop(0)
