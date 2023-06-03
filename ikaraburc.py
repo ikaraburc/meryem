@@ -330,7 +330,7 @@ class coin_trader:
                 print("Bağlantı bekleniyor...")
                 continue
 
-        global tmumlar, dmumlar, kmumlar, hacimler, hacimo
+        global tmumlar, dmumlar, kmumlar, hacimler
 
         tmumlar = [float(i[3]) for i in r]
         dmumlar = [float(i[4]) for i in r]
@@ -342,36 +342,36 @@ class coin_trader:
         kmumlar.reverse()
         hacimler.reverse()
 
-        global ma4s, ma12s, ma4, ma12, ma50, kemas, kema, kema1, kemao
-        ma4p = 4
-        ma12p = 12
+        global maks, mabs, mak, mab, ma50, kemas, kema, kema1, kemao
+        makp = 4
+        mabp = 12
         ma50p = 50
-        ma4s = []
-        ma12s = []
+        maks = []
+        mabs = []
         ma50s = []
         for i in range(len(kmumlar) - ma50p):
-            ma4s.append(round(sum(kmumlar[i:i + ma4p]) / ma4p, digit))
-            ma12s.append(round(sum(kmumlar[i:i + ma12p]) / ma12p, digit))
+            maks.append(round(sum(kmumlar[i:i + makp]) / makp, digit))
+            mabs.append(round(sum(kmumlar[i:i + mabp]) / mabp, digit))
             ma50s.append(round(sum(kmumlar[i:i + ma50p]) / ma50p, digit))
 
         kyer = 0
         kemas = []
-        for i in range(len(ma12s)):
-            if ma4s[i] < ma12s[i]:
+        for i in range(len(mabs)):
+            if maks[i] < mabs[i]:
                 if kyer == 1:
-                    kemas.append(ma12s[i])
+                    kemas.append(mabs[i])
                 kyer = -1
             else:
                 if kyer == -1:
-                    kemas.append(ma12s[i])
+                    kemas.append(mabs[i])
                 kyer = 1
 
-        ma4 = ma4s[0]
-        ma12 = ma12s[0]
+        mak = maks[0]
+        mab = mabs[0]
         ma50 = ma50s[0]
         kema = kemas[0]
         kema1 = kemas[1]
-        kemao = (ma4 - kema) / min(ma4, kema) * 100
+        kemao = (mak - kema) / min(mak, kema) * 100
 
         global sky, skd, bolge, trend, trendy, yer
 
@@ -388,12 +388,12 @@ class coin_trader:
             if kema / i >= km or i / kema >= km:
                 break
 
-        if ma12 / i >= km:
+        if mab / i >= km:
             yer = "Tepe"
         else:
             yer = "Dip"
-            
-        trendy = round((ma4 - ma50) / min(ma4, ma50) * 100, 2)
+
+        trendy = round((mak - ma50) / min(mak, ma50) * 100, 2)
         trend = "Yükseliş"
         if cp < ma50:
             trend = "Düşüş"
@@ -644,33 +644,39 @@ def ikinci_elek():
         T1.join()
         T2.join()
         T3.join()
-        
+
+        yero = "OK"
+        if yer == "Tepe":
+            yero = "XXXXX"
+            sil = "evet"
+
         if 0 <= kemao <= 2 and yer == "Dip":
             ema_ok = "OK"
         else:
             ema_ok = "XXXXX"
             sil = "evet"
 
-        if len(tmumlar) < 800:
-            print("Yeni çıkan coin, silindi...", bc)
-            sil = "evet"
-        
-        yero = "OK" 
-        if yer == "Tepe":
-            yero = "XXXXX"
-            sil = "evet"
-
-        m1hacim = round(sum(hacimler[:36])/3, 2)
+        m1hacim = round(sum(hacimler[:36]) / 3, 2)
         hacim_ok = "OK"
         if m1hacim < 2000:
             hacim_ok = "XXXXX"
+            sil = "evet"
+
+        if len(tmumlar) < 800:
+            print("Yeni çıkan coin, silindi...", bc)
+            sil = "evet"
+
+        trendo = "OK"
+        if max(mak, cp) < ma50:
+            trendo = "XXXXX"
             sil = "evet"
 
         bc_tablo.field_names = [str(bc), "of " + str(len(toplu))]
         bc_tablo.add_row(["yer", [yer, yero]])
         bc_tablo.add_row(["kemao", [kemao, ema_ok]])
         bc_tablo.add_row(["m1hacim", [m1hacim, hacim_ok]])
-        
+        bc_tablo.add_row(["Trend50", [trendo]])
+
         print(bc_tablo)
 
         toplu.pop(0)
@@ -758,40 +764,39 @@ while True:
     sf = max(hf, tsf[5])
     ksf = max(hf, saf * km)
 
-    if bolge == "Yükseliş":
+    if  min(cp, mak, taf[0]) > mab * 1.005:
+        bolge == "Yükseliş"
         p1 = usd
-        af = max(kema * 1.02, taf[2]/km)
-        
+        af = min(mab * 1.02, taf[0])
+
         m1 = min(ctm, mulk / 10 / cp)
-        sf = max(kema, tsf[0]) * km
+        sf = tsf[0] * km
 
         if kema * km <= tsf[0] <= max(tmumlar[:2]) * 0.98:
             bolge = "Tepeden aDönüş"
             sf = tsf[0]
             if ceder < mulk / 2:
-                sf = max(ksf, tsf[0])            
+                sf = max(ksf, tsf[0])
 
-    elif bolge == "Düşüş":
-        m1 = min(ctm, mulk / 10 / cp)
-        if yer == "Tepe":            
-            sf = tsf[0]
-        else:
-            sf = taf[0] * 1.02
+    elif max(cp, mak, tsf[0]) < mab / 1.005:
+        bolge = "Düşüş"
+        m1 = ctm
+        sf = max(mab / 1.02, tsf[0])
 
         p1 = min(usd, mulk / 10)
-        af = taf[2] / km
-        
-        if yer == "Dip" and tsf[1] >= ma12:
+        af = taf[3] / km
+
+        if tsf[1] >= mab or (kema/km > taf[0] >= min(dmumlar[:2]) * 1.02):
             bolge = "Dipten Ydönüş"
             sf = tsf[0] * 1.02
-            af = tsf[0] / 1.02           
+            af = tsf[0] / 1.02
     else:
+        Bolge = "Yatay"
         p1 = min(usd, mulk / 10)
         af = taf[0] / 1.02
-        
+
         m1 = min(ctm, mulk / 10 / cp)
         sf = tsf[0] * 1.02
-        
 
     # ************- TAF *************************************************************#
     m = 2
