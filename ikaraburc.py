@@ -789,7 +789,7 @@ while True:
         afi, sfi = 3, 3
         bolge == "Yükseliş"
         p1 = usd
-        af = min(mab * 1.02, taf[0])
+        af = max(kema, taf[0]/km)
 
         m1 = min(ctm, mulk / 10 / cp)
         sf = tsf[0] * km
