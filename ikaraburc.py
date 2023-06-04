@@ -746,7 +746,7 @@ while True:
         if kzo > (km - 1) * 100:
             alim_tamam = "evet"
 
-        if alim_tamam == "evet" and harcanan == 0 and kemao < 0:
+        if alim_tamam == "evet" or (harcanan == 0 and kemao < 0):
             ct.alsat_gecmisi()
             tbot_ozel.send_message(telegram_chat_id, str("Eldeki son mal satıldı. Yeni mal taranıyor..."))
             tbot_ozel.send_message(telegram_chat_id, str(bilanco))
@@ -788,8 +788,8 @@ while True:
     if min(cp, mak, taf[0]) > mab * 1.005:
         afi, sfi = 3, 3
         bolge == "Yükseliş"
-        p1 = usd
-        af = max(kema, taf[0]/km)
+        p1 = min(mulk/3, usd)
+        af = max(kema, taf[1]/km)
 
         m1 = min(ctm, mulk / 10 / cp)
         sf = tsf[0] * km
@@ -804,23 +804,23 @@ while True:
         afi, sfi = 5, 2
         bolge = "Düşüş"
         m1 = ctm
-        sf = max(mab / 1.02, tsf[0])
+        sf = max(mab / km, tsf[0])
 
         p1 = min(usd, mulk / 10)
         af = taf[3] / km
 
         if tsf[1] >= mab or (kema / km > taf[0] >= min(dmumlar[:2]) * 1.02):
             bolge = "Dipten Ydönüş"
-            sf = tsf[0] * 1.02
-            af = tsf[0] / 1.02
+            sf = tsf[0] * km
+            af = tsf[0] / km
     else:
         Bolge = "Yatay"
         afi, sfi = 4, 4
         p1 = min(usd, mulk / 5)
-        af = taf[0] / 1.02
+        af = taf[0] / km
 
         m1 = min(ctm, mulk / 5 / cp)
-        sf = tsf[0] * 1.02
+        sf = tsf[0] * km
 
     # ************- TAF *************************************************************#
     m = 2
