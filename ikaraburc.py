@@ -609,13 +609,12 @@ def birinci_elek():
                 and "5L" not in coin_liste[i]["currency_pair"] \
                 and float(coin_liste[i]["last"]) > 0 \
                 and float(coin_liste[i]["low_24h"]) > 0 \
-                and float(coin_liste[i]["last"]) / float(coin_liste[i]["low_24h"]) > 1.15:
+                and float(coin_liste[i]["last"]) / float(coin_liste[i]["low_24h"]) > 1.10:
             toplu.append([coin_liste[i]["currency_pair"], float(coin_liste[i]["last"]),
                           round(float(coin_liste[i]["last"]) / float(coin_liste[i]["low_24h"]), 2)])
 
     print("coin sayısı ", len(toplu))
     toplu.sort(key=lambda x: x[2])
-    toplu.reverse()
     import pprint
     pprint.pp(toplu)
 
@@ -646,11 +645,12 @@ def ikinci_elek():
         T3.join()
 
         yero = "OK"
+        gunluky = round((cp / dip24 - 1) * 100, 2)
         if yer == "Tepe":
             yero = "XXXXX"
             sil = "evet"
 
-        if 0 <= kemao <= 2 and yer == "Dip":
+        if 0.5 < kemao:
             ema_ok = "OK"
         else:
             ema_ok = "XXXXX"
@@ -666,12 +666,14 @@ def ikinci_elek():
             print("Yeni çıkan coin, silindi...", bc)
             sil = "evet"
 
-        trendo = "OK"
+        trendo = "Yükseliş OK"
         if max(mak, cp) < ma50:
             trendo = "XXXXX"
             sil = "evet"
 
-        bc_tablo.field_names = [str(bc), "of " + str(len(toplu))]
+        bc_tablo.field_names = [str(bc) + " g%: " + str(gunluky), "of" + str(len(toplu))]
+        bc_tablo.add_row(["cp:  ", str(cp)])
+        bc_tablo.add_row(["kema:", str(kema)])
         bc_tablo.add_row(["yer", [yer, yero]])
         bc_tablo.add_row(["kemao", [kemao, ema_ok]])
         bc_tablo.add_row(["m1hacim", [m1hacim, hacim_ok]])
@@ -715,6 +717,25 @@ if ceder < 1:
 afiyat = cp * 0.98
 sfiyat = cp * 1.05
 
+# ***********************************************************************************************************************************************************
+
+emirleri_sil()
+son_coin()
+
+ct = coin_trader(str(scoin))
+ct.coin_digit()
+ct.coin_fiyat()
+ct.bakiye_getir()
+ct.mumlar()
+
+alim_tamam = "evet"
+if ceder < 1:
+    yeni_tara = "evet"
+    alim_tamam = "hayır"
+
+afiyat = cp * 0.98
+sfiyat = cp * 1.05
+
 while True:
     ct.toplu_islem()
     print(bilanco)
@@ -725,7 +746,7 @@ while True:
         if kzo > (km - 1) * 100:
             alim_tamam = "evet"
 
-        if alim_tamam == "evet" or kemao > 5:
+        if alim_tamam == "evet" and harcanan == 0 and kemao < 0:
             ct.alsat_gecmisi()
             tbot_ozel.send_message(telegram_chat_id, str("Eldeki son mal satıldı. Yeni mal taranıyor..."))
             tbot_ozel.send_message(telegram_chat_id, str(bilanco))
@@ -764,7 +785,8 @@ while True:
     sf = max(hf, tsf[5])
     ksf = max(hf, saf * km)
 
-    if  min(cp, mak, taf[0]) > mab * 1.005:
+    if min(cp, mak, taf[0]) > mab * 1.005:
+        afi, sfi = 3, 3
         bolge == "Yükseliş"
         p1 = usd
         af = min(mab * 1.02, taf[0])
@@ -779,6 +801,7 @@ while True:
                 sf = max(ksf, tsf[0])
 
     elif max(cp, mak, tsf[0]) < mab / 1.005:
+        afi, sfi = 5, 2
         bolge = "Düşüş"
         m1 = ctm
         sf = max(mab / 1.02, tsf[0])
@@ -786,26 +809,27 @@ while True:
         p1 = min(usd, mulk / 10)
         af = taf[3] / km
 
-        if tsf[1] >= mab or (kema/km > taf[0] >= min(dmumlar[:2]) * 1.02):
+        if tsf[1] >= mab or (kema / km > taf[0] >= min(dmumlar[:2]) * 1.02):
             bolge = "Dipten Ydönüş"
             sf = tsf[0] * 1.02
             af = tsf[0] / 1.02
     else:
         Bolge = "Yatay"
-        p1 = min(usd, mulk / 10)
+        afi, sfi = 4, 4
+        p1 = min(usd, mulk / 5)
         af = taf[0] / 1.02
 
-        m1 = min(ctm, mulk / 10 / cp)
+        m1 = min(ctm, mulk / 5 / cp)
         sf = tsf[0] * 1.02
 
     # ************- TAF *************************************************************#
     m = 2
-    for i in range(3):
-        afi = i
+    for i in range(afi):
+        yafi = i
         if tam[i] > max(tsm[m], 50):
             break
 
-    alist = [tsf[1], tsf[0]] + taf[:afi + 1]
+    alist = [tsf[1], tsf[0]] + taf[:yafi + 1]
 
     if alist[- 1] <= af:
         for a in range(len(alist) - 1, -1, -1):
@@ -817,12 +841,12 @@ while True:
             af = alist[alist.index(af - k) + 1] + k
 
     # ************- TSF ************************************************************#
-    for i in range(3):
-        sfi = i
+    for i in range(sfi):
+        ysfi = i
         if tsm[i] > max(tam[m], 50):
             break
 
-    slist = [taf[1], taf[0]] + tsf[:sfi + 1]
+    slist = [taf[1], taf[0]] + tsf[:ysfi + 1]
 
     if slist[- 1] >= sf:
         for s in range(len(slist) - 1, -1, -1):
