@@ -790,7 +790,7 @@ while True:
         bolge == "Yükseliş"
         p1 = min(mulk/3, usd)
         af = max(kema, taf[0]/km)
-        if kemao < 5 and tam[1] > tsm[6]:
+        if ceder <= mulk/4 and tam[1] > tsm[6]:
             af = taf[0]
 
         m1 = min(ctm, mulk / 10 / cp)
