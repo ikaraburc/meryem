@@ -609,7 +609,7 @@ def birinci_elek():
                 and "5L" not in coin_liste[i]["currency_pair"] \
                 and float(coin_liste[i]["last"]) > 0 \
                 and float(coin_liste[i]["low_24h"]) > 0 \
-                and float(coin_liste[i]["last"]) / float(coin_liste[i]["low_24h"]) > 1.10:
+                and float(coin_liste[i]["last"]) / float(coin_liste[i]["low_24h"]) > 1.05:
             toplu.append([coin_liste[i]["currency_pair"], float(coin_liste[i]["last"]),
                           round(float(coin_liste[i]["last"]) / float(coin_liste[i]["low_24h"]), 2)])
 
@@ -650,13 +650,13 @@ def ikinci_elek():
             yero = "XXXXX"
             sil = "evet"
 
-        if 0.5 < kemao:
+        if 2 <= kemao <= 5:
             ema_ok = "OK"
         else:
             ema_ok = "XXXXX"
             sil = "evet"
 
-        m1hacim = round(sum(hacimler[:36]) / 3, 2)
+        m1hacim = round(sum(hacimler[:12]), 2)
         hacim_ok = "OK"
         if m1hacim < 2000:
             hacim_ok = "XXXXX"
