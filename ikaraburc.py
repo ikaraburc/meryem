@@ -784,12 +784,12 @@ while True:
     af = taf[5]
     sf = max(hf, tsf[5])
     ksf = max(hf, saf * km)
-
+     
     if min(mak, taf[0]) > mab:
-        afi, sfi = 3, 3
+        afi, sfi = 2, 2            
         bolge == "Yükseliş"
         p1 = min(mulk/3, usd)
-        af = max(kema * 1.02, taf[1]/km)
+        af = max(kema * 1.01, taf[1]/km)
         if kema > 10:
             af = max(kema * 1.02, taf[3]/km)  
             
