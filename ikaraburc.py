@@ -388,7 +388,7 @@ class coin_trader:
             if kema / i >= km or i / kema >= km:
                 break
 
-        if mab / i >= km:
+        if kema / i >= km:
             yer = "Tepe"
         else:
             yer = "Dip"
@@ -806,7 +806,10 @@ while True:
         afi, sfi = 5, 2
         bolge = "Düşüş"
         m1 = ctm
-        sf = max(mab / km, tsf[0])
+        if yer == "Tepe":
+            sf = max(kema / km, tsf[0])
+        else:
+            sf = taf[0] * 1.02
 
         p1 = min(usd, mulk / 10)
         af = taf[3] / km
