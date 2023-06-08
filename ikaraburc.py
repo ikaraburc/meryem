@@ -803,7 +803,7 @@ while True:
                 sf = max(ksf, tsf[0])
 
     elif max(mak, tsf[0]) < mab:
-        afi, sfi = 5, 2
+        afi, sfi = 5, 1
         bolge = "Düşüş"
         m1 = ctm
         if yer == "Tepe":
