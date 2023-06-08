@@ -786,15 +786,15 @@ while True:
     ksf = max(hf, saf * km)
      
     if min(mak, taf[0]) > mab:
-        afi, sfi = 2, 2            
+        afi, sfi = 3,3           
         bolge == "Yükseliş"
         p1 = min(mulk/3, usd)
         af = max(kema * 1.01, taf[1]/km)
         if kema > 10:
-            af = max(kema * 1.02, taf[3]/km)  
+            af = max(kema * 1.02, taf[3]/km)
             
         m1 = min(ctm, mulk / 10 / cp)
-        sf = tsf[0] * km
+        sf = taf[0] * km
         
         if kema * km <= tsf[0] <= max(tmumlar[:2]) * 0.98:
             bolge = "Tepeden aDönüş"
@@ -812,7 +812,7 @@ while True:
             sf = taf[0] * 1.02
 
         p1 = min(usd, mulk / 10)
-        af = taf[3] / km
+        af = taf[2] / km
 
         if tsf[1] >= mab or (kema / km > taf[0] >= min(dmumlar[:2]) * 1.02):
             bolge = "Dipten Ydönüş"
@@ -822,10 +822,10 @@ while True:
         Bolge = "Yatay"
         afi, sfi = 4, 4
         p1 = min(usd, mulk / 5)
-        af = taf[0] / km
+        af = tsf[0] / km
 
         m1 = min(ctm, mulk / 5 / cp)
-        sf = tsf[0] * km
+        sf = taf[0] * km
 
     if ceder <= mulk/2 and tam[1] > tsm[6]:
         p1 = min(usd, mulk/2-ceder+5)
