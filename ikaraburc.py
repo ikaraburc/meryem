@@ -797,6 +797,11 @@ while True:
             
         m1 = min(ctm, mulk / 10 / cp)
         sf = taf[0] * km
+        if kema * km < taf[0]:
+            if max (tmumlar[:2]) * 0.98 or taf[0] <= mab:
+                afi, sfi = 5, 1
+                sf = tsf[0]
+                m1 = min(ctm, mulk / 2 / cp)
         
     elif max(mak, tsf[0]) <= min(kema, mab):
         bolge = "Düşüş"
@@ -806,8 +811,7 @@ while True:
             m1 = ctm
         else:
             sf = taf[0] * 1.02
-            m1 = min(ctm, mulk / 10 / cp)
-            
+            m1 = min(ctm, mulk / 10 / cp)           
 
         p1 = min(usd, mulk / 10)
         af = taf[2] / km
