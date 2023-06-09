@@ -785,8 +785,8 @@ while True:
     sf = max(hf, tsf[5])
     ksf = max(hf, saf * km)
      
-    if min(mak, taf[0]) >= kema:
-         bolge == "Yükseliş"
+    if min(mak, taf[0]) >= max(kema, mab):
+        bolge == "Yükseliş"
         afi, sfi = 2, 3       
         p1 = usd
         af = max(kema * 1.01, taf[1]/km)
@@ -797,7 +797,7 @@ while True:
         m1 = min(ctm, mulk / 10 / cp)
         sf = taf[0] * km
         
-    elif max(mak, tsf[0]) <= kema:
+    elif max(mak, tsf[0]) <= min(kema, mab):
         bolge = "Düşüş"
         afi, sfi = 5, 1 
         if yer == "Tepe":
