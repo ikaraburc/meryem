@@ -652,7 +652,7 @@ def ikinci_elek():
             yero = "XXXXX"
             sil = "evet"
 
-        if 0 < kemao <= 5:
+        if 2 < kemao <= 5:
             ema_ok = "OK"
         else:
             ema_ok = "XXXXX"
@@ -819,6 +819,10 @@ while True:
 
         m1 = min(ctm, mulk / 5 / cp)
         sf = taf[0] * km
+    
+    if ceder <= mulk/2 and tam[1] > tsm[5]:
+        p1 = min(usd, mulk/2 - ceder + 5)
+        af = taf[0]+k
     
     # ************- TAF *************************************************************#
     m = 2
