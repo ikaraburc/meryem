@@ -804,9 +804,14 @@ while True:
         
     elif max(mak, tsf[0]) <= min(kema, mab):
         bolge = "Düşüş"
-        afi, sfi, m = 5, 1, 2
-        sf = tsf[sfi]
-        m1 = ctm               
+        if yer == "Tepe":
+            afi, sfi, m = 5, 1, 2
+            sf = tsf[sfi]
+            m1 = ctm   
+        else:
+            afi, sfi, m = 5, 3, 3
+            sf = tsf[sfi]
+            m1 = min(ctm, mulk / 4 / cp)             
 
         p1 = min(usd, mulk / 10)
         af = taf[2] / km
