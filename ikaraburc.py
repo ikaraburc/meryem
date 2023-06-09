@@ -798,11 +798,11 @@ while True:
             af = taf[afi]
         
         if kemao >= 3:
-            afi, sfi, m = 5, 2, 3
+            afi, sfi, m = 6, 3, 3
             af = min(taf[afi], tsf[0]/km)
             
         m1 = min(ctm, mulk / 10 / cp)
-        sf = max(saf, tsf[0]) * km
+        sf = max(saf, taf[0]) * km
         
         if saf * km < taf[0]:
             if max (tmumlar[:2]) * 0.98 or taf[0] <= mab:
@@ -911,12 +911,13 @@ while True:
     # ************- EKRANA PRİNT BÖLÜMÜ -*******************************#
 
     fiyatlar = PrettyTable()
-    fiyatlar.field_names = [str(yer) + "-" + str(bolge), "kema " + str(kema), str("cp " + str(cp))]
-    fiyatlar.add_row(["ma% " + str(kemao), "af    " + str(round(af, digit)), "sf    " + str(round(sf, digit))])
-    fiyatlar.add_row([str(trend) + " t% " + str(trendy), "taf0  " + str(taf[0]), "tsf0  " + str(tsf[0])])
-    fiyatlar.add_row(["ceder " + str(round(ceder, 2)), "saf   " + str(saf), "ssf   " + str(ssf)])
-    fiyatlar.add_row(["mülk " + str(round(mulk, 2)), "ksf " + str(ksf),
-                      "ksf% " + str(round((ksf / cp - 1) * 100, 2)) + " " + str(sonislem)])
+    fiyatlar.field_names = [str(yer) + "-" + str(bolge),"kemao %" + str(kemao), str("cp " + str(cp))]
+    fiyatlar.add_row(["Trend " + str(trend) +" %" + str(trendy), "af    " + str(round(af, digit)), "sf    " + str(round(sf, digit))])
+    fiyatlar.add_row(["kema " + str(kema), "mak   " + str(mak),"mab   " + str(mab)])    
+    fiyatlar.add_row(["Son işlem " + str(sonislem), "saf   " + str(saf), "ssf   " + str(ssf)])
+    fiyatlar.add_row(["ceder " + str(round(ceder, 2)), "taf0  " + str(taf[0]), "tsf0  " + str(tsf[0]) ])
+    fiyatlar.add_row(["mülk " + str(round(mulk, 2)), "ksf " + str(round(ksf,digit)),
+                      "ksf% " + str(round((ksf / cp - 1) * 100, 2))])
 
     print(fiyatlar)
 
