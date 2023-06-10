@@ -819,7 +819,11 @@ while True:
         if tsf[0] > saf:
             afi, sfi, m = 5, 1, 2
             sf = tsf[0]
-            m1 = ctm   
+            m1 = ctm
+        elif yer == "Tepe":
+            afi, sfi, m = 5, 2, 2
+            sf = tsf[0]
+            m1 = min(ctm, mulk / 2 / cp) 
         else:
             afi, sfi, m = 5, 3, 3
             sf = tsf[0]
