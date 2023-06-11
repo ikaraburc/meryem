@@ -698,7 +698,8 @@ def ikinci_elek():
     else:
         print("COİN BULUNAMADI....")
         bc = "boş"
-        
+
+
 # ***********************************************************************************************************************************************************
 
 emirleri_sil()
@@ -785,65 +786,62 @@ while True:
     af = taf[5]
     sf = max(hf, tsf[5])
     ksf = max(hf, saf * km)
-     
+
     if min(mak, taf[0], cp) > max(kema, mab):
         bolge = "Yükseliş"
-        if yer == "Dip" and kemao < 3:            
-            afi, sfi, m = 2, 5, 2       
+        if yer == "Dip" and kemao < 3:
+            afi, sfi, m = 2, 5, 2
             p1 = usd
-            af = taf[0] 
-        elif (cp/mab) >= 1.03:
+            af = taf[0]
+        elif (cp / mab) >= 1.03:
             bolge = "Sert yükseliş"
             afi, sfi, m = 10, 3, 4
-            af = taf[0]/km
+            p1 = min(usd, mulk / 4)
+            af = taf[0] / km
         else:
             afi, sfi, m = 10, 3, 4
-            af = taf[0]            
-            
+            p1 = min(usd, mulk / 4)
+            af = taf[0] / 1.01
+
         m1 = min(ctm, mulk / 10 / cp)
         sf = max(saf, taf[0]) * km
-        
+
         if tsf[0] >= saf * km:
-            if tsf[0] <= max(tmumlar[:2]) * 0.98 or af <= mab:
+            if tsf[0] <= max(tmumlar[:2]) * 0.98 or af <= mab or (kmumlar[0] < kmumlar[1]):
                 bolge = "Tepeden Düşüş"
-                afi, sfi, m = 5, 2, 2  
+                afi, sfi, m = 5, 2, 2
                 sf = tsf[0]
-                m1 = min(ctm, mulk / 2 / cp) 
+                m1 = min(ctm, mulk / 2 / cp)
                 af = max(kema, af / km)
-        
+
     elif max(mak, tsf[0], cp) < min(kema, mab):
         bolge = "Düşüş"
         if tsf[0] > saf:
             afi, sfi, m = 5, 1, 2
             sf = tsf[0]
             m1 = ctm
-        elif yer == "Tepe":
-            afi, sfi, m = 5, 2, 2
-            sf = tsf[0]
-            m1 = min(ctm, mulk / 2 / cp) 
         else:
             afi, sfi, m = 5, 3, 3
             sf = tsf[0]
             m1 = min(ctm, mulk / 4 / cp)
-        
+
         p1 = min(usd, mulk / 10)
         af = taf[2] / km
-        
-        if mak < kema / km:
-            if max(sf, tsf[0]) >= mab or  taf[0] >= min(dmumlar[:2])*1.02:
-                bolge = "Dipten Dönüş"
-                sf = sf * km
-                af = taf[0]        
+
+        if max(sf, tsf[0]) >= mab or taf[0] >= min(dmumlar[:2]) * 1.02 or (kmumlar[0] > kmumlar[1]):
+            bolge = "Dipten Dönüş"
+            sf = sf * km
+            af = taf[0]
     else:
         Bolge = "Yatay"
-        afi, sfi, m = 5, 5, 2 
+        afi, sfi, m = 5, 5, 2
         p1 = min(usd, mulk / 5)
         af = tsf[0] / km
 
         m1 = min(ctm, mulk / 5 / cp)
         sf = taf[0] * km
-        
-    # ************- TAF *************************************************************#    
+
+    # ************- TAF *************************************************************#
     for i in range(afi):
         yafi = i
         if tam[i] > max(tsm[m], 50):
@@ -922,12 +920,13 @@ while True:
     # ************- EKRANA PRİNT BÖLÜMÜ -*******************************#
 
     fiyatlar = PrettyTable()
-    fiyatlar.field_names = [str(yer) + "-" + str(bolge),"kemao %" + str(kemao), str("cp " + str(cp))]
-    fiyatlar.add_row(["Trend " + str(trend) +" %" + str(trendy), "af    " + str(round(af, digit)), "sf    " + str(round(sf, digit))])
-    fiyatlar.add_row(["kema " + str(kema), "mak   " + str(mak),"mab   " + str(mab)])    
+    fiyatlar.field_names = [str(yer) + "-" + str(bolge), "kemao %" + str(kemao), str("cp " + str(cp))]
+    fiyatlar.add_row(["Trend " + str(trend) + " %" + str(trendy), "af    " + str(round(af, digit)),
+                      "sf    " + str(round(sf, digit))])
+    fiyatlar.add_row(["kema " + str(kema), "mak   " + str(mak), "mab   " + str(mab)])
     fiyatlar.add_row(["Son işlem " + str(sonislem), "saf   " + str(saf), "ssf   " + str(ssf)])
-    fiyatlar.add_row(["ceder " + str(round(ceder, 2)), "taf0  " + str(taf[0]), "tsf0  " + str(tsf[0]) ])
-    fiyatlar.add_row(["mülk " + str(round(mulk, 2)), "ksf " + str(round(ksf,digit)),
+    fiyatlar.add_row(["ceder " + str(round(ceder, 2)), "taf0  " + str(taf[0]), "tsf0  " + str(tsf[0])])
+    fiyatlar.add_row(["mülk " + str(round(mulk, 2)), "ksf " + str(round(ksf, digit)),
                       "ksf% " + str(round((ksf / cp - 1) * 100, 2))])
 
     print(fiyatlar)
