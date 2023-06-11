@@ -828,13 +828,14 @@ while True:
         p1 = min(usd, mulk / 10)
         af = taf[2] / km
 
-        if max(sf, tsf[0]) >= mab or \
-                taf[0] >= min(dmumlar[:2]) * 1.01 or \
-                (kmumlar[0] >= kmumlar[1]) or \
-                mab / mak <= 1.01:
-            bolge = "Dipten Dönüş"
-            sf = sf * km
-            af = taf[0]
+        if taf[0] < kema / km:
+            if max(sf, tsf[0]) >= mab or \
+                    taf[0] >= min(dmumlar[:2]) * 1.01 or \
+                    (kmumlar[0] >= kmumlar[1]) or \
+                    mab / mak <= 1.01:
+                bolge = "Dipten Dönüş"
+                sf = sf * km
+                af = min(ssf / 1.01, taf[0])
     else:
         bolge = "Yatay"
         afi, sfi, m = 5, 5, 2
