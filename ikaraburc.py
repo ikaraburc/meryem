@@ -789,7 +789,7 @@ while True:
             af = taf[0]
         elif max(cp, tsf[0]) / mab >= 1.03:
             bolge = "Sert yükseliş"
-            afi, sfi, m = 10, 3, 3
+            afi, sfi, m = 10, 2, 3
             p1 = min(usd, mulk / 4)
             af = taf[0] / km
         else:
@@ -838,13 +838,17 @@ while True:
                     af = min(ssf / 1.01, taf[0])
     else:
         bolge = "Yatay"
-        afi, sfi, m = 5, 5, 2
         p1 = min(usd, mulk / 5)
-        af = tsf[0] / km
-
         m1 = min(ctm, mulk / 5 / cp)
-        sf = taf[0] * km
-
+        if yer == "Dip":            
+            afi, sfi, m = 3, 5, 2
+            af = taf[0]          
+            sf = taf[0] * km
+        else:
+            afi, sfi, m = 5, 3, 2
+            af = tsf[0] / km
+            sf = tsf[0]
+            
     # ************- TAF *************************************************************#
     for i in range(afi):
         yafi = i
