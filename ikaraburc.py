@@ -925,7 +925,8 @@ while True:
     fiyatlar.add_row(["Trend " + str(trend) + " %" + str(trendy), "af    " + str(round(af, digit)),
                       "sf    " + str(round(sf, digit))])
     fiyatlar.add_row(
-        ["ctm? " + str(round((ctm + usd / tsf[0])+"k" / 1000, mdigit)), "taf0  " + str(taf[0]), "tsf0  " + str(tsf[0])])
+        [str("ctm? " + str(round((ctm + usd / tsf[0]) / 1000, mdigit)) + "k"), "taf0  " + str(taf[0]),
+         "tsf0  " + str(tsf[0])])
     fiyatlar.add_row(["ceder " + str(round(ceder, 2)), "saf   " + str(saf), "ssf   " + str(ssf)])
     fiyatlar.add_row(["mülk  " + str(round(mulk, 2)), "ksf " + str(round(ksf, digit)),
                       "ksf% " + str(round((ksf / cp - 1) * 100, 2)) + " " + str(sonislem)])
