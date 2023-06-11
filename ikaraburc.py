@@ -790,7 +790,7 @@ while True:
     if min(mak, taf[0], cp) > max(kema, mab):
         m1 = min(ctm, mulk / 10 / cp)
         sf = max(saf * km, tsf[0])
-        
+
         bolge = "Yükseliş"
         if yer == "Dip" and kemao < 3:
             afi, sfi, m = 2, 5, 2
@@ -803,9 +803,9 @@ while True:
             af = taf[0] / km
         else:
             afi, sfi, m = 10, 3, 4
-            p1 = min(usd, mulk / 4)      
+            p1 = min(usd, mulk / 4)
 
-        if tsf[0] >= saf * km or mak/mab <= 1.01:
+        if tsf[0] >= saf * km or mak / mab <= 1.01:
             if tsf[0] <= max(tmumlar[:2]) * 0.98 or af <= mab or (kmumlar[0] <= kmumlar[1]):
                 bolge = "Tepeden Düşüş"
                 afi, sfi, m = 5, 2, 2
@@ -827,7 +827,8 @@ while True:
         p1 = min(usd, mulk / 10)
         af = taf[2] / km
 
-        if max(sf, tsf[0]) >= mab or taf[0] >= min(dmumlar[:2]) * 1.02 or (kmumlar[0] >= kmumlar[1]) or mab/mak <= 1.01:
+        if max(sf, tsf[0]) >= mab or taf[0] >= min(dmumlar[:2]) * 1.02 or (
+                kmumlar[0] >= kmumlar[1]) or mab / mak <= 1.01:
             bolge = "Dipten Dönüş"
             sf = sf * km
             af = taf[0]
@@ -920,13 +921,14 @@ while True:
 
     fiyatlar = PrettyTable()
     fiyatlar.field_names = [str(yer) + "-" + str(bolge), "kemao %" + str(kemao), str("cp " + str(cp))]
+    fiyatlar.add_row(["kema " + str(kema), "mak   " + str(mak), "mab   " + str(mab)])
     fiyatlar.add_row(["Trend " + str(trend) + " %" + str(trendy), "af    " + str(round(af, digit)),
                       "sf    " + str(round(sf, digit))])
-    fiyatlar.add_row(["kema " + str(kema), "mak   " + str(mak), "mab   " + str(mab)])
-    fiyatlar.add_row(["Son işlem " + str(sonislem), "saf   " + str(saf), "ssf   " + str(ssf)])
-    fiyatlar.add_row(["ceder " + str(round(ceder, 2)), "taf0  " + str(taf[0]), "tsf0  " + str(tsf[0])])
-    fiyatlar.add_row(["mülk " + str(round(mulk, 2)), "ksf " + str(round(ksf, digit)),
-                      "ksf% " + str(round((ksf / cp - 1) * 100, 2))])
+    fiyatlar.add_row(
+        ["ctm? " + str(round((ctm + usd / tsf[0])+"k" / 1000, mdigit)), "taf0  " + str(taf[0]), "tsf0  " + str(tsf[0])])
+    fiyatlar.add_row(["ceder " + str(round(ceder, 2)), "saf   " + str(saf), "ssf   " + str(ssf)])
+    fiyatlar.add_row(["mülk  " + str(round(mulk, 2)), "ksf " + str(round(ksf, digit)),
+                      "ksf% " + str(round((ksf / cp - 1) * 100, 2)) + " " + str(sonislem)])
 
     print(fiyatlar)
 
