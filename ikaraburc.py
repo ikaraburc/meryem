@@ -796,7 +796,7 @@ while True:
             bolge = "Yükseliş"
             afi, sfi, m = 10, 2, 3
             p1 = min(usd, mulk / 4)
-            af = taf[0]
+            af = tsf[0]/km
 
         m1 = min(ctm, mulk / 10 / cp)
         sf = max(saf * km, tsf[0])
