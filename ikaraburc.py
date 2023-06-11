@@ -788,18 +788,17 @@ while True:
      
     if min(mak, taf[0], cp) > max(kema, mab):
         bolge = "Yükseliş"
-        if yer == "Dip":            
-            afi, sfi, m = 2, 2, 2       
+        if yer == "Dip" and kemao < 3:            
+            afi, sfi, m = 2, 5, 2       
             p1 = usd
-            af = taf[0]
-        else:
-            afi, sfi, m = 6, 3, 2       
-            p1 = min(usd, mulk / 5)
-            af = taf[0]
-            
-        if kemao >= 5:
+            af = taf[0] 
+        elif (cp/mab) >= 1.03:
+            bolge = "Sert yükseliş"
             afi, sfi, m = 10, 3, 4
             af = taf[0]/km
+        else:
+            afi, sfi, m = 10, 3, 4
+            af = taf[0]            
             
         m1 = min(ctm, mulk / 10 / cp)
         sf = max(saf, taf[0]) * km
