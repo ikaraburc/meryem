@@ -373,14 +373,7 @@ class coin_trader:
         kema1 = kemas[1]
         kemao = (mak - kema) / min(mak, kema) * 100
 
-        global sky, skd, bolge, trend, trendy, yer
-
-        if kemao > 0.5:
-            bolge = "Yükseliş"
-        elif kemao < -0.5:
-            bolge = "Düşüş"
-        else:
-            bolge = "Yatay"
+        global trend, trendy, yer
 
         kemao = round(kemao, 2)
         km = 1.03
@@ -788,11 +781,9 @@ while True:
     ksf = max(hf, saf * km)
 
     if min(mak, taf[0], cp) > max(kema, mab):
-        m1 = min(ctm, mulk / 10 / cp)
-        sf = max(saf * km, tsf[0])
 
-        bolge = "Yükseliş"
         if yer == "Dip" and kemao < 3:
+            bolge = "Dipten Yükseliş"
             afi, sfi, m = 2, 5, 2
             p1 = usd
             af = taf[0]
@@ -802,28 +793,34 @@ while True:
             p1 = min(usd, mulk / 4)
             af = taf[0] / km
         else:
-            afi, sfi, m = 10, 3, 4
+            bolge = "Yükseliş"
+            afi, sfi, m = 10, 3, 3
             p1 = min(usd, mulk / 4)
             af = taf[0]
+
+        m1 = min(ctm, mulk / 10 / cp)
+        sf = max(saf * km, tsf[0])
 
         # makas daralış bölgesi veya düşüşe yaklaşma bölgesinde davranış
         if tsf[0] >= saf * km:
             if (kmumlar[0] <= kmumlar[1]) or \
                     tsf[0] <= max(tmumlar[:2]) / 1.01 or \
                     af <= mab:
-                bolge = "Tepeden Düşüş"
+                bolge = "Yükselişten Dönüş"
                 afi, sfi, m = 5, 2, 2
                 sf = tsf[0]
                 m1 = min(ctm, mulk / 2 / cp)
                 af = af / km
 
     elif max(mak, tsf[0], cp) < min(kema, mab):
-        bolge = "Düşüş"
+
         if tsf[0] >= saf * 1.01:
+            bolge = "Kârlı Düşüş"
             afi, sfi, m = 5, 1, 2
             sf = tsf[0]
             m1 = ctm
         else:
+            bolge = "Zararına Düşüş"
             afi, sfi, m = 5, 3, 3
             sf = tsf[0]
             m1 = min(ctm, mulk / 4 / cp)
@@ -839,7 +836,7 @@ while True:
             sf = sf * km
             af = taf[0]
     else:
-        Bolge = "Yatay"
+        bolge = "Yatay"
         afi, sfi, m = 5, 5, 2
         p1 = min(usd, mulk / 5)
         af = tsf[0] / km
