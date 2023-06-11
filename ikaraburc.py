@@ -835,7 +835,9 @@ while True:
                     mab / mak <= 1.01:
                 bolge = "Dipten Dönüş"
                 sf = sf * km
-                af = min(ssf / 1.01, taf[0])
+                af = taf[0]
+                if ssf > 0:
+                    af = min(ssf / 1.01, taf[0])
     else:
         bolge = "Yatay"
         afi, sfi, m = 5, 5, 2
