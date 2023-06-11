@@ -830,7 +830,7 @@ while True:
         af = taf[2] / km
         
         if mak < kema / km:
-            if max(sf, tsf[0], max(tmumlar[:2])) >= mab:
+            if max(sf, tsf[0]) >= mab or  taf[0] >= min(dmumlar[:2])*1.02:
                 bolge = "Dipten Dönüş"
                 sf = sf * km
                 af = taf[0]        
