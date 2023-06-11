@@ -794,7 +794,7 @@ while True:
             af = taf[0] / km
         else:
             bolge = "Yükseliş"
-            afi, sfi, m = 10, 3, 3
+            afi, sfi, m = 10, 2, 3
             p1 = min(usd, mulk / 4)
             af = taf[0]
 
