@@ -799,6 +799,7 @@ while True:
             
         if kemao >= 5:
             afi, sfi, m = 10, 3, 4
+            af = taf[0]/km
             
         m1 = min(ctm, mulk / 10 / cp)
         sf = max(saf, taf[0]) * km
