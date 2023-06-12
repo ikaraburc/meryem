@@ -802,7 +802,7 @@ while True:
         sf = max(saf * km, tsf[0])
 
         # makas daralış bölgesi veya düşüşe yaklaşma bölgesinde davranış
-        if tsf <= saf and tsm[1] > tam[3]:
+        if tsf[0] <= saf and tsm[1] > tam[3]:
             bolge = "Yükselmeden Düşüş"
             afi, sfi, m = 10, 2, 2
             sf = tsf[0]
