@@ -796,21 +796,25 @@ while True:
             bolge = "Yükseliş"
             afi, sfi, m = 10, 2, 3
             p1 = min(usd, mulk / 4)
-            af = tsf[0]/km
+            af = taf[0]
 
         m1 = min(ctm, mulk / 10 / cp)
         sf = max(saf * km, tsf[0])
 
         # makas daralış bölgesi veya düşüşe yaklaşma bölgesinde davranış
-        if tsf[0] >= saf * km:
-            if tsf[0] <= max(tmumlar[:2]) / 1.02 or \
-                    af <= mab or \
-                    mak/mab < 1.01:
-                bolge = "Yükselişten Dönüş"
-                afi, sfi, m = 5, 1, 2
-                sf = tsf[0]
-                m1 = min(ctm, mulk / 4 / cp)
-                af = af / km
+        if tsf <= saf and tsm[1] > tam[3]:
+            bolge = "Yükselmeden Düşüş"
+            afi, sfi, m = 10, 2, 2
+            sf = tsf[0]
+        elif tsf[0] >= saf * km and \
+        (tsf[0] <= max(tmumlar[:2]) / 1.02 or \
+         af <= mab or \
+         mak/mab < 1.01):
+            bolge = "Yükselişten Dönüş"
+            afi, sfi, m = 5, 1, 2
+            sf = tsf[0]
+            m1 = min(ctm, mulk / 4 / cp)
+            af = af / km
 
     elif max(mak, tsf[0], cp) < min(kema, mab):
         if tsf[0] > saf * 1.01:
@@ -837,6 +841,10 @@ while True:
                 af = taf[0]
                 if ssf > 0:
                     af = min(ssf / 1.01, taf[0])
+        if tam[1] > tsm[5]:
+            af = taf[0]
+            sf = saf * km
+
     else:
         bolge = "Yatay"
         p1 = min(usd, mulk / 5)
