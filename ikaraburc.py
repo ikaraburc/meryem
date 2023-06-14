@@ -767,92 +767,38 @@ while True:
     af = taf[5]
     sf = max(hf, tsf[5])
     ksf = max(hf, saf * km)
-    
+    ykk = 1
     if abs(kemao) < ykk and abs(koran) < ykk:
-        bolge = "Saçma Yatay"
+        bolge = "SAÇMA YATAY"
         afi, sfi, m = 5, 5, 2
         p1 = min(usd, mulk / 4)
         m1 = min(ctm, mulk / 4 / cp)
-        af = tsf[0] / km
-        sf = taf[0] * km
+        af = min(mab / 1.02, taf[afi])
+        sf = max(mab / 1.02, tsf[sfi])
     else:
-        if min(mak, taf[0], cp) > max(kema, mab) * ykk:
+        if taf[0] > max(kema, mab):
             bolge = "YÜKSELİŞ"
-            if yer == "Dip" and kemao < 3:
-                bolge = "Dipten Yükseliş"
-                afi, sfi, m = 2, 5, 2
-                p1 = usd
-                af = taf[0]
-            elif max(cp, tsf[0]) / mab >= 1.03:
-                bolge = "Sert yükseliş"
-                afi, sfi, m = 10, 2, 3
-                p1 = min(usd, mulk / 4)
-                af = taf[0] / km
-            else:
-                bolge = "Yükseliş"
-                afi, sfi, m = 10, 2, 3
-                p1 = min(usd, mulk / 4)
-                af = taf[0]
+            afi, sfi, m = 3, 5, 2
+            p1 = min(usd, mulk / 4)
+            m1 = min(ctm, mulk / 5 / cp)
+            af = min(mab * 1.01, taf[afi])
+            sf = max(mab * 1.03, tsf[sfi])
 
-            m1 = min(ctm, mulk / 10 / cp)
-            sf = max(saf * km, tsf[0])
-
-            if tsf[0] <= saf and tsm[1] > tam[3]:
-                bolge = "Yükselmeden Düşüş"
-                afi, sfi, m = 10, 2, 2
-                sf = tsf[0]
-            elif tsf[0] >= saf * km and \
-                    (tsf[0] <= max(tmumlar[:2]) / 1.02 or \
-                     af <= mab or \
-                     mak / mab < 1.01):
-                bolge = "Yükselişten Dönüş"
-                afi, sfi, m = 5, 1, 2
-                sf = tsf[0]
-                m1 = min(ctm, mulk / 4 / cp)
-                af = af / km
-
-        elif max(mak, tsf[0], cp) < min(kema, mab) / ykk:
+        elif tsf[0] < min(kema, mab):
             bolge = "DÜŞÜŞ"
-            if tsf[0] > saf * 1.01:
-                bolge = "Kârlı Düşüş"
-                afi, sfi, m = 5, 1, 2
-                sf = tsf[0]
-                m1 = ctm
-            else:
-                bolge = "Zararına Düşüş"
-                afi, sfi, m = 5, 3, 3
-                sf = tsf[0]
-                m1 = min(ctm, mulk / 4 / cp)
+            afi, sfi, m = 5, 3, 2
+            p1 = min(usd, mulk / 4)
+            m1 = min(ctm, mulk / 2 / cp)
+            af = min(mab / 1.03, taf[afi])
+            sf = max(mab / 1.01, tsf[sfi])
 
-            p1 = min(usd, mulk / 10)
-            af = taf[2] / km
-
-            if taf[0] < kema / km:
-                if max(sf, tsf[0]) >= mab or \
-                        taf[0] >= min(dmumlar[:2]) * 1.02 or \
-                        (kmumlar[0] > kmumlar[1]) or \
-                        mab / mak <= 1.01:
-                    bolge = "Dipten Dönüş"
-                    sf = saf * km
-                    af = taf[0]
-                    if ssf > 0:
-                        af = min(ssf / 1.01, taf[0])
-            if tam[1] > tsm[5]:
-                af = taf[0]
-                sf = saf * km
         else:
             bolge = "YATAY"
-            p1 = min(usd, mulk / 5)
-            m1 = min(ctm, mulk / 5 / cp)
-            if yer == "Tepe" or tsf[0] > saf * km:
-                afi, sfi, m = 5, 2, 2
-                af = tsf[0] / km
-                sf = tsf[0]
-            else:
-                afi, sfi, m = 3, 5, 2
-                af = taf[0]
-                sf = taf[0] * km
-
+            afi, sfi, m = 5, 5, 2
+            p1 = min(usd, mulk / 4)
+            m1 = min(ctm, mulk / 4 / cp)
+            af = min(mab / 1.02, taf[afi])
+            sf = max(mab / 1.02, tsf[sfi])
 
     # ************- TAF *************************************************************#
     for i in range(afi):
