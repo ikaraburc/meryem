@@ -767,7 +767,7 @@ while True:
     af = taf[5]
     sf = max(hf, tsf[5])
     ksf = max(hf, saf * km)
-    ykk = 1
+    
     if abs(kemao) < ykk and abs(koran) < ykk:
         bolge = "SAÇMA YATAY"
         afi, sfi, m = 5, 5, 2
