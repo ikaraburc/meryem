@@ -370,7 +370,7 @@ class coin_trader:
         mab = mabs[0]
         ma50 = ma50s[0]
 
-        global trend, trendy, yer, kemao, kema, kema1, ykk
+        global trend, trendy, yer, kemao, kema, kema1, ykk, koran
         ykk = 1.005
 
         for i in range(100):
@@ -380,6 +380,7 @@ class coin_trader:
                 break
 
         kemao = round((mak - kema) / min(mak, kema) * 100, 2)
+        koran = round((kemas[0] - kema) / min(kemas[0], kema) * 100, 2)
 
         km = 1.03
         skema = kema
@@ -766,7 +767,15 @@ while True:
     af = taf[5]
     sf = max(hf, tsf[5])
     ksf = max(hf, saf * km)
-    if abs(kemao) >= ykk:
+    
+    if abs(kemao) < ykk and abs(koran) < ykk:
+        bolge = "Saçma Yatay"
+        afi, sfi, m = 5, 5, 2
+        p1 = min(usd, mulk / 4)
+        m1 = min(ctm, mulk / 4 / cp)
+        af = tsf[0] / km
+        sf = taf[0] * km
+    else:
         if min(mak, taf[0], cp) > max(kema, mab) * ykk:
             bolge = "YÜKSELİŞ"
             if yer == "Dip" and kemao < 3:
@@ -843,13 +852,7 @@ while True:
                 afi, sfi, m = 3, 5, 2
                 af = taf[0]
                 sf = taf[0] * km
-    else:
-        bolge = "Saçma Yatay"
-        afi, sfi, m = 5, 5, 2
-        p1 = min(usd, mulk / 4)
-        m1 = min(ctm, mulk / 4 / cp)
-        af = tsf[0] / km
-        sf = taf[0] * km
+
 
     # ************- TAF *************************************************************#
     for i in range(afi):
