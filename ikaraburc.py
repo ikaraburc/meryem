@@ -767,45 +767,39 @@ while True:
     af = taf[5]
     sf = max(hf, tsf[5])
     ksf = max(hf, saf * km)
+    ykk = 1
     
     if abs(kemao) < ykk and abs(koran) < ykk:
         bolge = "SAÇMA YATAY"
         afi, sfi, m = 5, 5, 2
         p1 = min(usd, mulk / 4)
         m1 = min(ctm, mulk / 4 / cp)
-        af = min(mab / 1.02, taf[afi])
-        sf = max(mab / 1.02, tsf[sfi])
+        af = mab/1.01
+        sf = mab*1.01
     else:
-        if taf[0] > max(kema, mab):
+        if taf[2] >= max(kema, mab):
             bolge = "YÜKSELİŞ"
             afi, sfi, m = 3, 5, 2
             p1 = min(usd, mulk / 4)
             m1 = min(ctm, mulk / 5 / cp)
-            af = min(mab * 1.01, taf[afi])
-            sf = max(mab * 1.03, tsf[sfi])
-            
-            if taf[afi] < mab:
-                af = af/km
-                sf = tsf[sfi]
+            af = mab * 1.01
+            sf = mab * 1.03
 
-        elif tsf[0] < min(kema, mab):
+        elif tsf[2] <= min(kema, mab):
             bolge = "DÜŞÜŞ"
             afi, sfi, m = 5, 3, 2
             p1 = min(usd, mulk / 4)
             m1 = min(ctm, mulk / 2 / cp)
-            af = min(mab / 1.03, taf[afi])
-            sf = max(mab / 1.01, tsf[sfi])
-            
-            if tsf[sfi] > mab:
-                sf = sf * km
-                af = taf[afi]
+            af = mab / 1.03
+            sf = mab / 1.01
+
         else:
             bolge = "YATAY"
             afi, sfi, m = 5, 5, 2
             p1 = min(usd, mulk / 4)
             m1 = min(ctm, mulk / 4 / cp)
-            af = min(mab / 1.02, taf[afi])
-            sf = max(mab / 1.02, tsf[sfi])
+            af = mab/1.01
+            sf = mab*1.01
 
     # ************- TAF *************************************************************#
     for i in range(afi):
