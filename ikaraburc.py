@@ -343,14 +343,14 @@ class coin_trader:
         hacimler.reverse()
 
         global maks, mabs, mak, mab, ma50, kemas
-        makp = 4
+
         mabp = 12
         ma50p = 50
         maks = []
         mabs = []
         ma50s = []
         for i in range(len(kmumlar) - ma50p):
-            maks.append(round(sum(kmumlar[i:i + makp]) / makp, digit))
+            maks.append(round(kmumlar[i], digit))
             mabs.append(round(sum(kmumlar[i:i + mabp]) / mabp, digit))
             ma50s.append(round(sum(kmumlar[i:i + ma50p]) / ma50p, digit))
 
@@ -768,46 +768,52 @@ while True:
     sf = max(hf, tsf[5])
     ksf = max(hf, saf * km)
     ykk = 1
-    
+
+    for i in range(6):
+        afi = i
+        ataf = tam[i]
+        if tsm[2] <= tam[i]:
+            break
+    for i in range(6):
+        sfi = i
+        stsf = tsm[i]
+        if tam[2] <= tsm[i]:
+            break
+
     if abs(kemao) < ykk and abs(koran) < ykk:
         bolge = "SAÇMA YATAY"
-        afi, sfi, m = 5, 5, 2
-        p1 = min(usd, mulk / 4)
-        m1 = min(ctm, mulk / 4 / cp)
-        af = mab/1.01
-        sf = mab*1.01
+        p1 = min(usd, mulk / 2)
+        m1 = min(ctm, mulk / 2 / cp)
+        af = min(mab / 1.01, ataf)
+        sf = max(mab * 1.01, stsf)
     else:
-        if taf[2] >= max(kema, mab):
+        if stsf >= max(kema, mab):
             bolge = "YÜKSELİŞ"
-            afi, sfi, m = 3, 5, 2
-            p1 = min(usd, mulk / 4)
+            p1 = usd
             m1 = min(ctm, mulk / 5 / cp)
-            af = mab * 1.01
-            sf = mab * 1.03
+            af = min(mab, ataf)
+            sf = max(mab * 1.03, stsf)
 
-        elif tsf[2] <= min(kema, mab):
+        elif ataf <= min(kema, mab):
             bolge = "DÜŞÜŞ"
-            afi, sfi, m = 5, 3, 2
             p1 = min(usd, mulk / 4)
-            m1 = min(ctm, mulk / 2 / cp)
-            af = mab / 1.03
-            sf = mab / 1.01
+            m1 = ctm
+            af = min(mab / 1.03, ataf)
+            sf = max(mab, stsf)
 
         else:
             bolge = "YATAY"
-            afi, sfi, m = 5, 5, 2
             p1 = min(usd, mulk / 4)
             m1 = min(ctm, mulk / 4 / cp)
-            af = mab/1.01
-            sf = mab*1.01
+            if cp > mabs[20]:
+                af = min(mab / 1.03, ataf)
+                sf = max(mab, stsf)
+            else:
+                af = min(mab, ataf)
+                sf = max(mab * 1.01, stsf)
 
     # ************- TAF *************************************************************#
-    for i in range(afi):
-        yafi = i
-        if tam[i] > max(tsm[m], 50):
-            break
-
-    alist = [tsf[1], tsf[0]] + taf[:yafi + 1]
+    alist = [tsf[1], tsf[0]] + taf[:afi + 1]
 
     if alist[- 1] <= af:
         for a in range(len(alist) - 1, -1, -1):
@@ -819,12 +825,7 @@ while True:
             af = alist[alist.index(af - k) + 1] + k
 
     # ************- TSF ************************************************************#
-    for i in range(sfi):
-        ysfi = i
-        if tsm[i] > max(tam[m], 50):
-            break
-
-    slist = [taf[1], taf[0]] + tsf[:ysfi + 1]
+    slist = [taf[1], taf[0]] + tsf[:sfi + 1]
 
     if slist[- 1] >= sf:
         for s in range(len(slist) - 1, -1, -1):
