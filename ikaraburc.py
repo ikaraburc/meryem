@@ -771,12 +771,12 @@ while True:
 
     for i in range(6):
         afi = i
-        ataf = tam[i]
+        ataf = taf[i]
         if tsm[2] <= tam[i]:
             break
     for i in range(6):
         sfi = i
-        stsf = tsm[i]
+        stsf = tsf[i]
         if tam[2] <= tsm[i]:
             break
 
