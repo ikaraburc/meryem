@@ -471,12 +471,12 @@ class coin_trader:
             if agider > 0:
                 for a in r:
                     if a["side"] == "buy":
-                        saf = float(a["price"])
+                        saf = round(float(a["price"]), digit)
                         break
             if sgelir > 0:
                 for s in r:
                     if s["side"] == "sell":
-                        ssf = float(s["price"])
+                        ssf = round(float(s["price"]), digit)
                         break
             global saort, ssort
             samik, satut, saort = 0, 0, 0
@@ -498,9 +498,6 @@ class coin_trader:
                         ssort = round(sstut / ssmik, digit)
                         if sstut >= mulk / 2:
                             break
-
-            saf = round(max(saf, saort), digit)
-            ssf = round(min(ssf, ssort), digit)
 
             hf = round(max((anapara + harcanan * (km - 1) - usd) / ctm, saf * km), digit)
             if time.time() - tsiftah >= 6 * 24 * 60 * 60:
