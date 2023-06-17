@@ -771,12 +771,12 @@ while True:
 
     for i in range(6):
         afi = i
-        ataf = taf[i]
+        ataf = taf[i] + k
         if tsm[2] <= tam[i]:
             break
     for i in range(6):
         sfi = i
-        stsf = tsf[i]
+        stsf = tsf[i] - k
         if tam[2] <= tsm[i]:
             break
 
@@ -787,34 +787,35 @@ while True:
         af = min(mab / 1.01, ataf)
         sf = max(mab * 1.01, stsf)
     else:
-        if stsf >= max(kema, mab):
-            bolge = "YÜKSELİŞ"
+        if ataf >= max(kema, mab):
+            bolge = "YÜKSELİŞTE"
             p1 = usd
             m1 = min(ctm, mulk / 5 / cp)
             af = min(mab, ataf)
             sf = max(mab * 1.03, stsf)
 
-        elif ataf <= min(kema, mab):
-            bolge = "DÜŞÜŞ"
+        elif stsf <= min(kema, mab):
+            bolge = "DÜŞÜŞTE"
             p1 = min(usd, mulk / 4)
             m1 = ctm
             af = min(mab / 1.03, ataf)
             sf = max(mab, stsf)
 
         else:
-            bolge = "YATAY"
+
             p1 = min(usd, mulk / 4)
             m1 = min(ctm, mulk / 4 / cp)
             if cp > mabs[20]:
+                bolge = "SATIM BÖLGESİ"
                 af = min(mab / 1.03, ataf)
                 sf = max(mab, stsf)
             else:
+                bolge = "ALIM BÖLGESİ"
                 af = min(mab, ataf)
-                sf = max(mab * 1.01, stsf)
+                sf = max(mab * 1.03, stsf)
 
     # ************- TAF *************************************************************#
     alist = [tsf[1], tsf[0]] + taf[:afi + 1]
-
     if alist[- 1] <= af:
         for a in range(len(alist) - 1, -1, -1):
             af = alist[a] + k
