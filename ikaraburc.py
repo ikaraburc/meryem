@@ -789,30 +789,31 @@ while True:
     else:
         if ataf >= max(kema, mab):
             bolge = "YÜKSELİŞTE"
-            p1 = usd
-            m1 = min(ctm, mulk / 5 / cp)
+            p1 = min(usd, mulk / 4)
+            m1 = min(ctm, mulk / 4 / cp)
             af = min(mab, ataf)
             sf = max(mab * 1.03, stsf)
 
         elif stsf <= min(kema, mab):
             bolge = "DÜŞÜŞTE"
             p1 = min(usd, mulk / 4)
+            m1 = min(ctm, mulk / 4 / cp)
             m1 = ctm
             af = min(mab / 1.03, ataf)
             sf = max(mab, stsf)
 
-        else:
-
+        elif cp > mabs[20]:
+            bolge = "SATIM BÖLGESİ"
             p1 = min(usd, mulk / 4)
+            m1 = ctm
+            af = min(mab / 1.03, ataf)
+            sf = max(mab, stsf)
+        else:
+            p1 = usd
             m1 = min(ctm, mulk / 4 / cp)
-            if cp > mabs[20]:
-                bolge = "SATIM BÖLGESİ"
-                af = min(mab / 1.03, ataf)
-                sf = max(mab, stsf)
-            else:
-                bolge = "ALIM BÖLGESİ"
-                af = min(mab, ataf)
-                sf = max(mab * 1.03, stsf)
+            bolge = "ALIM BÖLGESİ"
+            af = min(mab, ataf)
+            sf = max(mab * 1.03, stsf)
 
     # ************- TAF *************************************************************#
     alist = [tsf[1], tsf[0]] + taf[:afi + 1]
