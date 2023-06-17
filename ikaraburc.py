@@ -766,8 +766,7 @@ while True:
     # ************- EMA STRATEJİSİ -*******************************#
     af = taf[5]
     sf = max(hf, tsf[5])
-    ksf = max(hf, saf * km)
-    ykk = 1
+    ksf = max(hf, saf * km)  
 
     for i in range(6):
         afi = i
@@ -779,26 +778,27 @@ while True:
         stsf = tsf[i] - k
         if tam[2] <= tsm[i]:
             break
-
+            
+    ykk = 0.5
+    bando = 1 + ykk/100
+    
     if abs(kemao) < ykk and abs(koran) < ykk:
         bolge = "SAÇMA YATAY"
         p1 = min(usd, mulk / 2)
         m1 = min(ctm, mulk / 2 / cp)
-        af = min(mab / 1.01, ataf)
-        sf = max(mab * 1.01, stsf)
+        af = min(mab / bando, ataf)
+        sf = max(mab * bando, stsf)
     else:
-        if ataf >= max(kema, mab):
+        p1 = min(usd, mulk / 4)
+        m1 = min(ctm, mulk / 4 / cp)
+        
+        if ataf >= mab * bando:
             bolge = "YÜKSELİŞTE"
-            p1 = min(usd, mulk / 4)
-            m1 = min(ctm, mulk / 4 / cp)
             af = min(mab, ataf)
             sf = max(mab * 1.03, stsf)
 
-        elif stsf <= min(kema, mab):
+        elif stsf <= mab / bando:
             bolge = "DÜŞÜŞTE"
-            p1 = min(usd, mulk / 4)
-            m1 = min(ctm, mulk / 4 / cp)
-            m1 = ctm
             af = min(mab / 1.03, ataf)
             sf = max(mab, stsf)
 
@@ -807,7 +807,7 @@ while True:
             p1 = min(usd, mulk / 4)
             m1 = ctm
             af = min(mab / 1.03, ataf)
-            sf = max(mab, stsf)
+            sf = max(mab/bando, stsf)
         else:
             p1 = usd
             m1 = min(ctm, mulk / 4 / cp)
