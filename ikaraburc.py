@@ -370,17 +370,17 @@ class coin_trader:
         mab = mabs[0]
         ma50 = ma50s[0]
 
-        global trend, trendy, yer, kemao, kema, kema1, ykk, koran
-        ykk = 1.005
+        global trend, trendy, yer, akoran, kema, kema1, ykk, kkoran
+        ykk = 1.01
 
-        for i in range(100):
+        for i in range(500):
             if kemas[0] / kemas[i] > ykk or kemas[i] / kemas[0] > ykk:
                 kema = kemas[i - 1]
                 kema1 = kemas[i]
                 break
 
-        kemao = round((mak - kema) / min(mak, kema) * 100, 2)
-        koran = round((kemas[0] - kema) / min(kemas[0], kema) * 100, 2)
+        akoran = round((mak - kema) / min(mak, kema) * 100, 2)
+        kkoran = round((kemas[0] - kema) / min(kemas[0], kema) * 100, 2)
 
         km = 1.03
         skema = kema
@@ -471,12 +471,12 @@ class coin_trader:
             if agider > 0:
                 for a in r:
                     if a["side"] == "buy":
-                        saf = round(float(a["price"]), digit)
+                        saf = float(a["price"])
                         break
             if sgelir > 0:
                 for s in r:
                     if s["side"] == "sell":
-                        ssf = round(float(s["price"]), digit)
+                        ssf = float(s["price"])
                         break
             global saort, ssort
             samik, satut, saort = 0, 0, 0
@@ -498,6 +498,9 @@ class coin_trader:
                         ssort = round(sstut / ssmik, digit)
                         if sstut >= mulk / 2:
                             break
+
+            saf = round(max(saf, saort), digit)
+            ssf = round(min(ssf, ssort), digit)
 
             hf = round(max((anapara + harcanan * (km - 1) - usd) / ctm, saf * km), digit)
             if time.time() - tsiftah >= 6 * 24 * 60 * 60:
@@ -649,7 +652,7 @@ def ikinci_elek():
             yero = "XXXXX"
             sil = "evet"
 
-        if 2 < kemao <= 5:
+        if 2 < akoran <= 5:
             ema_ok = "OK"
         else:
             ema_ok = "XXXXX"
@@ -674,7 +677,7 @@ def ikinci_elek():
         bc_tablo.add_row(["cp:  ", str(cp)])
         bc_tablo.add_row(["kema:", str(kema)])
         bc_tablo.add_row(["yer", [yer, yero]])
-        bc_tablo.add_row(["kemao", [kemao, ema_ok]])
+        bc_tablo.add_row(["akoran", [akoran, ema_ok]])
         bc_tablo.add_row(["m1hacim", [m1hacim, hacim_ok]])
         bc_tablo.add_row(["Trend50", [trendo]])
 
@@ -726,7 +729,7 @@ while True:
         if kzo > (km - 1) * 100:
             alim_tamam = "evet"
 
-        if alim_tamam == "evet" or (harcanan == 0 and kemao < 0):
+        if alim_tamam == "evet" or (harcanan == 0 and akoran < 0):
             ct.alsat_gecmisi()
             tbot_ozel.send_message(telegram_chat_id, str("Eldeki son mal satıldı. Yeni mal taranıyor..."))
             tbot_ozel.send_message(telegram_chat_id, str(bilanco))
@@ -763,7 +766,7 @@ while True:
     # ************- EMA STRATEJİSİ -*******************************#
     af = taf[5]
     sf = max(hf, tsf[5])
-    ksf = max(hf, saf * km)  
+    ksf = max(hf, saf * km)
 
     for i in range(6):
         afi = i
@@ -775,40 +778,35 @@ while True:
         stsf = tsf[i] - k
         if tam[2] <= tsm[i]:
             break
-            
-    ykk = 0.5
-    bando = 1 + ykk/100
-    
-    if abs(kemao) < ykk and abs(koran) < ykk:
+
+    if abs(akoran) < 1 - ykk / 100 and abs(kkoran) < 1 - ykk / 100:
         bolge = "SAÇMA YATAY"
-        p1 = min(usd, mulk / 2)
-        m1 = min(ctm, mulk / 2 / cp)
-        af = min(mab / bando, ataf)
-        sf = max(mab * bando, stsf)
     else:
         p1 = min(usd, mulk / 4)
         m1 = min(ctm, mulk / 4 / cp)
-        
-        if ataf >= mab * bando:
+
+        if stsf >= mab:
             bolge = "YÜKSELİŞTE"
             af = min(mab, ataf)
             sf = max(mab * 1.03, stsf)
 
-        elif stsf <= mab / bando:
+        elif ataf <= mab:
             bolge = "DÜŞÜŞTE"
             af = min(mab / 1.03, ataf)
             sf = max(mab, stsf)
 
-        elif cp > mabs[20]:
-            bolge = "SATIM BÖLGESİ"
+        else:
+            bolge = "YATAY"
+
+    if bolge == "SAÇMA YATAY" or bolge == "YATAY":
+        if cp > kema * ykk:
             p1 = min(usd, mulk / 4)
             m1 = ctm
             af = min(mab / 1.03, ataf)
-            sf = max(mab/bando, stsf)
+            sf = max(mab, stsf)
         else:
             p1 = usd
             m1 = min(ctm, mulk / 4 / cp)
-            bolge = "ALIM BÖLGESİ"
             af = min(mab, ataf)
             sf = max(mab * 1.03, stsf)
 
@@ -876,13 +874,13 @@ while True:
                 smiktar = m1 - yedek
 
             ct.coklu_sat()
-
+    print(kemas[0], kema, kema1)
     # ************- EKRANA PRİNT BÖLÜMÜ -*******************************#
 
     fiyatlar = PrettyTable()
     fiyatlar.field_names = [str(yer) + "-" + str(bolge), "kema " + str(kema), str("cp " + str(cp))]
-    fiyatlar.add_row(["kemao % " + str(kemao), "mak   " + str(mak), "mab   " + str(mab)])
-    fiyatlar.add_row(["Trend " + str(trend) + " %" + str(trendy), "af    " + str(round(af, digit)),
+    fiyatlar.add_row(["akoran % " + str(akoran), "mak   " + str(mak), "mab   " + str(mab)])
+    fiyatlar.add_row(["kkoran % " + str(kkoran), "af    " + str(round(af, digit)),
                       "sf    " + str(round(sf, digit))])
     fiyatlar.add_row(
         [str("ctm? " + str(round((ctm + usd / tsf[0]) / 1000, mdigit)) + "k"), "taf0  " + str(taf[0]),
