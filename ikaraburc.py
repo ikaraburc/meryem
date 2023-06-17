@@ -718,7 +718,6 @@ if ceder < 1:
 
 afiyat = cp * 0.98
 sfiyat = cp * 1.05
-
 while True:
     ct.toplu_islem()
     print(bilanco)
@@ -779,36 +778,26 @@ while True:
         if tam[2] <= tsm[i]:
             break
 
-    if abs(akoran) < 1 - ykk / 100 and abs(kkoran) < 1 - ykk / 100:
-        bolge = "SAÇMA YATAY"
-    else:
-        p1 = min(usd, mulk / 4)
-        m1 = min(ctm, mulk / 4 / cp)
+    p1 = min(usd, mulk / 4)
+    m1 = min(ctm, mulk / 4 / cp)
 
-        if stsf >= mab:
-            bolge = "YÜKSELİŞTE"
-            af = min(mab, ataf)
+    if abs(akoran) >= 0.5 or abs(kkoran) >= 0.5:
+        if ataf >= mab:
+            bolge = "YÜKSELİŞ"
             sf = max(mab * 1.03, stsf)
-
-        elif ataf <= mab:
-            bolge = "DÜŞÜŞTE"
+            af = min(kema, taf[0] + k)
+        elif stsf <= mab:
+            bolge = "DÜŞÜŞ"
             af = min(mab / 1.03, ataf)
-            sf = max(mab, stsf)
-
+            sf = max(kema, tsf[0] - k)
         else:
             bolge = "YATAY"
-
-    if bolge == "SAÇMA YATAY" or bolge == "YATAY":
-        if cp > kema * ykk:
-            p1 = min(usd, mulk / 4)
-            m1 = ctm
-            af = min(mab / 1.03, ataf)
-            sf = max(mab, stsf)
-        else:
-            p1 = usd
-            m1 = min(ctm, mulk / 4 / cp)
-            af = min(mab, ataf)
-            sf = max(mab * 1.03, stsf)
+            af = min(mab / 1.01, ataf)
+            sf = max(mab * 1.01, stsf)
+    else:
+        bolge = "SAÇMA YATAY"
+        af = min(mab / 1.005, ataf)
+        sf = max(mab * 1.005, stsf)
 
     # ************- TAF *************************************************************#
     alist = [tsf[1], tsf[0]] + taf[:afi + 1]
