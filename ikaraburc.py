@@ -784,10 +784,17 @@ while True:
     if abs(akoran) >= 0.5 or abs(kkoran) >= 0.5:
         if ataf >= mab:
             bolge = "YÜKSELİŞ"
+            p1 = usd
+            m1 = min(ctm, mulk / 4 / cp)
+            
             sf = max(mab * 1.03, stsf)
             af = min(kema, taf[0] + k)
+            
         elif stsf <= mab:
             bolge = "DÜŞÜŞ"
+            p1 = min(usd, mulk / 4)
+            m1 = ctm
+            
             af = min(mab / 1.03, ataf)
             sf = max(kema, tsf[0] - k)
         else:
