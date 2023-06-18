@@ -795,22 +795,22 @@ while True:
             p1 = usd
             af = ataf
             sf = max(mab * 1.03, stsf)
-        else:
-            bolge = "YATAY"
-            if mab > kema:
-                af = ataf
-                sf = max(mab * 1.03, stsf)
-            else:
-                af = min(mab / 1.03, ataf)
-                sf = stsf
-    else:
-        bolge = "SAÇMA YATAY"
-        if mab > kema:
+        elif mab < kema:
+            bolge = "YATAY DİP"
             af = ataf
             sf = max(mab * 1.03, stsf)
         else:
+            bolge = "YATAY TEPE"
             af = min(mab / 1.03, ataf)
             sf = stsf
+    elif mab < kema:
+        bolge = "SAÇMA YATAY DİP"
+        af = ataf
+        sf = max(mab * 1.03, stsf)
+    else:
+        bolge = "SAÇMA YATAY TEPE"
+        af = min(mab / 1.03, ataf)
+        sf = stsf
 
     # ************- TAF *************************************************************#
     alist = [tsf[1], tsf[0]] + taf[:afi + 1]
