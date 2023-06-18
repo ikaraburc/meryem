@@ -773,15 +773,18 @@ while True:
         stsf = tsf[i] - k
         if tam[2] <= tsm[i]:
             break
+            
+    p1 = min(usd, mulk / 4)
+    m1 = min(ctm, mulk / 4 / cp)
     if abs(akoran) >= 0.5 or abs(kkoran) >= 0.5:
-        p1 = min(usd, mulk / 4)
-        m1 = min(ctm, mulk / 4 / cp)
         if cp > kema * 1.01 and ataf < mab:
             bolge = "YÜKSELMİŞ DÜŞÜYOR SAT"
             af = min(mab / 1.03, ataf)
             sf = stsf
+            m1 = ctm
         elif cp < kema / 1.01 and stsf > mab:
             bolge = "DÜŞMÜŞ YÜKSELİYOR AL"
+            p1 = usd
             af = ataf
             sf = max(mab * 1.03, stsf)
         elif min(cp, ataf) > mab:
