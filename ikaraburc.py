@@ -787,10 +787,14 @@ while True:
             bolge = "ALIŞ"
             af = min(mab, ataf)
             sf = max(mab * 1.03, stsf)
-        elif max(cp, ststf) < mab:
+        elif max(cp, stsf) < mab:
             bolge = "DÜŞÜŞ"
             af = min(mab / 1.03, ataf)
             sf = max(kema, stsf)
+        else:
+            bolge = "YATAY"
+            af = min(mab/1.01, ataf)
+            sf = max(mab * 1.01, stsf)
     
     else:
         bolge = "SAÇMA YATAY"
