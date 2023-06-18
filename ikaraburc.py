@@ -682,8 +682,8 @@ def ikinci_elek():
 
         if sil != "evet":
             uygunlar.append(bc)
-        print(uygunlar)
-        # break
+            print(uygunlar)
+            break
 
     import pprint
 
@@ -762,12 +762,12 @@ while True:
     sf = max(hf, tsf[5])
     ksf = max(hf, saf * km)
 
-    for i in range(6):
+    for i in range(5):
         afi = i
         ataf = taf[i] + k
         if tsm[2] <= tam[i]:
             break
-    for i in range(6):
+    for i in range(5):
         sfi = i
         stsf = tsf[i] - k
         if tam[2] <= tsm[i]:
@@ -783,7 +783,7 @@ while True:
             m1 = min(ctm, mulk / 4 / cp)
 
             sf = max(mab * 1.03, stsf)
-            af = min(kema * 1.01, taf[0] + k)
+            af = min(kema * 1.01, ataf)
 
         elif stsf <= mab:
             bolge = "DÜŞÜŞ"
@@ -791,15 +791,15 @@ while True:
             m1 = ctm
 
             af = min(mab / 1.03, ataf)
-            sf = max(kema / 1.01, tsf[0] - k)
+            sf = max(kema / 1.01, stsf)
         else:
             bolge = "YATAY"
             af = min(mab / 1.01, ataf)
             sf = max(mab * 1.01, stsf)
     else:
         bolge = "SAÇMA YATAY"
-        af = min(mab / 1.005, ataf)
-        sf = max(mab * 1.005, stsf)
+        af = min(mab / 1.01, ataf)
+        sf = max(mab * 1.01, stsf)
 
     # ************- TAF *************************************************************#
     alist = [tsf[1], tsf[0]] + taf[:afi + 1]
@@ -865,7 +865,6 @@ while True:
                 smiktar = m1 - yedek
 
             ct.coklu_sat()
-    print(kemas[0], kema, kema1)
     # ************- EKRANA PRİNT BÖLÜMÜ -*******************************#
 
     fiyatlar = PrettyTable()
