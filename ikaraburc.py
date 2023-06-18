@@ -794,7 +794,7 @@ while True:
         elif stsf < mab:
             bolge = "DÜŞÜYOR"
             af = min(mab / 1.03, taf[0] / 1.02)
-            sf = max(tsf[0] * 1.01, stsf)
+            sf = stsf
         else:
             bolge = "YATAY"
             if mab > kema:
