@@ -772,30 +772,26 @@ while True:
         stsf = tsf[i] - k
         if tam[2] <= tsm[i]:
             break
-
-    p1 = min(usd, mulk / 4)
-    m1 = min(ctm, mulk / 4 / cp)
-
     if abs(akoran) >= 0.5 or abs(kkoran) >= 0.5:
-        if ataf >= mab:
-            bolge = "YÜKSELİŞ"
-            p1 = usd
-            m1 = min(ctm, mulk / 4 / cp)
-
-            sf = max(mab * 1.03, stsf)
-            af = min(kema * 1.01, ataf)
-
-        elif stsf <= mab:
-            bolge = "DÜŞÜŞ"
-            p1 = min(usd, mulk / 4)
-            m1 = ctm
-
+        p1 = min(usd, mulk / 4)
+        m1 = min(ctm, mulk / 4 / cp)
+        if cp > mab and ataf < mab:
+            bolge = "SATIŞ"
             af = min(mab / 1.03, ataf)
-            sf = max(kema / 1.01, stsf)
-        else:
-            bolge = "YATAY"
-            af = min(mab / 1.01, ataf)
-            sf = max(mab * 1.01, stsf)
+            sf = max(mab, stsf)
+        elif min(cp, ataf) > mab:
+            bolge = "YÜKSELİŞ"
+            af = min(kema, ataf)
+            sf = max(mab * 1.03, stsf)
+        elif cp < mab and stsf > mab:
+            bolge = "ALIŞ"
+            af = min(mab, ataf)
+            sf = max(mab * 1.03, stsf)
+        elif max(cp, ststf) < mab:
+            bolge = "DÜŞÜŞ"
+            af = min(mab / 1.03, ataf)
+            sf = max(kema, stsf)
+    
     else:
         bolge = "SAÇMA YATAY"
         af = min(mab / 1.01, ataf)
