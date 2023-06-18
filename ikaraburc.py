@@ -694,6 +694,7 @@ def ikinci_elek():
         print("COİN BULUNAMADI....")
         bc = "boş"
 
+
 # ***********************************************************************************************************************************************************
 
 emirleri_sil()
@@ -775,17 +776,17 @@ while True:
     if abs(akoran) >= 0.5 or abs(kkoran) >= 0.5:
         p1 = min(usd, mulk / 4)
         m1 = min(ctm, mulk / 4 / cp)
-        if cp > mab and ataf < mab:
+        if cp > kema * 1.01 and ataf < mab:
             bolge = "SATIŞ"
             af = min(mab / 1.03, ataf)
             sf = max(mab, stsf)
+        elif cp < kema/1.01 and stsf > mab:
+            bolge = "ALIŞ"
+            af = min(mab, ataf)
+            sf = max(mab * 1.03, stsf)
         elif min(cp, ataf) > mab:
             bolge = "YÜKSELİŞ"
             af = min(kema, ataf)
-            sf = max(mab * 1.03, stsf)
-        elif cp < mab and stsf > mab:
-            bolge = "ALIŞ"
-            af = min(mab, ataf)
             sf = max(mab * 1.03, stsf)
         elif max(cp, stsf) < mab:
             bolge = "DÜŞÜŞ"
@@ -793,13 +794,12 @@ while True:
             sf = max(kema, stsf)
         else:
             bolge = "YATAY"
-            af = min(mab/1.01, ataf)
-            sf = max(mab * 1.01, stsf)
-    
+            af = min(mab / 1.005, ataf)
+            sf = max(mab * 1.005, stsf)
     else:
         bolge = "SAÇMA YATAY"
-        af = min(mab / 1.01, ataf)
-        sf = max(mab * 1.01, stsf)
+        af = min(mab / 1.005, ataf)
+        sf = max(mab * 1.005, stsf)
 
     # ************- TAF *************************************************************#
     alist = [tsf[1], tsf[0]] + taf[:afi + 1]
