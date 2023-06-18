@@ -723,7 +723,7 @@ while True:
         if kzo > (km - 1) * 100:
             alim_tamam = "evet"
 
-        if alim_tamam == "evet" or (harcanan == 0 and akoran < 0):
+        if alim_tamam == "evet":
             ct.alsat_gecmisi()
             tbot_ozel.send_message(telegram_chat_id, str("Eldeki son mal satıldı. Yeni mal taranıyor..."))
             tbot_ozel.send_message(telegram_chat_id, str(bilanco))
