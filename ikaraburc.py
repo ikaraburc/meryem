@@ -712,7 +712,7 @@ if ceder < 1:
 
 afiyat = cp * 0.98
 sfiyat = cp * 1.05
-
+ct.toplu_islem()
 ct.satimlar_sil()
 ct.bakiye_getir()
 
@@ -720,3 +720,4 @@ sfiyat = taf[3]
 smiktar = ctm
 
 ct.coklu_sat()
+ct.toplu_islem()
