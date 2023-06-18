@@ -344,14 +344,13 @@ class coin_trader:
 
         global maks, mabs, mak, mab, ma50, kemas
 
-        makp = 4
         mabp = 12
         ma50p = 50
         maks = []
         mabs = []
         ma50s = []
         for i in range(len(kmumlar) - ma50p):
-            maks.append(round(sum(kmumlar[i:i + makp]) / makp, digit))
+            maks.append(round(kmumlar[i], digit))
             mabs.append(round(sum(kmumlar[i:i + mabp]) / mabp, digit))
             ma50s.append(round(sum(kmumlar[i:i + ma50p]) / ma50p, digit))
 
@@ -778,20 +777,20 @@ while True:
     p1 = min(usd, mulk / 4)
     m1 = min(ctm, mulk / 4 / cp)
     if abs(akoran) >= 0.5 or abs(kkoran) >= 0.5 or kkoran == 0:
-        if mak > max(mab, kema):
+        if ataf > max(mab, kema):
             bolge = "YÜKSELİŞTE"
             af = min(ataf, taf[2])
             sf = max(mab * 1.03, stsf)
-        elif mak < min(mab, kema):
+        elif stsf < min(mab, kema):
             bolge = "DÜŞÜŞTE"
             af = min(mab / 1.03, taf[0] / 1.02)
             sf = stsf
-        elif mab >= mak > kema:
+        elif mab >= ataf > kema:
             bolge = "YÜKSELMİŞ DÜŞÜYOR SAT"
             af = min(mab / 1.03, ataf)
             sf = stsf
             m1 = ctm
-        elif mab <= mak < kema:
+        elif mab <= stsf < kema:
             bolge = "DÜŞMÜŞ YÜKSELİYOR AL"
             p1 = usd
             af = ataf
