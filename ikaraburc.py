@@ -777,25 +777,29 @@ while True:
         p1 = min(usd, mulk / 4)
         m1 = min(ctm, mulk / 4 / cp)
         if cp > kema * 1.01 and ataf < mab:
-            bolge = "SATIŞ"
+            bolge = "YÜKSELMİŞ DÜŞÜYOR SAT"
             af = min(mab / 1.03, ataf)
             sf = max(mab, stsf)
         elif cp < kema / 1.01 and stsf > mab:
-            bolge = "ALIŞ"
+            bolge = "DÜŞMÜŞ YÜKSELİYOR AL"
             af = min(mab, ataf)
             sf = max(mab * 1.03, stsf)
         elif min(cp, ataf) > mab:
-            bolge = "YÜKSELİŞ"
-            af = min(kema, ataf)
+            bolge = "YÜKSELİYOR"
+            af = min(taf[0]/1.01, ataf)
             sf = max(mab * 1.03, stsf)
         elif max(cp, stsf) < mab:
-            bolge = "DÜŞÜŞ"
+            bolge = "DÜŞÜYOR"
             af = min(mab / 1.03, ataf)
-            sf = max(kema, stsf)
+            sf = max(tsf[0] * 1.01, stsf)
         else:
             bolge = "YATAY"
-            af = min(mab / 1.007, ataf)
-            sf = max(mab * 1.007, stsf)
+            if cp > kema:
+                af = min(mab, ataf)
+                sf = max(mab * 1.03, stsf)
+            else:
+                af = min(mab / 1.03, ataf)
+                sf = max(mab, stsf)
     else:
         bolge = "SAÇMA YATAY"
         af = min(mab / 1.007, ataf)
