@@ -780,7 +780,7 @@ while True:
             bolge = "SATIŞ"
             af = min(mab / 1.03, ataf)
             sf = max(mab, stsf)
-        elif cp < kema/1.01 and stsf > mab:
+        elif cp < kema / 1.01 and stsf > mab:
             bolge = "ALIŞ"
             af = min(mab, ataf)
             sf = max(mab * 1.03, stsf)
@@ -794,12 +794,12 @@ while True:
             sf = max(kema, stsf)
         else:
             bolge = "YATAY"
-            af = min(mab / 1.005, ataf)
-            sf = max(mab * 1.005, stsf)
+            af = min(mab / 1.007, ataf)
+            sf = max(mab * 1.007, stsf)
     else:
         bolge = "SAÇMA YATAY"
-        af = min(mab / 1.005, ataf)
-        sf = max(mab * 1.005, stsf)
+        af = min(mab / 1.007, ataf)
+        sf = max(mab * 1.007, stsf)
 
     # ************- TAF *************************************************************#
     alist = [tsf[1], tsf[0]] + taf[:afi + 1]
