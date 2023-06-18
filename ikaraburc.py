@@ -758,7 +758,7 @@ while True:
     # ************- EMA STRATEJİSİ -*******************************#
     af = taf[5]
     sf = max(hf, tsf[5])
-    ksf = max(hf, sonaort * km)
+    ksf = max(hf, saort * km)
 
     for i in range(5):
         afi = i
