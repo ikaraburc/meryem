@@ -776,7 +776,7 @@ while True:
             
     p1 = min(usd, mulk / 4)
     m1 = min(ctm, mulk / 4 / cp)
-    if abs(akoran) >= 0.5 or abs(kkoran) >= 0.5:
+    if abs(akoran) >= 0.5 or abs(kkoran) >= 0.5 or kkoran == 0:
         if cp > kema * 1.01 and ataf < mab:
             bolge = "YÜKSELMİŞ DÜŞÜYOR SAT"
             af = min(mab / 1.03, ataf)
