@@ -795,7 +795,7 @@ while True:
             p1 = usd
             af = ataf
             sf = max(mab * 1.03, stsf)
-        elif mab < kema:
+        elif stsf < kema:
             bolge = "YATAY DİP"
             af = ataf
             sf = max(mab * 1.03, stsf)
