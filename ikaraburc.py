@@ -617,6 +617,7 @@ def birinci_elek():
 
     print("coin sayısı ", len(toplu))
     toplu.sort(key=lambda x: x[2])
+    toplu.reverse()
     import pprint
     pprint.pp(toplu)
 
@@ -652,7 +653,7 @@ def ikinci_elek():
             yero = "XXXXX"
             sil = "evet"
 
-        if 2 < akoran <= 5:
+        if -1 <= akoran < 1 and cp >= mabs[5]:
             ema_ok = "OK"
         else:
             ema_ok = "XXXXX"
@@ -668,18 +669,12 @@ def ikinci_elek():
             print("Yeni çıkan coin, silindi...", bc)
             sil = "evet"
 
-        trendo = "Yükseliş OK"
-        if max(mak, cp) < ma50:
-            trendo = "XXXXX"
-            sil = "evet"
-
         bc_tablo.field_names = [str(bc) + " g%: " + str(gunluky), "of" + str(len(toplu))]
         bc_tablo.add_row(["cp:  ", str(cp)])
         bc_tablo.add_row(["kema:", str(kema)])
         bc_tablo.add_row(["yer", [yer, yero]])
         bc_tablo.add_row(["akoran", [akoran, ema_ok]])
         bc_tablo.add_row(["m1hacim", [m1hacim, hacim_ok]])
-        bc_tablo.add_row(["Trend50", [trendo]])
 
         print(bc_tablo)
 
@@ -687,8 +682,8 @@ def ikinci_elek():
 
         if sil != "evet":
             uygunlar.append(bc)
-            print(uygunlar)
-            break
+        print(uygunlar)
+        # break
 
     import pprint
 
@@ -698,7 +693,6 @@ def ikinci_elek():
     else:
         print("COİN BULUNAMADI....")
         bc = "boş"
-
 
 # ***********************************************************************************************************************************************************
 
@@ -718,6 +712,7 @@ if ceder < 1:
 
 afiyat = cp * 0.98
 sfiyat = cp * 1.05
+
 while True:
     ct.toplu_islem()
     print(bilanco)
@@ -786,17 +781,17 @@ while True:
             bolge = "YÜKSELİŞ"
             p1 = usd
             m1 = min(ctm, mulk / 4 / cp)
-            
+
             sf = max(mab * 1.03, stsf)
-            af = min(kema, taf[0] + k)
-            
+            af = min(kema * 1.01, taf[0] + k)
+
         elif stsf <= mab:
             bolge = "DÜŞÜŞ"
             p1 = min(usd, mulk / 4)
             m1 = ctm
-            
+
             af = min(mab / 1.03, ataf)
-            sf = max(kema, tsf[0] - k)
+            sf = max(kema / 1.01, tsf[0] - k)
         else:
             bolge = "YATAY"
             af = min(mab / 1.01, ataf)
