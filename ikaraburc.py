@@ -777,27 +777,27 @@ while True:
     p1 = min(usd, mulk / 4)
     m1 = min(ctm, mulk / 4 / cp)
     if abs(akoran) >= 0.5 or abs(kkoran) >= 0.5 or kkoran == 0:
-        if (ataf < mab) and (cp > kema * 1.01 or stsf >= kema):
+        if (ataf <= mab) and (mab > kema or stsf >= kema):
             bolge = "YÜKSELMİŞ DÜŞÜYOR SAT"
             af = min(mab / 1.03, ataf)
             sf = stsf
             m1 = ctm
-        elif (stsf > mab) and (cp < kema / 1.01 or ataf <= kema):
+        elif (stsf >= mab) and (mab < kema or ataf <= kema):
             bolge = "DÜŞMÜŞ YÜKSELİYOR AL"
             p1 = usd
             af = ataf
             sf = max(mab * 1.03, stsf)
-        elif min(cp, ataf) > mab:
+        elif ataf > mab:
             bolge = "YÜKSELİYOR"
             af = min(taf[0] / 1.01, ataf)
             sf = max(mab * 1.03, stsf)
-        elif max(cp, stsf) < mab:
+        elif stsf < mab:
             bolge = "DÜŞÜYOR"
             af = min(mab / 1.03, taf[0] / 1.02)
             sf = max(tsf[0] * 1.01, stsf)
         else:
             bolge = "YATAY"
-            if cp > kema:
+            if mab > kema:
                 af = ataf
                 sf = max(mab * 1.03, stsf)
             else:
@@ -805,8 +805,12 @@ while True:
                 sf = stsf
     else:
         bolge = "SAÇMA YATAY"
-        af = min(mab / 1.007, ataf)
-        sf = max(mab * 1.007, stsf)
+        if mab > kema:
+            af = ataf
+            sf = max(mab * 1.03, stsf)
+        else:
+            af = min(mab / 1.03, ataf)
+            sf = stsf
 
     # ************- TAF *************************************************************#
     alist = [tsf[1], tsf[0]] + taf[:afi + 1]
