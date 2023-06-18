@@ -344,13 +344,14 @@ class coin_trader:
 
         global maks, mabs, mak, mab, ma50, kemas
 
+        makp = 4
         mabp = 12
         ma50p = 50
         maks = []
         mabs = []
         ma50s = []
         for i in range(len(kmumlar) - ma50p):
-            maks.append(round(kmumlar[i], digit))
+            maks.append(round(sum(kmumlar[i:i + makp]) / makp, digit))
             mabs.append(round(sum(kmumlar[i:i + mabp]) / mabp, digit))
             ma50s.append(round(sum(kmumlar[i:i + ma50p]) / ma50p, digit))
 
@@ -777,20 +778,20 @@ while True:
     p1 = min(usd, mulk / 4)
     m1 = min(ctm, mulk / 4 / cp)
     if abs(akoran) >= 0.5 or abs(kkoran) >= 0.5 or kkoran == 0:
-        if ataf > max(mab, kema):
+        if mak > max(mab, kema):
             bolge = "YÜKSELİŞTE"
             af = min(ataf, taf[2])
             sf = max(mab * 1.03, stsf)
-        elif stsf < min(mab, kema):
+        elif mak < min(mab, kema):
             bolge = "DÜŞÜŞTE"
             af = min(mab / 1.03, taf[0] / 1.02)
             sf = stsf
-        elif mab >= ataf > kema:
+        elif mab >= mak > kema:
             bolge = "YÜKSELMİŞ DÜŞÜYOR SAT"
             af = min(mab / 1.03, ataf)
             sf = stsf
             m1 = ctm
-        elif mab <= stsf < kema:
+        elif mab <= mak < kema:
             bolge = "DÜŞMÜŞ YÜKSELİYOR AL"
             p1 = usd
             af = ataf
@@ -803,14 +804,10 @@ while True:
             bolge = "YATAY TEPE"
             af = min(mab / 1.03, ataf)
             sf = stsf
-    elif mab < kema:
-        bolge = "SAÇMA YATAY DİP"
-        af = ataf
-        sf = max(mab * 1.03, stsf)
     else:
-        bolge = "SAÇMA YATAY TEPE"
-        af = min(mab / 1.03, ataf)
-        sf = stsf
+        bolge = "SAÇMA YATAY"
+        af = min(mab / 1.01, tsf[0] / 1.01, ataf)
+        sf = max(mab * 1.01, taf[0] / 1.01, stsf)
 
     # ************- TAF *************************************************************#
     alist = [tsf[1], tsf[0]] + taf[:afi + 1]
