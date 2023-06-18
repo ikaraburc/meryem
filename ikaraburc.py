@@ -719,5 +719,9 @@ ct.bakiye_getir()
 sfiyat = taf[3]
 smiktar = ctm
 
+
+
+sfiyat1 = max(sfiyat * 1.05, ksf, tsf[9] - k)
+smiktar1 = 0
 ct.coklu_sat()
 ct.toplu_islem()
