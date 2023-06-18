@@ -779,27 +779,27 @@ while True:
         if cp > kema * 1.01 and ataf < mab:
             bolge = "YÜKSELMİŞ DÜŞÜYOR SAT"
             af = min(mab / 1.03, ataf)
-            sf = max(mab, stsf)
+            sf = stsf
         elif cp < kema / 1.01 and stsf > mab:
             bolge = "DÜŞMÜŞ YÜKSELİYOR AL"
-            af = min(mab, ataf)
+            af = ataf
             sf = max(mab * 1.03, stsf)
         elif min(cp, ataf) > mab:
             bolge = "YÜKSELİYOR"
-            af = min(taf[0]/1.01, ataf)
+            af = min(taf[0] / 1.01, ataf)
             sf = max(mab * 1.03, stsf)
         elif max(cp, stsf) < mab:
             bolge = "DÜŞÜYOR"
-            af = min(mab / 1.03, ataf)
+            af = min(mab / 1.03, taf[0]/1.02)
             sf = max(tsf[0] * 1.01, stsf)
         else:
             bolge = "YATAY"
             if cp > kema:
-                af = min(mab, ataf)
+                af = ataf
                 sf = max(mab * 1.03, stsf)
             else:
                 af = min(mab / 1.03, ataf)
-                sf = max(mab, stsf)
+                sf = stsf
     else:
         bolge = "SAÇMA YATAY"
         af = min(mab / 1.007, ataf)
