@@ -721,7 +721,8 @@ smiktar = ctm
 
 
 
-sfiyat1 = max(sfiyat * 1.05, ksf, tsf[9] - k)
+sfiyat1 = taf[5]
 smiktar1 = 0
 ct.coklu_sat()
-ct.toplu_islem()
+while True:
+    ct.toplu_islem()
