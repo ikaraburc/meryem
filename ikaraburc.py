@@ -70,7 +70,7 @@ class coin_trader:
 
                 continue
 
-        global cp, c24, tepe24, dip24, k, cpa, cps
+        global cp, c24, tepe24, dip24, k, cpa, cps, ott_percent
 
         cp, tepe24, dip24, c24 = float(r[0]["last"]), float(r[0]["high_24h"]), float(r[0]["low_24h"]), float(
             r[0]["change_percentage"])
@@ -78,6 +78,7 @@ class coin_trader:
         k = 1 / 10 ** digit
         if (cp + k) / cp >= 1.01:
             k = 0
+        ott_percent = max(1.5, round(cps / cpa, 2))
 
     def bakiye_getir(self):
 
@@ -330,73 +331,54 @@ class coin_trader:
                 print("Bağlantı bekleniyor...")
                 continue
 
-        global tmumlar, dmumlar, kmumlar, hacimler
+        global kmumlar, hacimler
 
-        tmumlar = [float(i[3]) for i in r]
-        dmumlar = [float(i[4]) for i in r]
         kmumlar = [float(i[2]) for i in r]
         hacimler = [float(i[1]) for i in r]
-
-        tmumlar.reverse()
-        dmumlar.reverse()
         kmumlar.reverse()
         hacimler.reverse()
 
-        global maks, mabs, mak, mab, ma50, kemas
-
+        global maks, mak, ott, otty, otta, son_dip, son_top, ott_yer, mabs, mab, yott_say
+        makp = 2
+        ottk = (1 + ott_percent / 100)
+        bant_percent = (1 + 0.0015)
         mabp = 12
-        ma50p = 50
         maks = []
         mabs = []
-        ma50s = []
-        for i in range(len(kmumlar) - ma50p):
-            maks.append(round(kmumlar[i], digit))
+        for i in range(len(kmumlar) - mabp):
+            maks.append(round(sum(kmumlar[i:i + makp]) / makp, digit))
             mabs.append(round(sum(kmumlar[i:i + mabp]) / mabp, digit))
-            ma50s.append(round(sum(kmumlar[i:i + ma50p]) / ma50p, digit))
-
-        kyer = 0
-        kemas = []
-        for i in range(len(mabs)):
-            if maks[i] < mabs[i]:
-                if kyer == 1:
-                    kemas.append(mabs[i])
-                kyer = -1
-            else:
-                if kyer == -1:
-                    kemas.append(mabs[i])
-                kyer = 1
 
         mak = maks[0]
         mab = mabs[0]
-        ma50 = ma50s[0]
 
-        global trend, trendy, yer, akoran, kema, kema1, ykk, kkoran
-        ykk = 1.01
-
-        for i in range(500):
-            if kemas[0] / kemas[i] > ykk or kemas[i] / kemas[0] > ykk:
-                kema = kemas[i - 1]
-                kema1 = kemas[i]
+        for i in range(len(maks)):
+            if max(maks[:i + 1]) / min(maks[:i + 1]) >= ottk:
+                son_dip = min(maks[:i])
+                son_top = max(maks[:i])
                 break
-
-        akoran = round((mak - kema) / min(mak, kema) * 100, 2)
-        kkoran = round((kemas[0] - kema) / min(kemas[0], kema) * 100, 2)
-
-        km = 1.03
-        skema = kema
-        for i in kemas:
-            if skema / i >= km or i / skema >= km:
+        for i in range(len(maks)):
+            if maks[i] == son_dip:
+                son_dip_i = i
                 break
-
-        if skema / i >= km:
-            yer = "Tepe"
+        for i in range(len(maks)):
+            if maks[i] == son_top:
+                son_top_i = i
+                break
+        if son_dip_i < son_top_i:
+            ott = round(son_dip * ottk, digit)
+            ott_yer = "düşüyor"
+            if maks[0] > son_dip:
+                ott_yer = "Düşüşten dönüyor"
         else:
-            yer = "Dip"
+            ott = round(son_top / ottk, digit)
+            ott_yer = "yükseliyor"
+            if maks[0] < son_top:
+                ott_yer = "yükselişten dönüyor"
 
-        trendy = round((mak - ma50) / min(mak, ma50) * 100, 2)
-        trend = "Yükseliş"
-        if cp < ma50:
-            trend = "Düşüş"
+        otty = round(ott * bant_percent, digit)
+        otta = round(ott / bant_percent, digit)
+        yott_say = min(son_dip_i, son_top_i)
 
     def alsat_gecmisi(self):
         # emirleri listele
@@ -527,24 +509,6 @@ class coin_trader:
         mbuys = round(sum([float(i["amount"]) * float(i["price"]) for i in r if i["side"] == "buy"]), 2)
         msells = round(sum([float(i["amount"]) * float(i["price"]) for i in r if i["side"] == "sell"]), 2)
 
-    def toplu_islem(self):
-        T1 = threading.Thread(target=self.coin_fiyat)
-        T2 = threading.Thread(target=self.bakiye_getir)
-        T3 = threading.Thread(target=self.tahta_getir)
-        T4 = threading.Thread(target=self.mumlar)
-
-        T1.start()
-        T2.start()
-        T3.start()
-        T4.start()
-
-        T1.join()
-        T2.join()
-        T3.join()
-        T4.join()
-
-        self.alsat_gecmisi()
-
 
 def emirleri_sil():
     host = "https://api.gateio.ws"
@@ -650,7 +614,7 @@ def ikinci_elek():
         T2 = threading.Thread(target=ct.coin_fiyat)
         T3 = threading.Thread(target=ct.mumlar)
         T4 = threading.Thread(target=ct.market_hacim)
-        T5 = threading.Thread(target=ct.tahta_getir())
+        T5 = threading.Thread(target=ct.tahta_getir)
 
         T1.start()
         T2.start()
@@ -664,13 +628,22 @@ def ikinci_elek():
         T4.join()
         T5.join()
 
+        yer = "BOŞ"
+        for i in range(len(maks)):
+            if mabs[0] / mabs[i] >= 1.05:
+                yer = "TEPE"
+                break
+            if mabs[i] / mabs[0] >= 1.05:
+                yer = "DİP"
+                break
+
         yero = "OK"
         gunluky = round((cp / dip24 - 1) * 100, 2)
-        if yer == "Tepe":
+        if yer == "TEPE":
             yero = "XXXXX"
             sil = "evet"
 
-        if 0 < akoran < 2 and taf[0] > mabs[3]:
+        if (mabs[0] * 1.02) >= taf[0] > mabs[3]:
             ema_ok = "OK"
         else:
             ema_ok = "XXXXX"
@@ -682,15 +655,15 @@ def ikinci_elek():
             hacim_ok = "XXXXX"
             sil = "evet"
 
-        if len(tmumlar) < 800:
+        if len(kmumlar) < 800:
             print("Yeni çıkan coin, silindi...", bc)
             sil = "evet"
 
         bc_tablo.field_names = [str(bc) + " g%: " + str(gunluky), "of" + str(len(toplu))]
         bc_tablo.add_row(["cp:  ", str(cp)])
-        bc_tablo.add_row(["kema:", str(kema)])
+        bc_tablo.add_row(["ott:", str(ott)])
         bc_tablo.add_row(["yer", [yer, yero]])
-        bc_tablo.add_row(["akoran", [akoran, ema_ok]])
+        bc_tablo.add_row(["kema?", [ema_ok]])
         bc_tablo.add_row(["m1hacim", [m1hacim, hacim_ok]])
 
         print(bc_tablo)
@@ -721,7 +694,6 @@ ct = coin_trader(str(scoin))
 ct.coin_digit()
 ct.coin_fiyat()
 ct.bakiye_getir()
-ct.mumlar()
 
 alim_tamam = "evet"
 if ceder < 1:
@@ -732,7 +704,23 @@ afiyat = cp * 0.98
 sfiyat = cp * 1.05
 
 while True:
-    ct.toplu_islem()
+    T1 = threading.Thread(target=ct.coin_fiyat)
+    T2 = threading.Thread(target=ct.bakiye_getir)
+    T3 = threading.Thread(target=ct.tahta_getir)
+    T1.start()
+    T2.start()
+    T3.start()
+    T1.join()
+    T2.join()
+    T3.join()
+
+    T4 = threading.Thread(target=ct.mumlar)
+    T5 = threading.Thread(target=ct.alsat_gecmisi)
+    T4.start()
+    T5.start()
+    T4.join()
+    T5.join()
+
     print(bilanco)
 
     if agider >= mulk / 5:
@@ -793,34 +781,25 @@ while True:
 
     p1 = min(usd, mulk / 4)
     m1 = min(ctm, mulk / 4 / cp)
-    if abs(akoran) >= 0.5 or abs(kkoran) >= 0.5 or kkoran == 0:
-        if ataf > max(mab, kema):
-            bolge = "YÜKSELİŞTE"
-            af = min(ataf, taf[2])
-            sf = max(mab * 1.03, stsf)
-        elif stsf < min(mab, kema):
-            bolge = "DÜŞÜŞTE"
-            af = min(mab / 1.03, taf[0] / 1.02)
-            sf = stsf
-        elif mab >= ataf > kema and afi >= sfi:
-            bolge = "YÜKSELMİŞ DÜŞÜYOR SAT"
-            af = min(mab / 1.03, ataf)
-            sf = tsf[0]
-            m1 = ctm
-        elif mab <= stsf < kema and afi <= sfi:
-            bolge = "DÜŞMÜŞ YÜKSELİYOR AL"
-            p1 = usd
-            af = taf[0]
-            sf = max(mab * 1.03, stsf)
-        else:
-            bolge = "YATAY"
-            af = min(mab / 1.02, ataf)
-            sf = max(mab * 1.02, stsf)
 
-    else:
+    if yott_say > 5:
         bolge = "SAÇMA YATAY"
-        af = min(mab / 1.01, tsf[0] / 1.01, ataf)
-        sf = max(mab * 1.01, taf[0] / 1.01, stsf)
+        af = min(ott / 1.005, ataf)
+        sf = max(ott * 1.005, stsf)
+    elif stsf < ott:
+        bolge = "DÜŞÜŞ"
+        af = taf[0] / km
+        sf = stsf
+        m1 = ctm
+    elif ataf > ott:
+        bolge = "YÜKSELİŞ"
+        af = ataf
+        sf = tsf[0] * km
+        p1 = usd
+    else:
+        bolge = "YATAY"
+        af = taf[0] / km
+        sf = tsf[0] * km
 
     # ************- TAF *************************************************************#
     alist = [tsf[1], tsf[0]] + taf[:afi + 1]
@@ -887,11 +866,10 @@ while True:
 
             ct.coklu_sat()
     # ************- EKRANA PRİNT BÖLÜMÜ -*******************************#
-
+    ott_oran = round((cp - ott) / min(cp, ott) * 100, 2)
     fiyatlar = PrettyTable()
-    fiyatlar.field_names = [str(yer) + "-" + str(bolge), "kema " + str(kema), str("cp " + str(cp))]
-    fiyatlar.add_row(["akoran % " + str(akoran), "mak   " + str(mak), "mab   " + str(mab)])
-    fiyatlar.add_row(["kkoran % " + str(kkoran), "af    " + str(round(af, digit)),
+    fiyatlar.field_names = [str(bolge) + " yott: " + str(yott_say), "ott " + str(ott), str("cp " + str(cp))]
+    fiyatlar.add_row(["ott% " + str(ott_oran), "af    " + str(round(af, digit)),
                       "sf    " + str(round(sf, digit))])
     fiyatlar.add_row(
         [str("ctm? " + str(round((ctm + usd / tsf[0]) / 1000, mdigit)) + "k"), "taf0  " + str(taf[0]),
