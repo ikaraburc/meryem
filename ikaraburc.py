@@ -471,12 +471,12 @@ class coin_trader:
             if agider > 0:
                 for a in r:
                     if a["side"] == "buy":
-                        saf = round(float(a["price"]),digit)
+                        saf = round(float(a["price"]), digit)
                         break
             if sgelir > 0:
                 for s in r:
                     if s["side"] == "sell":
-                        ssf = round(float(s["price"]),digit)
+                        ssf = round(float(s["price"]), digit)
                         break
             global saort, ssort
             samik, satut, saort = 0, 0, 0
@@ -511,6 +511,21 @@ class coin_trader:
         bilanco.add_row(["Apara= " + str(round(anapara, 2)), "Sgelir= " + str(round(sgelir, 2))])
         bilanco.add_row([" Mülk= " + str(round(mulk, 2)), "%" + str(kzo) + " " + str(kzt) + "$"])
         bilanco.align[str(self.coin).upper()] = "l"
+
+    def market_hacim(self):
+        host = "https://api.gateio.ws"
+        prefix = "/api/v4"
+        headers = {'Accept': 'application/json', 'Content-Type': 'application/json'}
+
+        url = '/spot/trades'
+        import time
+        zaman = int(time.time() - 30 * 60)
+        query_param = 'currency_pair=' + self.coin + "&from=" + str(zaman) + '&limit=1000'
+
+        r = requests.request('GET', host + prefix + url + "?" + query_param, headers=headers).json()
+        global mbuys, msells
+        mbuys = round(sum([float(i["amount"]) * float(i["price"]) for i in r if i["side"] == "buy"]), 2)
+        msells = round(sum([float(i["amount"]) * float(i["price"]) for i in r if i["side"] == "sell"]), 2)
 
     def toplu_islem(self):
         T1 = threading.Thread(target=self.coin_fiyat)
@@ -606,8 +621,7 @@ def birinci_elek():
                 and "5L" not in coin_liste[i]["currency_pair"] \
                 and float(coin_liste[i]["last"]) > 0 \
                 and float(coin_liste[i]["low_24h"]) > 0 \
-                and float(coin_liste[i]["quote_volume"]) > 15000 \
-                and float(coin_liste[i]["change_percentage"]) > 0 \
+                and float(coin_liste[i]["quote_volume"]) > 25000 \
                 and float(coin_liste[i]["last"]) / float(coin_liste[i]["low_24h"]) > 1.05:
             toplu.append([coin_liste[i]["currency_pair"], float(coin_liste[i]["last"]),
                           round(float(coin_liste[i]["last"]) / float(coin_liste[i]["low_24h"]), 2)])
@@ -635,14 +649,20 @@ def ikinci_elek():
         T1 = threading.Thread(target=ct.coin_digit)
         T2 = threading.Thread(target=ct.coin_fiyat)
         T3 = threading.Thread(target=ct.mumlar)
+        T4 = threading.Thread(target=ct.market_hacim)
+        T5 = threading.Thread(target=ct.tahta_getir())
 
         T1.start()
         T2.start()
         T3.start()
+        T4.start()
+        T5.start()
 
         T1.join()
         T2.join()
         T3.join()
+        T4.join()
+        T5.join()
 
         yero = "OK"
         gunluky = round((cp / dip24 - 1) * 100, 2)
@@ -650,15 +670,15 @@ def ikinci_elek():
             yero = "XXXXX"
             sil = "evet"
 
-        if -1 <= akoran < 1 and cp >= mabs[5]:
+        if 0 < akoran < 2 and taf[0] > mabs[3]:
             ema_ok = "OK"
         else:
             ema_ok = "XXXXX"
             sil = "evet"
 
-        m1hacim = round(sum(hacimler[:12]), 2)
+        m1hacim = mbuys
         hacim_ok = "OK"
-        if m1hacim < 2000:
+        if mbuys < max(msells, 1000) and tam[5] < tsm[5]:
             hacim_ok = "XXXXX"
             sil = "evet"
 
@@ -782,24 +802,21 @@ while True:
             bolge = "DÜŞÜŞTE"
             af = min(mab / 1.03, taf[0] / 1.02)
             sf = stsf
-        elif mab >= ataf > kema:
+        elif mab >= ataf > kema and afi >= sfi:
             bolge = "YÜKSELMİŞ DÜŞÜYOR SAT"
             af = min(mab / 1.03, ataf)
-            sf = stsf
+            sf = tsf[0]
             m1 = ctm
-        elif mab <= stsf < kema:
+        elif mab <= stsf < kema and afi <= sfi:
             bolge = "DÜŞMÜŞ YÜKSELİYOR AL"
             p1 = usd
-            af = ataf
-            sf = max(mab * 1.03, stsf)
-        elif mab < mabs[12]:
-            bolge = "YATAY DİP"
-            af = ataf
+            af = taf[0]
             sf = max(mab * 1.03, stsf)
         else:
-            bolge = "YATAY TEPE"
-            af = min(mab / 1.03, ataf)
-            sf = stsf
+            bolge = "YATAY"
+            af = min(mab / 1.02, ataf)
+            sf = max(mab * 1.02, stsf)
+
     else:
         bolge = "SAÇMA YATAY"
         af = min(mab / 1.01, tsf[0] / 1.01, ataf)
