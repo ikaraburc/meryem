@@ -875,12 +875,10 @@ while True:
     ott_oran = round((cp - ott) / min(cp, ott) * 100, 2)
     fiyatlar = PrettyTable()
     fiyatlar.field_names = [str(bolge) + " yott: " + str(yott_say), "ott " + str(ott), str("cp " + str(cp))]
-    fiyatlar.add_row(["ott% " + str(ott_oran), "af    " + str(round(af, digit)),
-                      "sf    " + str(round(sf, digit))])
-    fiyatlar.add_row(
-        [str("ctm? " + str(round((ctm + usd / tsf[0]) / 1000, mdigit)) + "k"), "taf0  " + str(taf[0]),
-         "tsf0  " + str(tsf[0])])
-    fiyatlar.add_row(["ceder " + str(round(ceder, 2)), "saf   " + str(saf), "ssf   " + str(ssf)])
+    fiyatlar.add_row(["ott% " + str(ott_oran), "af    " + str(round(af, digit)), "sf    " + str(round(sf, digit))])
+    fiyatlar.add_row(["kesti: " + str(kesti), "taf0  " + str(taf[0]), "tsf0  " + str(tsf[0])])
+    fiyatlar.add_row([str("ctm? " + str(round((ctm + usd / tsf[0]) / 1000, mdigit)) + "k"), "saf   " + str(saf),
+                      "ssf   " + str(ssf)])
     fiyatlar.add_row(["mülk  " + str(round(mulk, 2)), "ksf " + str(round(ksf, digit)),
                       "ksf% " + str(round((ksf / cp - 1) * 100, 2)) + " " + str(sonislem)])
 
