@@ -332,13 +332,14 @@ class coin_trader:
                 continue
 
         global kmumlar, hacimler
-
+        tmumlar = [float(i[3]) for i in r]
+        dmumlar = [float(i[4]) for i in r]
         kmumlar = [float(i[2]) for i in r]
         hacimler = [float(i[1]) for i in r]
         kmumlar.reverse()
         hacimler.reverse()
 
-        global maks, mak, ott, otty, otta, son_dip, son_top, ott_yer, mabs, mab, yott_say
+        global maks, mak, ott, otty, otta, son_dip, son_top, ott_yer, mabs, mab, yott_say, kesti
         makp = 2
         ottk = (1 + ott_percent / 100)
         bant_percent = (1 + 0.0015)
@@ -379,6 +380,11 @@ class coin_trader:
         otty = round(ott * bant_percent, digit)
         otta = round(ott / bant_percent, digit)
         yott_say = min(son_dip_i, son_top_i)
+
+        kesti = 0
+        for i in range(yott_say):
+            if (tmumlar[i] >= ott and dmumlar[i] <= ott):
+                kesti += 1
 
     def alsat_gecmisi(self):
         # emirleri listele
@@ -782,7 +788,7 @@ while True:
     p1 = min(usd, mulk / 4)
     m1 = min(ctm, mulk / 4 / cp)
 
-    if yott_say > 5:
+    if kesti > 1:
         bolge = "SAÇMA YATAY"
         af = min(ott / 1.005, ataf)
         sf = max(ott * 1.005, stsf)
