@@ -70,7 +70,7 @@ class coin_trader:
 
                 continue
 
-        global cp, c24, tepe24, dip24, k, cpa, cps, ott_percent
+        global cp, c24, tepe24, dip24, k, cpa, cps, ott_k
 
         cp, tepe24, dip24, c24 = float(r[0]["last"]), float(r[0]["high_24h"]), float(r[0]["low_24h"]), float(
             r[0]["change_percentage"])
@@ -78,7 +78,7 @@ class coin_trader:
         k = 1 / 10 ** digit
         if (cp + k) / cp >= 1.01:
             k = 0
-        ott_percent = max(1.5, round(cps / cpa, 2))
+        ott_k = max(1.5, round(cps / cpa, 2))
 
     def bakiye_getir(self):
 
@@ -331,7 +331,7 @@ class coin_trader:
                 print("Bağlantı bekleniyor...")
                 continue
 
-        global kmumlar, hacimler
+        global kmumlar, hacimler, tmumlar, dmumlar
         tmumlar = [float(i[3]) for i in r]
         dmumlar = [float(i[4]) for i in r]
         kmumlar = [float(i[2]) for i in r]
@@ -341,7 +341,7 @@ class coin_trader:
 
         global maks, mak, ott, otty, otta, son_dip, son_top, ott_yer, mabs, mab, yott_say, kesti
         makp = 2
-        ottk = (1 + ott_percent / 100)
+        ottk = (1 + ott_k / 100)
         bant_percent = (1 + 0.0015)
         mabp = 12
         maks = []
@@ -776,19 +776,22 @@ while True:
 
     p1 = min(usd, mulk / 4)
     m1 = min(ctm, mulk / 4 / cp)
+    bando = (1 + ott_k / 100)
+    orta = round((taf[0] + tsf[0]) / 2, digit)
 
-    if kesti > 1:
-        bolge = "SAÇMA YATAY"
-        af = min(ott / 1.005, ataf)
-        sf = max(ott * 1.005, stsf)
-    elif stsf < ott:
+    if (saf / bando <= orta <= saf * bando) or (ssf / bando <= orta <= ssf * bando):
+        if tsf[0] > tmumlar[1]:
+            af = ataf;
+        if taf[0] <= min(dmumlar[1], saf) or (saf * (1 + ott_k / 200) <= taf[0] <= min(saf, dmumlar[1])):
+            sf = stsf
+    elif tsf[0] <= ott:
         bolge = "DÜŞÜŞ"
         af = taf[0] / km
-        sf = stsf
+        sf = max(stsf, stsf)
         m1 = ctm
-    elif ataf > ott:
+    elif taf[0] >= ott:
         bolge = "YÜKSELİŞ"
-        af = ataf
+        af = min(ataf, ott)
         sf = tsf[0] * km
         p1 = usd
     else:
