@@ -419,7 +419,7 @@ class coin_trader:
                 print("Bağlantı bekleniyor...")
                 continue
 
-        global bilanco, sonislem, saf, ssf, mf, kzo, kzt, anapara, harcanan, agider, sgelir, hf, km
+        global bilanco, sonislem, saf, ssf, mf, kzo, kzt, anapara, harcanan, agider, sgelir, hf, km, saort
 
         miktar = ctm
         amiktar = 0
