@@ -419,7 +419,7 @@ class coin_trader:
                 print("Bağlantı bekleniyor...")
                 continue
 
-        global bilanco, sonislem, saf, ssf, mf, kzo, kzt, anapara, harcanan, agider, sgelir, hf, km, saort
+        global bilanco, sonislem, saf, ssf, mf, kzo, kzt, anapara, harcanan, agider, sgelir, hf, km
 
         miktar = ctm
         amiktar = 0
@@ -514,6 +514,27 @@ class coin_trader:
         global mbuys, msells
         mbuys = round(sum([float(i["amount"]) * float(i["price"]) for i in r if i["side"] == "buy"]), 2)
         msells = round(sum([float(i["amount"]) * float(i["price"]) for i in r if i["side"] == "sell"]), 2)
+
+    def toplu_islem(self):
+        T1 = threading.Thread(target=self.coin_fiyat)
+        T2 = threading.Thread(target=self.bakiye_getir)
+        T3 = threading.Thread(target=self.mumlar)
+        T4 = threading.Thread(target=self.market_hacim)
+        T5 = threading.Thread(target=self.tahta_getir)
+
+        T1.start()
+        T2.start()
+        T3.start()
+        T4.start()
+        T5.start()
+
+        T1.join()
+        T2.join()
+        T3.join()
+        T4.join()
+        T5.join()
+
+        self.alsat_gecmisi()
 
 
 def emirleri_sil():
@@ -615,24 +636,8 @@ def ikinci_elek():
         bc = toplu[0][0]
 
         ct = coin_trader(bc)
-
-        T1 = threading.Thread(target=ct.coin_digit)
-        T2 = threading.Thread(target=ct.coin_fiyat)
-        T3 = threading.Thread(target=ct.mumlar)
-        T4 = threading.Thread(target=ct.market_hacim)
-        T5 = threading.Thread(target=ct.tahta_getir)
-
-        T1.start()
-        T2.start()
-        T3.start()
-        T4.start()
-        T5.start()
-
-        T1.join()
-        T2.join()
-        T3.join()
-        T4.join()
-        T5.join()
+        ct.coin_digit()
+        ct.toplu_islem()
 
         yer = "BOŞ"
         for i in range(len(maks)):
@@ -698,8 +703,7 @@ son_coin()
 
 ct = coin_trader(str(scoin))
 ct.coin_digit()
-ct.coin_fiyat()
-ct.bakiye_getir()
+ct.toplu_islem()
 
 alim_tamam = "evet"
 if ceder < 1:
@@ -710,22 +714,7 @@ afiyat = cp * 0.98
 sfiyat = cp * 1.05
 
 while True:
-    T1 = threading.Thread(target=ct.coin_fiyat)
-    T2 = threading.Thread(target=ct.bakiye_getir)
-    T3 = threading.Thread(target=ct.tahta_getir)
-    T1.start()
-    T2.start()
-    T3.start()
-    T1.join()
-    T2.join()
-    T3.join()
-
-    T4 = threading.Thread(target=ct.mumlar)
-    T5 = threading.Thread(target=ct.alsat_gecmisi)
-    T4.start()
-    T5.start()
-    T4.join()
-    T5.join()
+    ct.toplu_islem()
 
     print(bilanco)
 
@@ -754,11 +743,7 @@ while True:
                     tbot_ozel.send_message(telegram_chat_id, str(bc + str(" coine girildi...")))
                     ct = coin_trader(str(bc))
                     ct.coin_digit()
-                    ct.coin_fiyat()
-                    ct.bakiye_getir()
-                    ct.alsat_gecmisi()
-                    ct.tahta_getir()
-                    ct.mumlar()
+                    ct.toplu_islem()
 
                     emirleri_sil()
                     t2 = time.time()
@@ -776,7 +761,7 @@ while True:
     # ************- EMA STRATEJİSİ -*******************************#
     af = taf[5]
     sf = max(hf, tsf[5])
-    ksf = max(hf, saort * km)
+    ksf = hf
 
     for i in range(5):
         afi = i
