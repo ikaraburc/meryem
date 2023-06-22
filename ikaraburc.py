@@ -754,6 +754,7 @@ while True:
                     tbot_ozel.send_message(telegram_chat_id, str(bc + str(" coine girildi...")))
                     ct = coin_trader(str(bc))
                     ct.coin_digit()
+                    ct.coin_fiyat()
                     ct.bakiye_getir()
                     ct.alsat_gecmisi()
                     ct.tahta_getir()
