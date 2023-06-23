@@ -683,7 +683,7 @@ def ikinci_elek():
 
         m1hacim = mbuys
         hacim_ok = "OK"
-        if mbuys < max(msells, 1000) and tam[5] < tsm[5]:
+        if mbuys < max(msells, 1500) or len(tam) <10 or len(tsm) < 10:
             hacim_ok = "XXXXX"
             sil = "evet"
 
