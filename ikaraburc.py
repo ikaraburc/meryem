@@ -378,7 +378,7 @@ class coin_trader:
         k = 1 / 10 ** digit
         if (cp + k) / cp >= 1.01:
             k = 0
-        ott_k = max(0.5, round(cps / cpa, 2))
+        ott_k = max(1, round((cps / cpa - 1) * 100, 2))
 
         # ----------------- bakiye_getir
         global cam, ctm, usd, usdt_av, mulk, ceder
@@ -797,13 +797,7 @@ while True:
     bando = (1 + ott_k / 100)
     orta = round((taf[0] + tsf[0]) / 2, digit)
 
-    if (saf / bando < orta < saf * bando) or (ssf / bando < orta < ssf * bando):
-        bolge = "SAÇMA YATAY"
-        if tsf[0] > tmumlar[1]:
-            af = ataf;
-        if taf[0] <= min(dmumlar[1], saf) or (saf * (1 + ott_k / 200) <= taf[0] <= min(saf, dmumlar[1])):
-            sf = stsf
-    elif tsf[0] <= ott:
+    if tsf[0] <= ott:
         bolge = "DÜŞÜŞ"
         af = taf[0] / km
         sf = max(stsf, stsf)
@@ -886,7 +880,9 @@ while True:
     ott_oran = round((cp - ott) / min(cp, ott) * 100, 2)
     fiyatlar = PrettyTable()
     fiyatlar.field_names = [str(bolge) + " ott% " + str(ott_oran), "ott " + str(ott), str("cp " + str(cp))]
-    fiyatlar.add_row(["yott: " + str(yott_say) +" sloss%:" + str(ott_k), "af    " + str(round(af, digit)), "sf    " + str(round(sf, digit))])
+
+    fiyatlar.add_row(["yott: " + str(yott_say) + " sloss%:" + str(ott_k), "af    " + str(round(af, digit)),
+                      "sf    " + str(round(sf, digit))])
     fiyatlar.add_row(["kesti: " + str(kesti), "taf0  " + str(taf[0]), "tsf0  " + str(tsf[0])])
     fiyatlar.add_row([str("ctm? " + str(round((ctm + usd / tsf[0]) / 1000, mdigit)) + "k"), "saf   " + str(saf),
                       "ssf   " + str(ssf)])
