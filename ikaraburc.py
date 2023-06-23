@@ -18,31 +18,23 @@ class coin_trader:
 
         url = '/spot/currency_pairs/' + self.coin
         query_param = ''
-
+        global rcoin_digit
         while True:
             try:
-                r = requests.request('GET', host + prefix + url, headers=headers).json()
+                rcoin_digit = requests.request('GET', host + prefix + url, headers=headers).json()
             except ConnectionError as e:  # This is the correct syntax
                 print(e)
                 time.sleep(1)
-                r = "Nothing"
+                rcoin_digit = "Nothing"
             except ValueError:
                 print("Gelen Dosya Json değil...")
-                r = "Nothing"
-            if r != "Nothing":
+                rcoin_digit = "Nothing"
+            if rcoin_digit != "Nothing":
                 break
             else:
                 print("Bağlantı bekleniyor...")
 
                 continue
-
-        global digit, mdigit, coin_adi, coin_birimi, mal
-        coin_adi, coin_birimi = str(self.coin).split("_")
-        mal = self.coin
-        if "label" in r:
-            print("Böyle bir coin yok....")
-        else:
-            digit, mdigit = int(r["precision"]), int(r["amount_precision"])
 
     def coin_fiyat(self):
 
@@ -53,32 +45,23 @@ class coin_trader:
         url = '/spot/tickers'
         query_param = 'currency_pair=' + str.upper(self.coin)
 
+        global rcoin_fiyat
         while True:
             try:
-                r = requests.request('GET', host + prefix + url + "?" + query_param, headers=headers).json()
+                rcoin_fiyat = requests.request('GET', host + prefix + url + "?" + query_param, headers=headers).json()
             except ConnectionError as e:  # This is the correct syntax
                 print(e)
                 time.sleep(1)
-                r = "Nothing"
+                rcoin_fiyat = "Nothing"
             except ValueError:
                 print("Gelen Dosya Json değil...")
                 r = "Nothing"
-            if r != "Nothing":
+            if rcoin_fiyat != "Nothing":
                 break
             else:
                 print("Bağlantı bekleniyor...")
 
                 continue
-
-        global cp, c24, tepe24, dip24, k, cpa, cps, ott_k
-
-        cp, tepe24, dip24, c24 = float(r[0]["last"]), float(r[0]["high_24h"]), float(r[0]["low_24h"]), float(
-            r[0]["change_percentage"])
-        cpa, cps = float(r[0]["highest_bid"]), float(r[0]["lowest_ask"])
-        k = 1 / 10 ** digit
-        if (cp + k) / cp >= 1.01:
-            k = 0
-        ott_k = max(1.5, round(cps / cpa, 2))
 
     def bakiye_getir(self):
 
@@ -92,20 +75,21 @@ class coin_trader:
         sign_headers = gen_sign('GET', prefix + url, query_param)
         headers.update(sign_headers)
 
+        global rbakiye_getir
         while True:
             try:
-                r = requests.request('GET', host + prefix + url, headers=headers).json()
+                rbakiye_getir = requests.request('GET', host + prefix + url, headers=headers).json()
             except ConnectionError as e:  # This is the correct syntax
                 print(e)
                 time.sleep(1)
-                r = "Nothing"
+                rbakiye_getir = "Nothing"
             except ValueError:
                 print("Gelen Dosya Json değil...")
-                r = "Nothing"
+                rbakiye_getir = "Nothing"
             except KeyError:
                 print("Key error hatası veriyor")
-                r = "Nothing"
-            if r != "Nothing" or r["label"] not in r:
+                rbakiye_getir = "Nothing"
+            if rbakiye_getir != "Nothing" or rbakiye_getir["label"] not in rbakiye_getir:
                 break
             else:
                 print("Bağlantı bekleniyor...")
@@ -113,24 +97,6 @@ class coin_trader:
                 continue
 
         # print(r)
-        global cam, ctm, usd, usdt_av, mulk, ceder
-
-        eldeki_mal = list(filter(lambda coin: coin['currency'] == str.upper(coin_adi), r))
-        eldeki_usdt = list(filter(lambda coin: coin['currency'] == 'USDT', r))
-
-        if len(eldeki_mal) > 0:
-            cam, clm = float(eldeki_mal[0]["available"]), float(eldeki_mal[0]["locked"])
-        else:
-            cam, clm = 0, 0
-        if len(eldeki_usdt) > 0:
-            usdt_av, usdt_lo = float(eldeki_usdt[0]["available"]), float(eldeki_usdt[0]["locked"])
-        else:
-            usdt_av, usdt_lo = 0, 0
-
-        usd = usdt_av + usdt_lo
-        ctm = cam + clm
-        ceder = ctm * cp
-        mulk = usd + ceder
 
     def tahta_getir(self):
 
@@ -141,36 +107,26 @@ class coin_trader:
         url = '/spot/order_book'
         query_param = "".join(['currency_pair=', str(self.coin).upper(), "&limit=50"])
 
+        global rtahta_getir
         while True:
             try:
-                r = requests.request('GET', host + prefix + url + "?" + query_param, headers=headers).json()
+                rtahta_getir = requests.request('GET', host + prefix + url + "?" + query_param, headers=headers).json()
             except ConnectionError as e:  # This is the correct syntax
                 print(e)
                 time.sleep(1)
-                r = "Nothing"
+                rtahta_getir = "Nothing"
             except ValueError:
                 print("Gelen Dosya Json değil...")
-                r = "Nothing"
+                rtahta_getir = "Nothing"
             except KeyError:
                 print("Key error hatası veriyor")
-                r = "Nothing"
+                rtahta_getir = "Nothing"
 
-            if r != "Nothing":
+            if rtahta_getir != "Nothing":
                 break
             else:
                 print("Bağlantı bekleniyor...")
                 continue
-
-        global taf, tsf, tam, tsm
-
-        tam = [float(x[0]) * float(x[1]) for x in r["bids"]]
-        tsm = [float(x[0]) * float(x[1]) for x in r["asks"]]
-
-        tam = [sum(tam[:i]) for i in range(1, len(tam))]
-        tsm = [sum(tsm[:i]) for i in range(1, len(tsm))]
-
-        taf = [float(x[0]) for x in r["bids"]]
-        tsf = [float(x[0]) for x in r["asks"]]
 
     def coklu_al(self):
         # Alış emri girilmesi.........
@@ -313,29 +269,157 @@ class coin_trader:
         headers = {'Accept': 'application/json', 'Content-Type': 'application/json'}
         url = '/spot/candlesticks'
         query_param = 'currency_pair=' + self.coin + '&interval=5m' + '&limit=1000'
+        global rmumlar
         while True:
             try:
-                r = requests.request('GET', host + prefix + url + "?" + query_param, headers=headers).json()
+                rmumlar = requests.request('GET', host + prefix + url + "?" + query_param, headers=headers).json()
             except ConnectionError as e:  # This is the correct syntax
                 print(e)
                 time.sleep(1)
-                r = "Nothing"
+                rmumlar = "Nothing"
 
             except ValueError:
                 print("Gelen Dosya Json değil...")
-                r = "Nothing"
+                rmumlar = "Nothing"
 
-            if r != "Nothing":
+            if rmumlar != "Nothing":
                 break
             else:
                 print("Bağlantı bekleniyor...")
                 continue
 
+    def alsat_gecmisi(self):
+        # emirleri listele
+        host = "https://api.gateio.ws"
+        prefix = "/api/v4"
+        headers = {'Accept': 'application/json', 'Content-Type': 'application/json'}
+        url = '/spot/my_trades'
+        query_param = 'currency_pair=' + str(self.coin) + "&limit=1000"
+
+        sign_headers = gen_sign('GET', prefix + url, query_param)
+        headers.update(sign_headers)
+        global ralsat_gecmisi
+        while True:
+            try:
+                ralsat_gecmisi = requests.request('GET', host + prefix + url + "?" + query_param,
+                                                  headers=headers).json()
+            except ConnectionError as e:  # This is the correct syntax
+                print(e)
+                time.sleep(1)
+                ralsat_gecmisi = "Nothing"
+                continue
+            except ValueError:
+                print("Gelen Dosya Json değil...")
+                ralsat_gecmisi = "Nothing"
+                continue
+            except KeyError:
+                print("Key error hatası veriyor")
+                ralsat_gecmisi = "Nothing"
+                continue
+            if ralsat_gecmisi != "Nothing":
+                break
+            else:
+                print("Bağlantı bekleniyor...")
+                continue
+
+    def market_hacim(self):
+        host = "https://api.gateio.ws"
+        prefix = "/api/v4"
+        headers = {'Accept': 'application/json', 'Content-Type': 'application/json'}
+
+        url = '/spot/trades'
+        import time
+        zaman = int(time.time() - 30 * 60)
+        query_param = 'currency_pair=' + self.coin + "&from=" + str(zaman) + '&limit=1000'
+
+        global rmarket_hacim
+        rmarket_hacim = requests.request('GET', host + prefix + url + "?" + query_param, headers=headers).json()
+
+    def toplu_islem(self):
+        T0 = threading.Thread(target=self.coin_digit)
+        T1 = threading.Thread(target=self.coin_fiyat)
+        T2 = threading.Thread(target=self.bakiye_getir)
+        T3 = threading.Thread(target=self.mumlar)
+        T4 = threading.Thread(target=self.market_hacim)
+        T5 = threading.Thread(target=self.tahta_getir)
+
+        T0.start()
+        T1.start()
+        T2.start()
+        T3.start()
+        T4.start()
+        T5.start()
+
+        T0.join()
+        T1.join()
+        T2.join()
+        T3.join()
+        T4.join()
+        T5.join()
+
+        self.alsat_gecmisi()
+
+        # ----------------- coin_digit
+        global digit, mdigit, coin_adi, coin_birimi, mal
+        coin_adi, coin_birimi = str(self.coin).split("_")
+        mal = self.coin
+        if "label" in rcoin_digit:
+            print("Böyle bir coin yok....")
+        else:
+            digit, mdigit = int(rcoin_digit["precision"]), int(rcoin_digit["amount_precision"])
+
+        # ----------------- coin_fiyat
+        global cp, c24, tepe24, dip24, k, cpa, cps, ott_k
+
+        cp, tepe24, dip24, c24 = float(rcoin_fiyat[0]["last"]), float(rcoin_fiyat[0]["high_24h"]), float(
+            rcoin_fiyat[0]["low_24h"]), float(
+            rcoin_fiyat[0]["change_percentage"])
+        cpa, cps = float(rcoin_fiyat[0]["highest_bid"]), float(rcoin_fiyat[0]["lowest_ask"])
+        k = 1 / 10 ** digit
+        if (cp + k) / cp >= 1.01:
+            k = 0
+        ott_k = max(1.5, round(cps / cpa, 2))
+
+        # ----------------- bakiye_getir
+        global cam, ctm, usd, usdt_av, mulk, ceder
+
+        eldeki_mal = list(filter(lambda coin: coin['currency'] == str.upper(coin_adi), rbakiye_getir))
+        eldeki_usdt = list(filter(lambda coin: coin['currency'] == 'USDT', rbakiye_getir))
+
+        if len(eldeki_mal) > 0:
+            cam, clm = float(eldeki_mal[0]["available"]), float(eldeki_mal[0]["locked"])
+        else:
+            cam, clm = 0, 0
+        if len(eldeki_usdt) > 0:
+            usdt_av, usdt_lo = float(eldeki_usdt[0]["available"]), float(eldeki_usdt[0]["locked"])
+        else:
+            usdt_av, usdt_lo = 0, 0
+
+        usd = usdt_av + usdt_lo
+        ctm = cam + clm
+        ceder = ctm * cp
+        mulk = usd + ceder
+
+        # -----------tahta_getir
+
+        global taf, tsf, tam, tsm
+
+        tam = [float(x[0]) * float(x[1]) for x in rtahta_getir["bids"]]
+        tsm = [float(x[0]) * float(x[1]) for x in rtahta_getir["asks"]]
+
+        tam = [sum(tam[:i]) for i in range(1, len(tam))]
+        tsm = [sum(tsm[:i]) for i in range(1, len(tsm))]
+
+        taf = [float(x[0]) for x in rtahta_getir["bids"]]
+        tsf = [float(x[0]) for x in rtahta_getir["asks"]]
+
+        # ---------------Mumlar
+
         global kmumlar, hacimler, tmumlar, dmumlar
-        tmumlar = [float(i[3]) for i in r]
-        dmumlar = [float(i[4]) for i in r]
-        kmumlar = [float(i[2]) for i in r]
-        hacimler = [float(i[1]) for i in r]
+        tmumlar = [float(i[3]) for i in rmumlar]
+        dmumlar = [float(i[4]) for i in rmumlar]
+        kmumlar = [float(i[2]) for i in rmumlar]
+        hacimler = [float(i[1]) for i in rmumlar]
         kmumlar.reverse()
         hacimler.reverse()
 
@@ -386,39 +470,7 @@ class coin_trader:
             if (tmumlar[i] >= ott and dmumlar[i] <= ott):
                 kesti += 1
 
-    def alsat_gecmisi(self):
-        # emirleri listele
-        host = "https://api.gateio.ws"
-        prefix = "/api/v4"
-        headers = {'Accept': 'application/json', 'Content-Type': 'application/json'}
-        url = '/spot/my_trades'
-        query_param = 'currency_pair=' + str(self.coin) + "&limit=1000"
-
-        sign_headers = gen_sign('GET', prefix + url, query_param)
-        headers.update(sign_headers)
-
-        while True:
-            try:
-                r = requests.request('GET', host + prefix + url + "?" + query_param, headers=headers).json()
-            except ConnectionError as e:  # This is the correct syntax
-                print(e)
-                time.sleep(1)
-                r = "Nothing"
-                continue
-            except ValueError:
-                print("Gelen Dosya Json değil...")
-                r = "Nothing"
-                continue
-            except KeyError:
-                print("Key error hatası veriyor")
-                r = "Nothing"
-                continue
-            if r != "Nothing":
-                break
-            else:
-                print("Bağlantı bekleniyor...")
-                continue
-
+        # ------------Alsat_gecmisi
         global bilanco, sonislem, saf, ssf, mf, kzo, kzt, anapara, harcanan, agider, sgelir, hf, km
 
         miktar = ctm
@@ -430,7 +482,7 @@ class coin_trader:
         saf, ssf, sonislem = 0, 0, "boş"
 
         if ceder >= 1:
-            for x in r:
+            for x in ralsat_gecmisi:
                 if x["side"] == "buy":
                     amiktar = amiktar + float(x["amount"])
                     miktar = miktar - float(x["amount"])
@@ -450,19 +502,19 @@ class coin_trader:
             kzt = round(ceder - agider + sgelir, 2)
             harcanan = min(agider, anapara)
 
-            sonislem = r[0]["side"]
+            sonislem = ralsat_gecmisi[0]["side"]
             mf = round((agider - sgelir) / ctm * 1.002, digit)
             mmf = round(anapara / (usd / cp + ctm) * 1.002, digit)
             amalf = round(agider / amiktar, digit)
             kzo = round(kzt / harcanan * 100, 2)
 
             if agider > 0:
-                for a in r:
+                for a in ralsat_gecmisi:
                     if a["side"] == "buy":
                         saf = round(float(a["price"]), digit)
                         break
             if sgelir > 0:
-                for s in r:
+                for s in ralsat_gecmisi:
                     if s["side"] == "sell":
                         ssf = round(float(s["price"]), digit)
                         break
@@ -471,7 +523,7 @@ class coin_trader:
             ssmik, sstut, ssort = 0, 0, 0
 
             if agider > 0:
-                for a in r:
+                for a in ralsat_gecmisi:
                     if a["side"] == "buy":
                         samik = samik + float(a["amount"])
                         satut = satut + float(a["price"]) * float(a["amount"])
@@ -479,7 +531,7 @@ class coin_trader:
                         if satut >= mulk / 2:
                             break
             if sgelir > 0:
-                for s in r:
+                for s in ralsat_gecmisi:
                     if s["side"] == "sell":
                         ssmik = ssmik + float(s["amount"])
                         sstut = sstut + float(s["price"]) * float(s["amount"])
@@ -500,41 +552,10 @@ class coin_trader:
         bilanco.add_row([" Mülk= " + str(round(mulk, 2)), "%" + str(kzo) + " " + str(kzt) + "$"])
         bilanco.align[str(self.coin).upper()] = "l"
 
-    def market_hacim(self):
-        host = "https://api.gateio.ws"
-        prefix = "/api/v4"
-        headers = {'Accept': 'application/json', 'Content-Type': 'application/json'}
-
-        url = '/spot/trades'
-        import time
-        zaman = int(time.time() - 30 * 60)
-        query_param = 'currency_pair=' + self.coin + "&from=" + str(zaman) + '&limit=1000'
-
-        r = requests.request('GET', host + prefix + url + "?" + query_param, headers=headers).json()
+        # --------------market_hacim
         global mbuys, msells
-        mbuys = round(sum([float(i["amount"]) * float(i["price"]) for i in r if i["side"] == "buy"]), 2)
-        msells = round(sum([float(i["amount"]) * float(i["price"]) for i in r if i["side"] == "sell"]), 2)
-
-    def toplu_islem(self):
-        T1 = threading.Thread(target=self.coin_fiyat)
-        T2 = threading.Thread(target=self.bakiye_getir)
-        T3 = threading.Thread(target=self.mumlar)
-        T4 = threading.Thread(target=self.market_hacim)
-        T5 = threading.Thread(target=self.tahta_getir)
-
-        T1.start()
-        T2.start()
-        T3.start()
-        T4.start()
-        T5.start()
-
-        T1.join()
-        T2.join()
-        T3.join()
-        T4.join()
-        T5.join()
-
-        self.alsat_gecmisi()
+        mbuys = round(sum([float(i["amount"]) * float(i["price"]) for i in rmarket_hacim if i["side"] == "buy"]), 2)
+        msells = round(sum([float(i["amount"]) * float(i["price"]) for i in rmarket_hacim if i["side"] == "sell"]), 2)
 
 
 def emirleri_sil():
@@ -636,7 +657,6 @@ def ikinci_elek():
         bc = toplu[0][0]
 
         ct = coin_trader(bc)
-        ct.coin_digit()
         ct.toplu_islem()
 
         yer = "BOŞ"
@@ -702,7 +722,6 @@ emirleri_sil()
 son_coin()
 
 ct = coin_trader(str(scoin))
-ct.coin_digit()
 ct.toplu_islem()
 
 alim_tamam = "evet"
@@ -725,7 +744,7 @@ while True:
             alim_tamam = "evet"
 
         if alim_tamam == "evet":
-            ct.alsat_gecmisi()
+            ct.toplu_islem()
             tbot_ozel.send_message(telegram_chat_id, str("Eldeki son mal satıldı. Yeni mal taranıyor..."))
             tbot_ozel.send_message(telegram_chat_id, str(bilanco))
             yeni_tara = "evet"
@@ -742,7 +761,6 @@ while True:
                 if bc != "boş":
                     tbot_ozel.send_message(telegram_chat_id, str(bc + str(" coine girildi...")))
                     ct = coin_trader(str(bc))
-                    ct.coin_digit()
                     ct.toplu_islem()
 
                     emirleri_sil()
@@ -829,7 +847,7 @@ while True:
     if usd >= 1:
         if af > afiyat or af < afiyat / 1.005 or usdt_av > 1:
             T1 = threading.Thread(target=ct.alimlar_sil)
-            T2 = threading.Thread(target=ct.bakiye_getir)
+            T2 = threading.Thread(target=ct.toplu_islem)
             T1.start()
             T2.start()
             T1.join()
@@ -847,7 +865,7 @@ while True:
         yedek = 2 / cp
         if sf > sfiyat * 1.005 or sf < sfiyat or cam > yedek:
             T1 = threading.Thread(target=ct.satimlar_sil)
-            T2 = threading.Thread(target=ct.bakiye_getir)
+            T2 = threading.Thread(target=ct.toplu_islem)
             T1.start()
             T2.start()
             T1.join()
