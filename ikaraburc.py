@@ -797,7 +797,7 @@ while True:
     bando = (1 + ott_k / 100)
     orta = round((taf[0] + tsf[0]) / 2, digit)
 
-    if (saf / bando <= orta <= saf * bando) or (ssf / bando <= orta <= ssf * bando):
+    if (saf / bando < orta < saf * bando) or (ssf / bando < orta < ssf * bando):
         bolge = "SAÇMA YATAY"
         if tsf[0] > tmumlar[1]:
             af = ataf;
