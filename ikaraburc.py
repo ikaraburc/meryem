@@ -378,7 +378,7 @@ class coin_trader:
         k = 1 / 10 ** digit
         if (cp + k) / cp >= 1.01:
             k = 0
-        ott_k = max(1.5, round(cps / cpa, 2))
+        ott_k = max(0.5, round(cps / cpa, 2))
 
         # ----------------- bakiye_getir
         global cam, ctm, usd, usdt_av, mulk, ceder
@@ -885,8 +885,8 @@ while True:
     # ************- EKRANA PRİNT BÖLÜMÜ -*******************************#
     ott_oran = round((cp - ott) / min(cp, ott) * 100, 2)
     fiyatlar = PrettyTable()
-    fiyatlar.field_names = [str(bolge) + " yott: " + str(yott_say), "ott " + str(ott), str("cp " + str(cp))]
-    fiyatlar.add_row(["ott% " + str(ott_oran), "af    " + str(round(af, digit)), "sf    " + str(round(sf, digit))])
+    fiyatlar.field_names = [str(bolge) + " ott% " + str(ott_oran), "ott " + str(ott), str("cp " + str(cp))]
+    fiyatlar.add_row(["yott: " + str(yott_say) +" sloss%:" + str(ott_k), "af    " + str(round(af, digit)), "sf    " + str(round(sf, digit))])
     fiyatlar.add_row(["kesti: " + str(kesti), "taf0  " + str(taf[0]), "tsf0  " + str(tsf[0])])
     fiyatlar.add_row([str("ctm? " + str(round((ctm + usd / tsf[0]) / 1000, mdigit)) + "k"), "saf   " + str(saf),
                       "ssf   " + str(ssf)])
