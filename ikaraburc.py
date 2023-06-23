@@ -409,6 +409,7 @@ class coin_trader:
 
         tam = [sum(tam[:i]) for i in range(1, len(tam))]
         tsm = [sum(tsm[:i]) for i in range(1, len(tsm))]
+        print("tam, tsm ", len(tam)," ", len(tsm))
 
         taf = [float(x[0]) for x in rtahta_getir["bids"]]
         tsf = [float(x[0]) for x in rtahta_getir["asks"]]
