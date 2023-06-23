@@ -798,6 +798,7 @@ while True:
     orta = round((taf[0] + tsf[0]) / 2, digit)
 
     if (saf / bando <= orta <= saf * bando) or (ssf / bando <= orta <= ssf * bando):
+        bolge = "SAÇMA YATAY"
         if tsf[0] > tmumlar[1]:
             af = ataf;
         if taf[0] <= min(dmumlar[1], saf) or (saf * (1 + ott_k / 200) <= taf[0] <= min(saf, dmumlar[1])):
