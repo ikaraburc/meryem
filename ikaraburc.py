@@ -464,6 +464,10 @@ class coin_trader:
         otty = round(ott * bant_percent, digit)
         otta = round(ott / bant_percent, digit)
         yott_say = min(son_dip_i, son_top_i)
+        
+        global ydip, ytop
+        ydip = min(kmumlar[:yott_say])
+        ytop = max(kmumlar[:yott_say])
 
         kesti = 0
         for i in range(yott_say):
@@ -680,6 +684,11 @@ def ikinci_elek():
             ema_ok = "XXXXX"
             sil = "evet"
 
+        ott_ok = "OK"
+        if taf[0] <= ott:
+            ott_ok = "XXXXX"
+            sil = "evet"
+
         m1hacim = mbuys
         hacim_ok = "OK"
         if mbuys < max(msells, 1500) or len(tam) < 10 or len(tsm) < 10:
@@ -690,11 +699,11 @@ def ikinci_elek():
             print("Yeni çıkan coin, silindi...", bc)
             sil = "evet"
 
-        bc_tablo.field_names = [str(bc) + " g%: " + str(gunluky), "of" + str(len(toplu))]
+        bc_tablo.field_names = [str(bc) + " g%: " + str(gunluky), "of " + str(len(toplu))]
         bc_tablo.add_row(["cp:  ", str(cp)])
-        bc_tablo.add_row(["ott:", str(ott)])
         bc_tablo.add_row(["yer", [yer, yero]])
-        bc_tablo.add_row(["kema?", [ema_ok]])
+        bc_tablo.add_row(["ema?", [ema_ok]])
+        bc_tablo.add_row(["ott?", [ott, ott_ok]])
         bc_tablo.add_row(["m1hacim", [m1hacim, hacim_ok]])
 
         print(bc_tablo)
@@ -799,8 +808,8 @@ while True:
 
     if (taf[0] <= ott <= tsf[0]) or (ott < taf[0] < dmumlar[1]) or (tmumlar[1] < tsf[0] < ott):
         bolge = "YATAY"
-        af = taf[0] / km
-        sf = tsf[0] * km
+        af = min(ydip, ataf)
+        sf = max(ytop, stsf)
     elif tsf[0] < ott:
         bolge = "DÜŞÜŞ"
         af = taf[0] / km
