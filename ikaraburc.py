@@ -811,7 +811,7 @@ while True:
         af = ataf
         sf = tsf[0] * km
         p1 = usd
-        if cp > mabs[60] * 1.05:
+        if cp > mabs[12] * 1.05:
             af = min(af, taf[2])
             p1 = min(usd, mulk / 4)
     else:
