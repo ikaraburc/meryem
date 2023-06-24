@@ -409,7 +409,7 @@ class coin_trader:
 
         tam = [sum(tam[:i]) for i in range(1, len(tam))]
         tsm = [sum(tsm[:i]) for i in range(1, len(tsm))]
-        print("tam, tsm ", len(tam)," ", len(tsm))
+  
 
         taf = [float(x[0]) for x in rtahta_getir["bids"]]
         tsf = [float(x[0]) for x in rtahta_getir["asks"]]
@@ -801,11 +801,11 @@ while True:
     if tsf[0] <= ott:
         bolge = "DÜŞÜŞ"
         af = taf[0] / km
-        sf = max(stsf, stsf)
+        sf = stsf
         m1 = ctm
     elif taf[0] >= ott:
         bolge = "YÜKSELİŞ"
-        af = min(ataf, ott)
+        af = min(ataf, taf[1])
         sf = tsf[0] * km
         p1 = usd
     else:
