@@ -409,7 +409,6 @@ class coin_trader:
 
         tam = [sum(tam[:i]) for i in range(1, len(tam))]
         tsm = [sum(tsm[:i]) for i in range(1, len(tsm))]
-  
 
         taf = [float(x[0]) for x in rtahta_getir["bids"]]
         tsf = [float(x[0]) for x in rtahta_getir["asks"]]
@@ -683,7 +682,7 @@ def ikinci_elek():
 
         m1hacim = mbuys
         hacim_ok = "OK"
-        if mbuys < max(msells, 1500) or len(tam) <10 or len(tsm) < 10:
+        if mbuys < max(msells, 1500) or len(tam) < 10 or len(tsm) < 10:
             hacim_ok = "XXXXX"
             sil = "evet"
 
@@ -798,18 +797,25 @@ while True:
     bando = (1 + ott_k / 100)
     orta = round((taf[0] + tsf[0]) / 2, digit)
 
-    if tsf[0] <= ott:
+    if (taf[0] <= ott <= tsf[0]) or (ott < taf[0] < dmumlar[1]) or (tmumlar[1] < tsf[0] < ott):
+        bolge = "YATAY"
+        af = taf[0] / km
+        sf = tsf[0] * km
+    elif tsf[0] < ott:
         bolge = "DÜŞÜŞ"
         af = taf[0] / km
-        sf = stsf
+        sf = max(stsf, stsf)
         m1 = ctm
     elif taf[0] >= ott:
         bolge = "YÜKSELİŞ"
-        af = min(ataf, taf[1])
+        af = ataf
         sf = tsf[0] * km
         p1 = usd
+        if cp > mab[12] * 1.05:
+            af = min(af, taf[2])
+            p1 = min(usd, mulk / 4)
     else:
-        bolge = "YATAY"
+        bolge = "SAÇMA YATAY"
         af = taf[0] / km
         sf = tsf[0] * km
 
