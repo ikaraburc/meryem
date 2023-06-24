@@ -268,7 +268,9 @@ class coin_trader:
         prefix = "/api/v4"
         headers = {'Accept': 'application/json', 'Content-Type': 'application/json'}
         url = '/spot/candlesticks'
-        query_param = 'currency_pair=' + self.coin + '&interval=5m' + '&limit=1000'
+        global mumd
+        mumd = 1
+        query_param = 'currency_pair=' + self.coin + '&interval=' + str(mumd) + 'm' + '&limit=1000'
         global rmumlar
         while True:
             try:
@@ -378,7 +380,6 @@ class coin_trader:
         k = 1 / 10 ** digit
         if (cp + k) / cp >= 1.01:
             k = 0
-        ott_k = max(1, round((cps / cpa - 1) * 100, 2))
 
         # ----------------- bakiye_getir
         global cam, ctm, usd, usdt_av, mulk, ceder
@@ -423,11 +424,9 @@ class coin_trader:
         kmumlar.reverse()
         hacimler.reverse()
 
-        global maks, mak, ott, otty, otta, son_dip, son_top, ott_yer, mabs, mab, yott_say, kesti
+        global maks, mabs, mak, mab, ott, son_dip, son_top, yott_say, kesti, ott_k, ott_ky
         makp = 2
-        ottk = (1 + ott_k / 100)
-        bant_percent = (1 + 0.0015)
-        mabp = 12
+        mabp = int(60 / mumd)
         maks = []
         mabs = []
         for i in range(len(kmumlar) - mabp):
@@ -436,9 +435,11 @@ class coin_trader:
 
         mak = maks[0]
         mab = mabs[0]
+        ott_ky = max(1, round((cps / cpa - 1) * 100, 2))
+        ott_k = (1 + ott_ky / 100)
 
         for i in range(len(maks)):
-            if max(maks[:i + 1]) / min(maks[:i + 1]) >= ottk:
+            if max(maks[:i + 1]) / min(maks[:i + 1]) >= ott_k:
                 son_dip = min(maks[:i])
                 son_top = max(maks[:i])
                 break
@@ -451,24 +452,11 @@ class coin_trader:
                 son_top_i = i
                 break
         if son_dip_i < son_top_i:
-            ott = round(son_dip * ottk, digit)
-            ott_yer = "düşüyor"
-            if maks[0] > son_dip:
-                ott_yer = "Düşüşten dönüyor"
+            ott = round(son_dip * ott_k, digit)
         else:
-            ott = round(son_top / ottk, digit)
-            ott_yer = "yükseliyor"
-            if maks[0] < son_top:
-                ott_yer = "yükselişten dönüyor"
+            ott = round(son_top / ott_k, digit)
 
-        otty = round(ott * bant_percent, digit)
-        otta = round(ott / bant_percent, digit)
         yott_say = min(son_dip_i, son_top_i)
-        
-        global ydip, ytop
-        ydip = min(kmumlar[:yott_say])
-        ytop = max(kmumlar[:yott_say])
-
         kesti = 0
         for i in range(yott_say):
             if (tmumlar[i] >= ott and dmumlar[i] <= ott):
@@ -701,8 +689,8 @@ def ikinci_elek():
 
         bc_tablo.field_names = [str(bc) + " g%: " + str(gunluky), "of " + str(len(toplu))]
         bc_tablo.add_row(["cp:  ", str(cp)])
+        bc_tablo.add_row(["ema?", [mabs[0], ema_ok]])
         bc_tablo.add_row(["yer", [yer, yero]])
-        bc_tablo.add_row(["ema?", [ema_ok]])
         bc_tablo.add_row(["ott?", [ott, ott_ok]])
         bc_tablo.add_row(["m1hacim", [m1hacim, hacim_ok]])
 
@@ -803,19 +791,17 @@ while True:
 
     p1 = min(usd, mulk / 4)
     m1 = min(ctm, mulk / 4 / cp)
-    bando = (1 + ott_k / 100)
-    orta = round((taf[0] + tsf[0]) / 2, digit)
 
-    if (taf[0] <= ott <= tsf[0]) or (ott < taf[0] < dmumlar[1]) or (tmumlar[1] < tsf[0] < ott):
+    if (taf[0] <= ott <= tsf[0]) or (ott < taf[0] < dmumlar[0]) or (tmumlar[0] < tsf[0] < ott):
         bolge = "YATAY"
-        af = min(ydip, ataf)
-        sf = max(ytop, stsf)
-    elif tsf[0] < ott:
+        af = taf[0] / km
+        sf = tsf[0] * km
+    elif (dmumlar[0] > ott and taf[0] <= ott) or tsf[0] <= ott:
         bolge = "DÜŞÜŞ"
         af = taf[0] / km
-        sf = max(stsf, stsf)
+        sf = stsf
         m1 = ctm
-    elif taf[0] >= ott:
+    elif (tmumlar[0] < ott and tsf[0] >= ott) or taf[0] >= ott:
         bolge = "YÜKSELİŞ"
         af = ataf
         sf = tsf[0] * km
