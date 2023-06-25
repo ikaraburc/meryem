@@ -794,8 +794,8 @@ while True:
 
     if (taf[0] <= ott <= tsf[0]):
         bolge = "YATAY"
-        af = taf[0] / km
-        sf = tsf[0] * km
+        af = ataf
+        sf = stsf
     elif (dmumlar[0] > ott and taf[0] <= ott) or tsf[0] <= ott:
         bolge = "DÜŞÜŞ"
         af = taf[0] / km
