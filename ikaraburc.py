@@ -792,7 +792,7 @@ while True:
     p1 = min(usd, mulk / 4)
     m1 = min(ctm, mulk / 4 / cp)
 
-    if (taf[0] <= ott <= tsf[0]) or (ott < taf[0] < dmumlar[0]) or (tmumlar[0] < tsf[0] < ott):
+    if (taf[0] <= ott <= tsf[0]):
         bolge = "YATAY"
         af = taf[0] / km
         sf = tsf[0] * km
