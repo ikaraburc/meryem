@@ -425,7 +425,7 @@ class coin_trader:
         hacimler.reverse()
 
         global maks, mabs, mak, mab, ott, son_dip, son_top, yott_say, kesti, ott_k, ott_ky
-        makp = 2
+        makp = 5
         mabp = int(60 / mumd)
         maks = []
         mabs = []
