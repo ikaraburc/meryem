@@ -883,7 +883,7 @@ while True:
     fiyatlar = PrettyTable()
     fiyatlar.field_names = [str(bolge) + " ott% " + str(ott_oran), "ott " + str(ott), str("cp " + str(cp))]
 
-    fiyatlar.add_row(["yott: " + str(yott_say) + " sloss%:" + str(ott_k), "af    " + str(round(af, digit)),
+    fiyatlar.add_row(["yott: " + str(yott_say) + " sloss%:" + str(ott_ky), "af    " + str(round(af, digit)),
                       "sf    " + str(round(sf, digit))])
     fiyatlar.add_row(["kesti: " + str(kesti), "taf0  " + str(taf[0]), "tsf0  " + str(tsf[0])])
     fiyatlar.add_row([str("ctm? " + str(round((ctm + usd / tsf[0]) / 1000, mdigit)) + "k"), "saf   " + str(saf),
