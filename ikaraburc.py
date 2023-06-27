@@ -808,7 +808,7 @@ while True:
             af = taf[0] / km
             sf = tsf[0] * km
     else:
-        bolge = "YATAY"
+        bolge = "KESTİ YATAY"
         if (tsf[0] > max(tmumlar[0], ssf)):
             af = ataf
             sf = tsf[0] * km
@@ -816,7 +816,6 @@ while True:
             af = taf[0] < km
             sf = stsf
         else:
-            bolge = "SAÇMA YATAY"
             af = taf[0] / km
             sf = tsf[0] * km
 
