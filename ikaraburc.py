@@ -269,7 +269,7 @@ class coin_trader:
         headers = {'Accept': 'application/json', 'Content-Type': 'application/json'}
         url = '/spot/candlesticks'
         global mumd
-        mumd = 1
+        mumd = 5
         query_param = 'currency_pair=' + self.coin + '&interval=' + str(mumd) + 'm' + '&limit=1000'
         global rmumlar
         while True:
@@ -425,7 +425,7 @@ class coin_trader:
         hacimler.reverse()
 
         global maks, mabs, mak, mab, ott, son_dip, son_top, yott_say, kesti, ott_k, ott_ky
-        makp = 30
+        makp = 5
         mabp = int(60 / mumd)
         maks = []
         mabs = []
@@ -531,7 +531,7 @@ class coin_trader:
                         if sstut >= mulk / 2:
                             break
 
-            hf = round(max((anapara + harcanan * (km - 1) - usd) / ctm, saf * km), digit)
+            hf = round(max((anapara + harcanan * (km - 1) - usd) / ctm, saort * km), digit)
             if time.time() - tsiftah >= 6 * 24 * 60 * 60:
                 hf = round(max(hf, amalf * 1.20), digit)
 
@@ -737,9 +737,6 @@ while True:
     if agider >= mulk / 5:
         alim_tamam = "evet"
     if ceder < 1:
-        if kzo > (km - 1) * 100:
-            alim_tamam = "evet"
-
         if alim_tamam == "evet":
             ct.toplu_islem()
             tbot_ozel.send_message(telegram_chat_id, str("Eldeki son mal satıldı. Yeni mal taranıyor..."))
@@ -792,23 +789,36 @@ while True:
     p1 = min(usd, mulk / 4)
     m1 = min(ctm, mulk / 4 / cp)
 
-    if (maks[0] > ott and taf[0] <= ott) or maks[0] < ott:
-        bolge = "DÜŞÜŞ"
-        af = taf[0] / km
-        sf = stsf
-        m1 = ctm
-    elif (maks[0] < ott and tsf[0] >= ott) or maks[0] > ott:
-        bolge = "YÜKSELİŞ"
-        af = ataf
-        sf = tsf[0] * km
-        p1 = usd
-        if cp > mabs[5] * 1.05:
-            af = min(af, taf[2])
-            p1 = min(usd, mulk / 4)
+    if kesti == 0:
+        if (dmumlar[0] > ott and taf[0] <= ott) or tsf[0] < ott:
+            bolge = "DÜŞÜŞ"
+            af = taf[0] / km
+            sf = stsf
+            m1 = ctm
+        elif (tmumlar[0] < ott and tsf[0] >= ott) or taf[0] > ott:
+            bolge = "YÜKSELİŞ"
+            af = ataf
+            sf = tsf[0] * km
+            p1 = usd
+            if cp > mabs[5] * 1.05:
+                af = min(af, taf[2])
+                p1 = min(usd, mulk / 4)
+        else:
+            bolge = "SAÇMA YATAY"
+            af = taf[0] / km
+            sf = tsf[0] * km
     else:
-        bolge = "SAÇMA YATAY"
-        af = taf[0] / km
-        sf = tsf[0] * km
+        bolge = "YATAY"
+        if (tsf[0] > max(tmumlar[0], ssf)):
+            af = ataf
+            sf = tsf[0] * km
+        elif (taf[0] < min(dmumlar[0], saf)):
+            af = taf[0] < km
+            sf = stsf
+        else:
+            bolge = "SAÇMA YATAY"
+            af = taf[0] / km
+            sf = tsf[0] * km
 
     # ************- TAF *************************************************************#
     alist = [tsf[1], tsf[0]] + taf[:afi + 1]
