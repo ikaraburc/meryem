@@ -457,7 +457,7 @@ class coin_trader:
         else:
             ott = round(son_top / ott_k, digit)
 
-        yott_say = max(son_dip_i, son_top_i)
+        yott_say = min(son_dip_i, son_top_i)
         kesti = 0
         for i in range(yott_say):
             if (tmumlar[i] >= ott and dmumlar[i] <= ott):
