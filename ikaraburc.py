@@ -440,9 +440,8 @@ class coin_trader:
 
         for i in range(len(maks)):
             if max(maks[:i + 1]) / min(maks[:i + 1]) >= (1 + ott_ky *2/100):
-                son_dip = min(maks[:i])
-                son_top = max(maks[:i])
-                print(son_top/son_dip, 1+ott_ky*2/100)
+                son_dip = min(maks[:i+1])
+                son_top = max(maks[:i+1])
                 break
         for i in range(len(maks)):
             if maks[i] == son_dip:
@@ -891,6 +890,5 @@ while True:
                       "ksf% " + str(round((ksf / cp - 1) * 100, 2)) + " " + str(sonislem)])
 
     print(fiyatlar)
-    print(son_dip, son_top)
 
     continue
