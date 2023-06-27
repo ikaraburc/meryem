@@ -792,16 +792,12 @@ while True:
     p1 = min(usd, mulk / 4)
     m1 = min(ctm, mulk / 4 / cp)
 
-    if (taf[0] <= ott <= tsf[0]):
-        bolge = "YATAY"
-        af = taf[0] / km
-        sf = tsf[0] * km
-    elif (dmumlar[0] > ott and taf[0] <= ott) or tsf[0] <= ott:
+    if (maks[0] > ott and taf[0] <= ott) or maks[0] < ott:
         bolge = "DÜŞÜŞ"
         af = taf[0] / km
         sf = stsf
         m1 = ctm
-    elif (tmumlar[0] < ott and tsf[0] >= ott) or taf[0] >= ott:
+    elif (maks[0] < ott and tsf[0] >= ott) or maks[0] > ott:
         bolge = "YÜKSELİŞ"
         af = ataf
         sf = tsf[0] * km
