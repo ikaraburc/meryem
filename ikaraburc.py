@@ -442,6 +442,7 @@ class coin_trader:
             if max(maks[:i + 1]) / min(maks[:i + 1]) >= (1 + ott_ky *2/100):
                 son_dip = min(maks[:i+1])
                 son_top = max(maks[:i+1])
+                print(son_dip, son_top)
                 break
         for i in range(len(maks)):
             if maks[i] == son_dip:
