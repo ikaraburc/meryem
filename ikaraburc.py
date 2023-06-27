@@ -890,5 +890,6 @@ while True:
                       "ksf% " + str(round((ksf / cp - 1) * 100, 2)) + " " + str(sonislem)])
 
     print(fiyatlar)
+    print(son_dip, son_top)
 
     continue
