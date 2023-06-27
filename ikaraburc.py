@@ -810,11 +810,11 @@ while True:
     else:
         bolge = "KESTİ YATAY"
         if (tsf[0] > max(tmumlar[0], ssf)):
-            af = ataf
+            af = min(ataf, ott)
             sf = tsf[0] * km
         elif (taf[0] < min(dmumlar[0], saf)):
             af = taf[0] < km
-            sf = stsf
+            sf = max(stsf, ott)
         else:
             af = taf[0] / km
             sf = tsf[0] * km
