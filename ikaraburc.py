@@ -429,8 +429,8 @@ class coin_trader:
         global maks, mabs, mak, mab, ott, son_dip, son_top, yott_say, kesti, ott_k, ott_ky
         makp = 4
         mabp = int(60 / mumd)
-        maks = []
-        mabs = []
+        maks = [round((cp + sum(kmumlar[:makp - 1])) / makp, digit)]
+        mabs = [round((cp + sum(kmumlar[:mabp - 1])) / mabp, digit)]
         for i in range(len(kmumlar) - mabp):
             maks.append(round(sum(kmumlar[i:i + makp]) / makp, digit))
             mabs.append(round(sum(kmumlar[i:i + mabp]) / mabp, digit))
@@ -776,7 +776,7 @@ while True:
     # ************- EMA STRATEJİSİ -*******************************#
     af = taf[5]
     sf = max(hf, tsf[5])
-    ksf = hf
+    ksf = max(hf, saort * km)
 
     for i in range(5):
         afi = i
@@ -793,32 +793,36 @@ while True:
     m1 = min(ctm, mulk / 4 / cp)
 
     if kesti == 0:
-        if (dmumlar[0] > ott and tsf[0] <= ott) or tsf[0] < ott:
-            bolge = "DÜŞÜŞ"
-            af = min(ott / km, ataf)
-            sf = stsf
+        if (maks[1] > ott and mak <= ott):
+            bolge = "SATIŞ"
+            sfi = 0
+            af = min(taf[0] / km, ataf)
+            sf = max(taf[0], saort * km)
             m1 = ctm
-        elif (tmumlar[0] < ott and taf[0] >= ott) or taf[0] > ott:
-            bolge = "YÜKSELİŞ"
-            af = ataf
+        elif (maks[1] < ott and mak >= ott):
+            bolge = "ALIŞ"
+            afi = 0
+            af = tsf[0]
             sf = max(ott * km, stsf)
             p1 = usd
-            if cp > mab * 1.03:
-                af = min(af, taf[2])
-                p1 = min(usd, mulk / 4)
+        elif mak > ott:
+            bolge = "YÜKSELİŞ"
+            af = ataf
+            if stsf > mab * km:
+                af = min(ataf, tsf[0] / km)
+            sf = max(stsf, saort * km, ott * km)
+        elif mak < ott:
+            bolge = "DÜŞÜŞ"
+            af = min(ataf, taf[0] / km)
+            sf = max(stsf, saort * km)
         else:
-            bolge = "SAÇMA YATAY"
-            if dmumlar[0] < ott:
-                af = ataf
-            elif tmumlar[0] > ott:
-                sf = stsf
-            else:
-                af = min(ott / km, ataf)
-                sf = max(ott * km, stsf)
+            bolge = "VAR MI ACABA"
+            af = min(ataf, ott / km)
+            sf = max(stsf, ott * km)
     else:
         bolge = "KESTİ YATAY"
-        af = min(ataf, ott / 1.005)
-        sf = max(stsf, ott * 1.005)
+        af = min(ataf, son_dip + k)
+        sf = max(stsf, son_top - k)
 
     # ************- TAF *************************************************************#
     alist = [tsf[1], tsf[0]] + taf[:afi + 1]
@@ -893,11 +897,10 @@ while True:
     fiyatlar.add_row(["kesti: " + str(kesti) + " mak " + str(mak), "taf0  " + str(taf[0]), "tsf0  " + str(tsf[0])])
     fiyatlar.add_row(["mak: " + str(mak), "sdip: " + str(son_dip), "stop: " + str(son_top)])
     fiyatlar.add_row([str("ctm? " + str(round((ctm + usd / tsf[0]) / 1000, mdigit)) + "k"), "saf   " + str(saf),
-                      "ssf   " + str(ssf)])    
+                      "ssf   " + str(ssf)])
     fiyatlar.add_row(["mülk  " + str(round(mulk, 2)), "ksf " + str(round(ksf, digit)),
                       "ksf% " + str(round((ksf / cp - 1) * 100, 2)) + " " + str(sonislem)])
 
     print(fiyatlar)
-    print(son_dip, son_top)
 
     continue
