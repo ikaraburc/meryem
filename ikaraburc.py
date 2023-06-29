@@ -778,28 +778,29 @@ while True:
     sf = max(hf, tsf[5])
     ksf = max(hf, saort * km)
 
+    m = 2
     for i in range(5):
         afi = i
         ataf = taf[i] + k
-        if tsm[2] <= tam[i]:
+        if tsm[m] <= tam[i]:
             break
     for i in range(5):
         sfi = i
         stsf = tsf[i] - k
-        if tam[2] <= tsm[i]:
+        if tam[m] <= tsm[i]:
             break
 
     p1 = min(usd, mulk / 4)
     m1 = min(ctm, mulk / 4 / cp)
 
-    if kesti == 0:
-        if (maks[1] > ott and mak <= ott):
+    if kesti <= 2:
+        if mak <= ott < maks[1]:
             bolge = "SATIŞ"
             sfi = 0
             af = min(taf[0] / km, ataf)
             sf = max(taf[0], saort * km)
             m1 = ctm
-        elif (maks[1] < ott and mak >= ott):
+        elif maks[1] < ott <= mak:
             bolge = "ALIŞ"
             afi = 0
             af = tsf[0]
@@ -814,15 +815,15 @@ while True:
         elif mak < ott:
             bolge = "DÜŞÜŞ"
             af = min(ataf, taf[0] / km)
-            sf = max(stsf, saort * km)
+            sf = max(stsf, saort)
         else:
             bolge = "VAR MI ACABA"
             af = min(ataf, ott / km)
             sf = max(stsf, ott * km)
     else:
-        bolge = "KESTİ YATAY"
-        af = min(ataf, son_dip + k)
-        sf = max(stsf, son_top - k)
+        bolge = "YATAY PİYASA"
+        af = min(ataf, ott / 1.005)
+        sf = max(stsf, ott * 1.005)
 
     # ************- TAF *************************************************************#
     alist = [tsf[1], tsf[0]] + taf[:afi + 1]
