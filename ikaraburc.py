@@ -817,21 +817,23 @@ while True:
             p1 = usd
         elif mak > mab:
             bolge = "YÜKSELİŞ"
-            if kemao < 5:
-                af = ataf
-            else:
+            af = ataf
+            if kemao >= 5:
                 af = min(ataf, tsf[0] / km)
+
             sf = max(stsf, mab * km)
+            if taf[0] < ik:
+                sf = stsf
         elif mak < mab:
             bolge = "DÜŞÜŞ"
             af = min(ataf, taf[0] / km)
-            if ataf > dmumlar[0]:
+            if tsf[0] > ik:
                 af = ataf
-            sf = max(stsf, mab)
+            sf = max(stsf, mab * km)
         else:
             bolge = "VAR MI ACABA"
-            af = min(ataf, mab / km)
-            sf = max(stsf, mab * km)
+            af = min(ataf, mab / 1.01)
+            sf = max(stsf, mab * 1.01)
     else:
         bolge = "YATAY PİYASA"
         af = min(ataf, mab / 1.01)
@@ -903,12 +905,11 @@ while True:
             ct.coklu_sat()
     # ************- EKRANA PRİNT BÖLÜMÜ -*******************************#
     fiyatlar = PrettyTable()
-    fiyatlar.field_names = [str(bolge) + " %" + str(kemao), "kema " + str(kema), str("cp " + str(cp))]
+    fiyatlar.field_names = [str(bolge) + " %" + str(kemao), "cp " + str(cp), "kema " + str(kema)]
     fiyatlar.add_row(["ik " + str(ik), "mak " + str(mak), "mab " + str(mab)])
     fiyatlar.add_row(["yik: " + str(yik) + " kes: " + str(kes), "af    " + str(af), "sf    " + str(sf)])
-    fiyatlar.add_row([str(sonislem) + " ksf " + str(ksf), "taf0  " + str(taf[0]), "tsf0  " + str(tsf[0])])
-    fiyatlar.add_row([str("ctm? " + str(round((ctm + usd / tsf[0]) / 1000, mdigit)) + "k"), "saf   " + str(saf),
-                      "ssf   " + str(ssf)])
+    fiyatlar.add_row(["ksf " + str(ksf), "taf0  " + str(taf[0]), "tsf0  " + str(tsf[0])])
+    fiyatlar.add_row([str(sonislem), "saf   " + str(saf), "ssf   " + str(ssf)])
     fiyatlar.add_row(["mülk  " + str(round(mulk, 2)), "saort " + str(saort),
                       "ssort " + str(ssort)])
 
