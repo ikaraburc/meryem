@@ -451,6 +451,8 @@ class coin_trader:
         if len(usts) > 0:
             usdo = round(sum(usts) / len(usts) * mabk, digit)
 
+        tdo = round(usdo / aldo, 2)
+
         kes = 0
         for i in range(mabp):
             if min(kmumlar[i], kmumlar[i + 1]) <= mab <= max(kmumlar[i], kmumlar[i + 1]):
@@ -815,6 +817,11 @@ while True:
         bolge = "TEMİZ DÜŞÜŞ"
         af = min(ataf, taf[0] / km)
         sf = max(stsf, mab * km)
+        
+    else:
+        bolge = "SAÇMA"
+        af = min(ataf, mab / km)
+        sf = max(stsf, mab * km)
 
     # ************- TAF *************************************************************#
     alist = [tsf[1], tsf[0]] + taf[:afi + 1]
@@ -885,7 +892,7 @@ while True:
     fiyatlar.field_names = [str(bolge) + " %" + str(kemao), "cp " + str(cp), "kema " + str(kema)]
     fiyatlar.add_row(["usdo " + str(usdo), "mab%: " + str(mabo), "mab " + str(mab)])
     fiyatlar.add_row(["aldo " + str(aldo), "af    " + str(af), "sf    " + str(sf)])
-    fiyatlar.add_row(["ksf " + str(ksf), "taf0  " + str(taf[0]), "tsf0  " + str(tsf[0])])
+    fiyatlar.add_row(["tdo% " + str(tdo), "taf0  " + str(taf[0]), "tsf0  " + str(tsf[0])])
     fiyatlar.add_row([str(sonislem) + " kes: " + str(kes), "saf   " + str(saf), "ssf   " + str(ssf)])
     fiyatlar.add_row(["mülk  " + str(round(mulk, 2)), "saort " + str(saort),
                       "ssort " + str(ssort)])
