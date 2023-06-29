@@ -433,8 +433,9 @@ class coin_trader:
             mabs.append(round(sum(kmumlar[i:i + mabp]) / mabp, digit))
 
         mab = mabs[0]
-        mabk = round(mabs[0] / mabs[mabp - 1], 3)
-        mabo = round((mabk - 1) * 100, 2)
+        mabo = round((mabs[0] / mabs[mabp - 1] - 1) * 100, 3)
+        mabk = round(mabo / 100 + 1, 2)
+
         aldo = mab
         usdo = mab
 
@@ -450,10 +451,12 @@ class coin_trader:
             aldo = sum(alts) / len(alts)
         if len(usts) > 0:
             usdo = sum(usts) / len(usts)
-
+        tdo = round(usdo / aldo, 2)
+        if tdo < 1.02:
+            aldo = (usdo + aldo) / 2 / 1.01
+            usdo = (usdo + aldo) / 2 * 1.01
         aldo = round(aldo * mabk, digit)
         usdo = round(usdo * mabk, digit)
-        tdo = round(usdo / aldo, 2)
 
         kes = 0
         for i in range(mabp):
@@ -486,6 +489,7 @@ class coin_trader:
                     ott = round(sdip * 1.015, digit)
                 else:
                     ott = round(stop / 1.015, digit)
+                break
 
         # ------------Alsat_gecmisi
         global bilanco, sonislem, saf, ssf, mf, kzo, kzt, anapara, harcanan, agider, sgelir, hf, km
