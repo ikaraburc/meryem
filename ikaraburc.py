@@ -426,7 +426,7 @@ class coin_trader:
         kmumlar.reverse()
         hacimler.reverse()
 
-        global maks, mabs, mak, mab, kes, ik, yik, sdip, stop
+        global maks, mabs, mak, mab, kes, ik, yik, sdip, stop, kemas, kema, kemao
         makp = 4
         mabp = int(60 / mumd)
         maks = [round((cp + sum(kmumlar[:makp - 1])) / makp, digit)]
@@ -460,6 +460,20 @@ class coin_trader:
             if dmumlar[i] <= mab <= tmumlar[i]:
                 kes = kes + 1
 
+        kyer = 0
+        kemas = []
+        for i in range(len(mabs)):
+            if maks[i] < mabs[i]:
+                if kyer == 1:
+                    kemas.append(mabs[i])
+                kyer = -1
+            else:
+                if kyer == -1:
+                    kemas.append(mabs[i])
+                kyer = 1
+
+        kema = kemas[0]
+        kemao = round((maks[0] / kema - 1) * 100, 2)
         # ------------Alsat_gecmisi
         global bilanco, sonislem, saf, ssf, mf, kzo, kzt, anapara, harcanan, agider, sgelir, hf, km
 
@@ -793,27 +807,27 @@ while True:
             bolge = "SATIŞ"
             sfi = 0
             af = min(taf[0] / km, ataf)
-            sf = max(taf[0], saort * km)
+            sf = max(taf[0], mab / 1.01)
             m1 = ctm
         elif maks[1] < mab <= mak:
             bolge = "ALIŞ"
             afi = 0
-            af = tsf[0]
+            af = min(tsf[0], mab * 1.01)
             sf = max(mab * km, stsf)
             p1 = usd
         elif mak > mab:
             bolge = "YÜKSELİŞ"
-            if cp/mab < km:
+            if kemao < 5:
                 af = ataf
             else:
                 af = min(ataf, tsf[0] / km)
-            sf = max(stsf, saort * km, mab * km)
+            sf = max(stsf, mab * km)
         elif mak < mab:
             bolge = "DÜŞÜŞ"
             af = min(ataf, taf[0] / km)
-            if taf[0] > dmumlar[0]:
+            if ataf > dmumlar[0]:
                 af = ataf
-            sf = max(stsf, saort * km)
+            sf = max(stsf, mab)
         else:
             bolge = "VAR MI ACABA"
             af = min(ataf, mab / km)
@@ -888,16 +902,15 @@ while True:
 
             ct.coklu_sat()
     # ************- EKRANA PRİNT BÖLÜMÜ -*******************************#
-    mab_oran = round((cp - mab) / min(cp, mab) * 100, 2)
     fiyatlar = PrettyTable()
-    fiyatlar.field_names = [str(bolge), "mab% " + str(mab_oran), str("cp " + str(cp))]
+    fiyatlar.field_names = [str(bolge) + " %" + str(kemao), "kema " + str(kema), str("cp " + str(cp))]
     fiyatlar.add_row(["ik " + str(ik), "mak " + str(mak), "mab " + str(mab)])
-    fiyatlar.add_row(["yik: " + str(yik), "af    " + str(af), "sf    " + str(sf)])
-    fiyatlar.add_row(["kes: " + str(kes), "taf0  " + str(taf[0]), "tsf0  " + str(tsf[0])])
+    fiyatlar.add_row(["yik: " + str(yik) + " kes: " + str(kes), "af    " + str(af), "sf    " + str(sf)])
+    fiyatlar.add_row([str(sonislem) + " ksf " + str(ksf), "taf0  " + str(taf[0]), "tsf0  " + str(tsf[0])])
     fiyatlar.add_row([str("ctm? " + str(round((ctm + usd / tsf[0]) / 1000, mdigit)) + "k"), "saf   " + str(saf),
                       "ssf   " + str(ssf)])
-    fiyatlar.add_row(["mülk  " + str(round(mulk, 2)), "ksf " + str(round(ksf, digit)),
-                      "ksf% " + str(round((ksf / cp - 1) * 100, 2)) + " " + str(sonislem)])
+    fiyatlar.add_row(["mülk  " + str(round(mulk, 2)), "saort " + str(saort),
+                      "ssort " + str(ssort)])
 
     print(fiyatlar)
 
