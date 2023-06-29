@@ -371,7 +371,7 @@ class coin_trader:
             digit, mdigit = int(rcoin_digit["precision"]), int(rcoin_digit["amount_precision"])
 
         # ----------------- coin_fiyat
-        global cp, c24, tepe24, dip24, k, cpa, cps, ott_k
+        global cp, c24, tepe24, dip24, k, cpa, cps
 
         cp, tepe24, dip24, c24 = float(rcoin_fiyat[0]["last"]), float(rcoin_fiyat[0]["high_24h"]), float(
             rcoin_fiyat[0]["low_24h"]), float(
@@ -426,7 +426,7 @@ class coin_trader:
         kmumlar.reverse()
         hacimler.reverse()
 
-        global maks, mabs, mak, mab, ott, son_dip, son_top, yott_say, kesti, ott_k, ott_ky
+        global maks, mabs, mak, mab, kes, ik, yik, sdip, stop
         makp = 4
         mabp = int(60 / mumd)
         maks = [round((cp + sum(kmumlar[:makp - 1])) / makp, digit)]
@@ -437,33 +437,28 @@ class coin_trader:
 
         mak = maks[0]
         mab = mabs[0]
-        ott_ky = max(1, round((cps / cpa - 1) * 100, 2))
-        ott_k = (1 + ott_ky / 100)
+
+        ik, sdip, stop = 0, 0, 0
+        ikk = 1.25
+        iky = 1 + ikk / 100
 
         for i in range(len(maks)):
-            if max(maks[:i + 1]) / min(maks[:i + 1]) >= (1 + ott_ky * 2 / 100):
-                son_dip = min(maks[:i + 1])
-                son_top = max(maks[:i + 1])
+            stop = max(maks[:i + 1])
+            sdip = min(maks[:i + 1])
+            stopi = maks.index(stop)
+            sdipi = maks.index(sdip)
+            if stop / sdip >= (1 + iky * 2 / 100):
+                if stopi < sdipi:
+                    ik = round(stop / iky, digit)
+                else:
+                    ik = round(sdip * iky, digit)
+                break
 
-                break
-        for i in range(len(maks)):
-            if maks[i] == son_dip:
-                son_dip_i = i
-                break
-        for i in range(len(maks)):
-            if maks[i] == son_top:
-                son_top_i = i
-                break
-        if son_dip_i < son_top_i:
-            ott = round(son_dip * ott_k, digit)
-        else:
-            ott = round(son_top / ott_k, digit)
-
-        yott_say = min(son_dip_i, son_top_i)
-        kesti = 0
-        for i in range(yott_say):
-            if dmumlar[i] <= ott <= tmumlar[i]:
-                kesti += 1
+        yik = min(stopi, sdipi)
+        kes = 0
+        for i in range(yik):
+            if dmumlar[i] <= mab <= tmumlar[i]:
+                kes = kes + 1
 
         # ------------Alsat_gecmisi
         global bilanco, sonislem, saf, ssf, mf, kzo, kzt, anapara, harcanan, agider, sgelir, hf, km
@@ -675,9 +670,9 @@ def ikinci_elek():
             ema_ok = "XXXXX"
             sil = "evet"
 
-        ott_ok = "OK"
-        if taf[0] <= ott:
-            ott_ok = "XXXXX"
+        mab_ok = "OK"
+        if taf[0] <= mab:
+            mab_ok = "XXXXX"
             sil = "evet"
 
         m1hacim = mbuys
@@ -694,7 +689,7 @@ def ikinci_elek():
         bc_tablo.add_row(["cp:  ", str(cp)])
         bc_tablo.add_row(["ema?", [mabs[0], ema_ok]])
         bc_tablo.add_row(["yer", [yer, yero]])
-        bc_tablo.add_row(["ott?", [ott, ott_ok]])
+        bc_tablo.add_row(["mab?", [mab, mab_ok]])
         bc_tablo.add_row(["m1hacim", [m1hacim, hacim_ok]])
 
         print(bc_tablo)
@@ -793,37 +788,40 @@ while True:
     p1 = min(usd, mulk / 4)
     m1 = min(ctm, mulk / 4 / cp)
 
-    if kesti <= 2:
-        if mak <= ott < maks[1]:
+    if kes <= 2:
+        if mak <= mab < maks[1]:
             bolge = "SATIŞ"
             sfi = 0
             af = min(taf[0] / km, ataf)
             sf = max(taf[0], saort * km)
             m1 = ctm
-        elif maks[1] < ott <= mak:
+        elif maks[1] < mab <= mak:
             bolge = "ALIŞ"
             afi = 0
             af = tsf[0]
-            sf = max(ott * km, stsf)
+            sf = max(mab * km, stsf)
             p1 = usd
-        elif mak > ott:
+        elif mak > mab:
             bolge = "YÜKSELİŞ"
-            af = min(ataf, tsf[0] / km)
-            sf = max(stsf, saort * km, ott * km)
-        elif mak < ott:
+            if cp/mab < km:
+                af = ataf
+            else:
+                af = min(ataf, tsf[0] / km)
+            sf = max(stsf, saort * km, mab * km)
+        elif mak < mab:
             bolge = "DÜŞÜŞ"
-            af = min(af, taf[0] / km)
+            af = min(ataf, taf[0] / km)
             if taf[0] > dmumlar[0]:
                 af = ataf
             sf = max(stsf, saort * km)
         else:
             bolge = "VAR MI ACABA"
-            af = min(ataf, ott / km)
-            sf = max(stsf, ott * km)
+            af = min(ataf, mab / km)
+            sf = max(stsf, mab * km)
     else:
         bolge = "YATAY PİYASA"
-        af = min(ataf, ott / 1.005)
-        sf = max(stsf, ott * 1.005)
+        af = min(ataf, mab / 1.01)
+        sf = max(stsf, mab * 1.01)
 
     # ************- TAF *************************************************************#
     alist = [tsf[1], tsf[0]] + taf[:afi + 1]
@@ -890,13 +888,12 @@ while True:
 
             ct.coklu_sat()
     # ************- EKRANA PRİNT BÖLÜMÜ -*******************************#
-    ott_oran = round((cp - ott) / min(cp, ott) * 100, 2)
+    mab_oran = round((cp - mab) / min(cp, mab) * 100, 2)
     fiyatlar = PrettyTable()
-    fiyatlar.field_names = [str(bolge) + " ott% " + str(ott_oran), "ott " + str(ott), str("cp " + str(cp))]
-    fiyatlar.add_row(["yott: " + str(yott_say) + " sloss%:" + str(ott_ky), "af    " + str(round(af, digit)),
-                      "sf    " + str(round(sf, digit))])
-    fiyatlar.add_row(["kesti: " + str(kesti) + " mak " + str(mak), "taf0  " + str(taf[0]), "tsf0  " + str(tsf[0])])
-    fiyatlar.add_row(["mak: " + str(mak), "sdip: " + str(son_dip), "stop: " + str(son_top)])
+    fiyatlar.field_names = [str(bolge), "mab% " + str(mab_oran), str("cp " + str(cp))]
+    fiyatlar.add_row(["ik " + str(ik), "mak " + str(mak), "mab " + str(mab)])
+    fiyatlar.add_row(["yik: " + str(yik), "af    " + str(af), "sf    " + str(sf)])
+    fiyatlar.add_row(["kes: " + str(kes), "taf0  " + str(taf[0]), "tsf0  " + str(tsf[0])])
     fiyatlar.add_row([str("ctm? " + str(round((ctm + usd / tsf[0]) / 1000, mdigit)) + "k"), "saf   " + str(saf),
                       "ssf   " + str(ssf)])
     fiyatlar.add_row(["mülk  " + str(round(mulk, 2)), "ksf " + str(round(ksf, digit)),
