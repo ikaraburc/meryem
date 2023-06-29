@@ -426,16 +426,17 @@ class coin_trader:
         kmumlar.reverse()
         hacimler.reverse()
 
-        global maks, mabs, mak, mab, kes, kemas, kema, kemao, tdo, aldo, usdo, mabk, mabo
+        global maks, mabs, mak, mab, kes, kemas, kema, kemao, tdo, aldo, usdo, mabk, mabo, ott
         mabp = int(60 / mumd)
         mabs = [round((cp + sum(kmumlar[:mabp - 1])) / mabp, digit)]
         for i in range(len(kmumlar) - mabp):
             mabs.append(round(sum(kmumlar[i:i + mabp]) / mabp, digit))
 
         mab = mabs[0]
-        mabk = round(max(mabs[0], mabs[mabp - 1]) / min(mabs[0], mabs[mabp - 1]), 3)
-        mabk = max(mabk, 1.014)
-        mabo = round((mabs[0] - mabs[mabp - 1]) / mabs[mabp - 1] * 100, 3)
+        mabk = round(mabs[0] / mabs[mabp - 1], 3)
+        mabo = round((mabk - 1) * 100, 2)
+        aldo = mab
+        usdo = mab
 
         alts = []
         usts = []
@@ -444,13 +445,14 @@ class coin_trader:
                 usts.append(kmumlar[i])
             else:
                 alts.append(kmumlar[i])
-        aldo = mab
-        usdo = mab
-        if len(alts) > 0:
-            aldo = round(sum(alts) / len(alts) / mabk, digit)
-        if len(usts) > 0:
-            usdo = round(sum(usts) / len(usts) * mabk, digit)
 
+        if len(alts) > 0:
+            aldo = sum(alts) / len(alts)
+        if len(usts) > 0:
+            usdo = sum(usts) / len(usts)
+
+        aldo = round(aldo * mabk, digit)
+        usdo = round(usdo * mabk, digit)
         tdo = round(usdo / aldo, 2)
 
         kes = 0
@@ -472,6 +474,18 @@ class coin_trader:
 
         kema = kemas[0]
         kemao = round((kmumlar[0] / kema - 1) * 100, 2)
+
+        ott = mab
+        for i in range(len(kmumlar)):
+            stop = max(kmumlar[:i + 1])
+            sdip = min(kmumlar[:i + 1])
+            sdipi = kmumlar.index(sdip)
+            stopi = kmumlar.index(stop)
+            if stop / sdip >= 1.03:
+                if sdipi < stopi:
+                    ott = round(sdip * 1.015, digit)
+                else:
+                    ott = round(stop / 1.015, digit)
 
         # ------------Alsat_gecmisi
         global bilanco, sonislem, saf, ssf, mf, kzo, kzt, anapara, harcanan, agider, sgelir, hf, km
@@ -801,7 +815,7 @@ while True:
     p1 = min(usd, mulk / 4)
     m1 = min(ctm, mulk / 4 / cp)
 
-    if mabk < km and kes >= 2:
+    if abs(mabo) < 2 and kes >= 2:
         bolge = "YATAY"
         af = min(ataf, aldo)
         sf = max(stsf, usdo)
@@ -809,22 +823,27 @@ while True:
     elif mab > mabs[12]:
         bolge = "TEMİZ YÜKSELİŞ"
         af = ataf
+        sf = max(stsf, ott * km)
         if kemao > 5:
             af = min(ataf, tsf[0] / km)
-        sf = max(stsf, mab * km)
+        if taf[0] < ott:
+            sf = stsf
+            af = min(ataf, taf[0] / km)
 
     elif mab < mabs[12]:
         bolge = "TEMİZ DÜŞÜŞ"
         af = min(ataf, taf[0] / km)
-        sf = max(stsf, mab * km)
-        
+        sf = max(stsf, mab)
+        if tsf[0] > ott:
+            af = ataf
+            sf = mab * km
     else:
         bolge = "SAÇMA"
         af = min(ataf, mab / km)
         sf = max(stsf, mab * km)
 
     # ************- TAF *************************************************************#
-    alist = [tsf[1], tsf[0]] + taf[:afi + 1]
+    alist = [tsf[0]] + taf[:afi + 1]
     if alist[- 1] <= af:
         for a in range(len(alist) - 1, -1, -1):
             af = alist[a] + k
@@ -835,7 +854,7 @@ while True:
             af = alist[alist.index(af - k) + 1] + k
 
     # ************- TSF ************************************************************#
-    slist = [taf[1], taf[0]] + tsf[:sfi + 1]
+    slist = [taf[0]] + tsf[:sfi + 1]
 
     if slist[- 1] >= sf:
         for s in range(len(slist) - 1, -1, -1):
@@ -890,7 +909,7 @@ while True:
     # ************- EKRANA PRİNT BÖLÜMÜ -*******************************#
     fiyatlar = PrettyTable()
     fiyatlar.field_names = [str(bolge) + " %" + str(kemao), "cp " + str(cp), "kema " + str(kema)]
-    fiyatlar.add_row(["usdo " + str(usdo), "mab%: " + str(mabo), "mab " + str(mab)])
+    fiyatlar.add_row(["usdo " + str(usdo), "mab%: " + str(mabo) + "mabk: " + str(mabk), "mab " + str(mab)])
     fiyatlar.add_row(["aldo " + str(aldo), "af    " + str(af), "sf    " + str(sf)])
     fiyatlar.add_row(["tdo% " + str(tdo), "taf0  " + str(taf[0]), "tsf0  " + str(tsf[0])])
     fiyatlar.add_row([str(sonislem) + " kes: " + str(kes), "saf   " + str(saf), "ssf   " + str(ssf)])
