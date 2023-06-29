@@ -434,6 +434,7 @@ class coin_trader:
 
         mab = mabs[0]
         mabk = round(max(mabs[0], mabs[mabp - 1]) / min(mabs[0], mabs[mabp - 1]), 3)
+        mabk = max(mabk, 1.014)
         mabo = round((mabs[0] - mabs[mabp - 1]) / mabs[mabp - 1] * 100, 3)
 
         alts = []
