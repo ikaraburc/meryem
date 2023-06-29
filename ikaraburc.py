@@ -802,7 +802,7 @@ while True:
     p1 = min(usd, mulk / 4)
     m1 = min(ctm, mulk / 4 / cp)
 
-    if kes <= 2:
+    if kes <= 1:
         if mak <= mab < maks[1]:
             bolge = "SATIŞ"
             sfi = 0
@@ -822,7 +822,7 @@ while True:
                 af = min(ataf, tsf[0] / km)
 
             sf = max(stsf, mab * km)
-            if taf[0] < ik:
+            if ssort * km < taf[0] < ik:
                 sf = stsf
         elif mak < mab:
             bolge = "DÜŞÜŞ"
