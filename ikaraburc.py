@@ -443,9 +443,12 @@ class coin_trader:
                 usts.append(kmumlar[i])
             else:
                 alts.append(kmumlar[i])
-
-        aldo = round(sum(alts) / len(alts) / mabk, digit)
-        usdo = round(sum(usts) / len(usts) * mabk, digit)
+        aldo = mab
+        usdo = mab
+        if len(alts) > 0:
+            aldo = round(sum(alts) / len(alts) / mabk, digit)
+        if len(usts) > 0:
+            usdo = round(sum(usts) / len(usts) * mabk, digit)
 
         kes = 0
         for i in range(mabp):
@@ -882,7 +885,7 @@ while True:
     fiyatlar.add_row(["usdo " + str(usdo), "mab%: " + str(mabo), "mab " + str(mab)])
     fiyatlar.add_row(["aldo " + str(aldo), "af    " + str(af), "sf    " + str(sf)])
     fiyatlar.add_row(["ksf " + str(ksf), "taf0  " + str(taf[0]), "tsf0  " + str(tsf[0])])
-    fiyatlar.add_row([str(sonislem)+ " kes: " + str(kes), "saf   " + str(saf), "ssf   " + str(ssf)])
+    fiyatlar.add_row([str(sonislem) + " kes: " + str(kes), "saf   " + str(saf), "ssf   " + str(ssf)])
     fiyatlar.add_row(["mülk  " + str(round(mulk, 2)), "saort " + str(saort),
                       "ssort " + str(ssort)])
 
