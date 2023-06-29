@@ -808,14 +808,14 @@ while True:
             p1 = usd
         elif mak > ott:
             bolge = "YÜKSELİŞ"
-            af = ataf
-            if stsf > mab * km:
-                af = min(ataf, tsf[0] / km)
+            af = min(ataf, tsf[0] / km)
             sf = max(stsf, saort * km, ott * km)
         elif mak < ott:
             bolge = "DÜŞÜŞ"
-            af = min(ataf, taf[0] / km)
-            sf = max(stsf, saort)
+            af = min(af, taf[0] / km)
+            if taf[0] > dmumlar[0]:
+                af = ataf
+            sf = max(stsf, saort * km)
         else:
             bolge = "VAR MI ACABA"
             af = min(ataf, ott / km)
