@@ -269,7 +269,7 @@ class coin_trader:
         headers = {'Accept': 'application/json', 'Content-Type': 'application/json'}
         url = '/spot/candlesticks'
         global mumd
-        mumd = 5
+        mumd = 1
         query_param = 'currency_pair=' + self.coin + '&interval=' + str(mumd) + 'm' + '&limit=1000'
         global rmumlar
         while True:
@@ -426,72 +426,50 @@ class coin_trader:
         kmumlar.reverse()
         hacimler.reverse()
 
-        global maks, mabs, mak, mab, kes, kemas, kema, kemao, tdo, aldo, usdo, mabk, mabo, ott
-        mabp = int(60 / mumd)
+        global mabs, mab, ott, yatay, aldo, usdo, kes
+        mabp = int(20 / mumd)
         mabs = [round((cp + sum(kmumlar[:mabp - 1])) / mabp, digit)]
         for i in range(len(kmumlar) - mabp):
             mabs.append(round(sum(kmumlar[i:i + mabp]) / mabp, digit))
 
         mab = mabs[0]
-        mabo = round((mabs[0] / mabs[mabp - 1] - 1) * 100, 3)
-        mabk = round(mabo / 100 + 1, 2)
-
-        aldo = mab
-        usdo = mab
+        ottp = 1.5
+        ottdk = 1.03
+        ottk = 1 + (ottdk - 1) / 2
+        yatay = 0
+        for i in range(len(mabs)):
+            stop = max(mabs[:i + 1])
+            sdip = min(mabs[:i + 1])
+            sdipi = mabs.index(sdip)
+            stopi = mabs.index(stop)
+            yatay = min(sdipi, stopi)
+            if stop / sdip >= ottk:
+                if sdipi < stopi:
+                    ott = round(sdip * ottk, digit)
+                else:
+                    ott = round(stop / ottk, digit)
+                break
 
         alts = []
         usts = []
-        for i in range(mabp):
-            if kmumlar[i] > mabs[i]:
-                usts.append(kmumlar[i])
-            else:
-                alts.append(kmumlar[i])
-
-        if len(alts) > 0:
-            aldo = sum(alts) / len(alts)
-        if len(usts) > 0:
-            usdo = sum(usts) / len(usts)
-
-        aldo = round(aldo * mabk, digit)
-        usdo = round(usdo * mabk, digit)
-
-        if len(alts) == 0:
-            aldo = mab
-        if len(usts) == 0:
-            usdo = mab
-
         kes = 0
-        for i in range(mabp):
-            if dmumlar[i] <= mab <= tmumlar[i]:
+        for i in range(yatay):
+            if tmumlar[i] > ott:
+                usts.append(tmumlar[i])
+            if dmumlar[i] < ott:
+                alts.append(dmumlar[i])
+            if tmumlar[i] >= ott >= dmumlar[i]:
                 kes = kes + 1
 
-        kyer = 0
-        kemas = []
-        for i in range(len(mabs)):
-            if kmumlar[i] < mabs[i]:
-                if kyer == 1:
-                    kemas.append(mabs[i])
-                kyer = -1
-            else:
-                if kyer == -1:
-                    kemas.append(mabs[i])
-                kyer = 1
+        if len(alts) > 0:
+            aldo = round(sum(alts) / len(alts), digit)
+        else:
+            aldo = ott
 
-        kema = kemas[0]
-        kemao = round((kmumlar[0] / kema - 1) * 100, 2)
-
-        ott = mab
-        for i in range(len(kmumlar)):
-            stop = max(kmumlar[:i + 1])
-            sdip = min(kmumlar[:i + 1])
-            sdipi = kmumlar.index(sdip)
-            stopi = kmumlar.index(stop)
-            if stop / sdip >= 1.03:
-                if sdipi < stopi:
-                    ott = round(sdip * 1.015, digit)
-                else:
-                    ott = round(stop / 1.015, digit)
-                break
+        if len(usts) > 0:
+            usdo = round(sum(usts) / len(usts), digit)
+        else:
+            usdo = ott
 
         # ------------Alsat_gecmisi
         global bilanco, sonislem, saf, ssf, mf, kzo, kzt, anapara, harcanan, agider, sgelir, hf, km, saort, ssort
@@ -820,44 +798,45 @@ while True:
     p1 = min(usd, mulk / 4)
     m1 = min(ctm, mulk / 4 / cp)
 
-    if taf[0] >= aldo / 1.01 and tsf[0] <= usdo * 1.01 and kes >= 2:
-        bolge = "YATAY"
-        af = min(ataf, aldo, mab / 1.01)
-        sf = max(stsf, mab * km)
-        if tmumlar[0] > tsf[0] > mab:
-            sf = max(stsf, usdo, mab * 1.01)
+    af = min(ataf, ott / km)
+    sf = max(stsf, ott * km)
 
-    elif dmumlar[0] > mab >= taf[0] > saort * 1.01:
-        bolge = "SATIŞ"
-        af = min(ataf, taf[0] / km)
-        sf = stsf
-        sfi = 1
+    if yatay >= 1:
+        if kes == 0:
+            if tmumlar[0] < ott < tsf[0]:
+                bolge = "ALIŞ"
+                af = ataf
+                sf = max(stsf, ott * km)
+                p1 = usd
+            elif dmumlar[0] > ott > taf[0]:
+                bolge = "SATIŞ"
+                af = min(ataf, ott / km)
+                sf = stsf
+                m1 = ctm
+            else:
+                bolge = "YATAY-KES=0"
+                af = min(ataf, aldo, ott / 1.005)
+                sf = max(stsf, usdo, ott * 1.005)
+        else:
+            bolge = "SAÇMA YATAY"
+            af = min(ataf, aldo, ott / 1.005)
+            sf = max(stsf, usdo, ott * 1.005)
 
-    elif tmumlar[0] < mab <= tsf[0]:
-        bolge = "ALIŞ"
-        afi = 1
+    elif taf[0] > ott:
+        bolge = "YÜKSELİŞ"
         af = ataf
         sf = max(stsf, ott * km)
+        p1 = usd
 
-    elif taf[0] > mab:
-        bolge = "YÜKSELİŞTE"
-        af = min(ataf, tsf[0] / km)
-        sf = max(stsf, tsf[0] * km)
-        if taf[0] < ott:
-            sf = stsf
-            af = min(ataf, taf[0] / km)
-
-    elif tsf[0] < mab:
-        bolge = "DÜŞÜŞTE"
-        af = min(ataf, taf[0] / km)
-        sf = max(stsf, mab * 1.01)
-        if tsf[0] > ott:
-            af = ataf
-            sf = mab * km
+    elif tsf[0] < ott:
+        bolge = "DÜŞÜŞ"
+        af = min(ataf, ott / km)
+        sf = stsf
+        m1 = ctm
     else:
-        bolge = "SAÇMA"
-        af = min(ataf, mab / km)
-        sf = max(stsf, mab * km)
+        bolge = "SAÇMA YATAY1"
+        af = min(ataf, aldo, ott / 1.005)
+        sf = max(stsf, usdo, ott * 1.005)
 
     # ************- TAF *************************************************************#
     alist = [tsf[0]] + taf[:afi + 1]
@@ -923,16 +902,15 @@ while True:
                 smiktar = m1 - yedek
 
             ct.coklu_sat()
-    # ************- EKRANA PRİNT BÖLÜMÜ -*******************************#
-    fiyatlar = PrettyTable()
-    fiyatlar.field_names = [str(bolge) + " %" + str(kemao), "cp " + str(cp), "kema " + str(kema)]
-    fiyatlar.add_row(["usdo " + str(usdo), "mab%: " + str(mabo) + "mabk: " + str(mabk), "mab " + str(mab)])
-    fiyatlar.add_row(["aldo " + str(aldo), "af    " + str(af), "sf    " + str(sf)])
-    fiyatlar.add_row(["ott  " + str(ott), "taf0  " + str(taf[0]), "tsf0  " + str(tsf[0])])
-    fiyatlar.add_row([" kes: " + str(kes), "saf   " + str(saf), "ssf   " + str(ssf)])
-    fiyatlar.add_row([str(sonislem), "saort " + str(saort),
-                      "ssort " + str(ssort)])
 
+    # ************- EKRANA PRİNT BÖLÜMÜ -*******************************#
+    ho = round((cp / mabs[20] - 1) * 100, 2)
+    fiyatlar = PrettyTable()
+    fiyatlar.field_names = [str(bolge) + " ma%" + str(ho), "ott  " + str(ott), "cp " + str(cp)]
+    fiyatlar.add_row(["usdo " + str(usdo), "af    " + str(af), "sf    " + str(sf)])
+    fiyatlar.add_row(["aldo " + str(aldo), "taf0  " + str(taf[0]), "tsf0  " + str(tsf[0])])
+    fiyatlar.add_row(["yatay: " + str(yatay) + " kes: " + str(kes), "saort " + str(saort), "ssort " + str(ssort)])
+    fiyatlar.add_row([str(sonislem), "saf   " + str(saf), "ssf   " + str(ssf)])
     print(fiyatlar)
 
     continue
