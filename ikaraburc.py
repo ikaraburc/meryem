@@ -451,7 +451,7 @@ class coin_trader:
             aldo = sum(alts) / len(alts)
         if len(usts) > 0:
             usdo = sum(usts) / len(usts)
-            
+
         aldo = round(aldo * mabk, digit)
         usdo = round(usdo * mabk, digit)
 
@@ -823,7 +823,9 @@ while True:
     if taf[0] >= aldo / 1.01 and tsf[0] <= usdo * 1.01 and kes >= 2:
         bolge = "YATAY"
         af = min(ataf, aldo, mab / 1.01)
-        sf = max(stsf, usdo, mab * 1.01)
+        sf = max(stsf, mab * km)
+        if tmumlar[0] > tsf[0] > mab:
+            sf = max(stsf, usdo, mab * 1.01)
 
     elif dmumlar[0] > mab >= taf[0] > saort * 1.01:
         bolge = "SATIŞ"
@@ -927,8 +929,8 @@ while True:
     fiyatlar.add_row(["usdo " + str(usdo), "mab%: " + str(mabo) + "mabk: " + str(mabk), "mab " + str(mab)])
     fiyatlar.add_row(["aldo " + str(aldo), "af    " + str(af), "sf    " + str(sf)])
     fiyatlar.add_row(["ott  " + str(ott), "taf0  " + str(taf[0]), "tsf0  " + str(tsf[0])])
-    fiyatlar.add_row(["tdo% " + str(tdo), "saf   " + str(saf), "ssf   " + str(ssf)])
-    fiyatlar.add_row([str(sonislem) + " kes: " + str(kes), "saort " + str(saort),
+    fiyatlar.add_row([" kes: " + str(kes), "saf   " + str(saf), "ssf   " + str(ssf)])
+    fiyatlar.add_row([str(sonislem), "saort " + str(saort),
                       "ssort " + str(ssort)])
 
     print(fiyatlar)
