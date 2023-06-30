@@ -782,6 +782,7 @@ while True:
     af = taf[5]
     sf = max(hf, tsf[5])
     ksf = max(hf, saort * km)
+    ho = round((cp / mabs[20] - 1) * 100, 2)
 
     m = 3
     for i in range(5):
@@ -825,6 +826,8 @@ while True:
     elif taf[0] > ott:
         bolge = "YÜKSELİŞ"
         af = ataf
+        if ho >= 3:
+            af = min(ataf, tsf[0] / km)
         sf = max(stsf, ott * km)
         p1 = usd
 
@@ -832,6 +835,8 @@ while True:
         bolge = "DÜŞÜŞ"
         af = min(ataf, ott / km)
         sf = stsf
+        if ho <= -3:
+            sf = max(stsf, taf[0] * km)
         m1 = ctm
     else:
         bolge = "SAÇMA YATAY1"
@@ -904,9 +909,8 @@ while True:
             ct.coklu_sat()
 
     # ************- EKRANA PRİNT BÖLÜMÜ -*******************************#
-    ho = round((cp / mabs[20] - 1) * 100, 2)
     fiyatlar = PrettyTable()
-    fiyatlar.field_names = [str(bolge) + " ma%" + str(ho), "ott  " + str(ott), "cp " + str(cp)]
+    fiyatlar.field_names = [str(bolge) + " ho%" + str(ho), "ott  " + str(ott), "cp " + str(cp)]
     fiyatlar.add_row(["usdo " + str(usdo), "af    " + str(af), "sf    " + str(sf)])
     fiyatlar.add_row(["aldo " + str(aldo), "taf0  " + str(taf[0]), "tsf0  " + str(tsf[0])])
     fiyatlar.add_row(["yatay: " + str(yatay) + " kes: " + str(kes), "saort " + str(saort), "ssort " + str(ssort)])
