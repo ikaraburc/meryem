@@ -829,8 +829,18 @@ while True:
         af = min(ataf, aldo)
         sf = max(stsf, usdo)       
 
+    elif dmumlar[0] > mab >= taf[0]:
+        bolge = "SATIŞ"
+        af = min(ataf, taf[0] / km)
+        sf = stsf
+        
+    elif tmumlar[0] < mab <= tsf[0]:
+        bolge = "ALIŞ"
+        af = ataf
+        sf = max(stsf, ott * km)
+        
     elif taf[0] > mab:
-        bolge = "TEMİZ YÜKSELİŞ"
+        bolge = "YÜKSELİŞTE"
         af = ataf
         sf = max(stsf, ott * km)
         if kemao > 5:
@@ -840,9 +850,9 @@ while True:
             af = min(ataf, taf[0] / km)
 
     elif tsf[0] < mab:
-        bolge = "TEMİZ DÜŞÜŞ"
+        bolge = "DÜŞÜŞTE"
         af = min(ataf, taf[0] / km)
-        sf = max(stsf, ott * km)
+        sf = max(stsf, mab/1.01)
         if tsf[0] > ott:
             af = ataf
             sf = mab * km
