@@ -451,10 +451,7 @@ class coin_trader:
             aldo = sum(alts) / len(alts)
         if len(usts) > 0:
             usdo = sum(usts) / len(usts)
-        tdo = round(usdo / aldo, 2)
-        if tdo < 1.02:
-            aldo = (usdo + aldo) / 2 / 1.01
-            usdo = (usdo + aldo) / 2 * 1.01
+            
         aldo = round(aldo * mabk, digit)
         usdo = round(usdo * mabk, digit)
 
@@ -465,7 +462,7 @@ class coin_trader:
 
         kes = 0
         for i in range(mabp):
-            if min(kmumlar[i], kmumlar[i + 1]) <= mab <= max(kmumlar[i], kmumlar[i + 1]):
+            if dmumlar[i] <= mab <= tmumlar[i]:
                 kes = kes + 1
 
         kyer = 0
@@ -497,10 +494,10 @@ class coin_trader:
                 break
 
         # ------------Alsat_gecmisi
-        global bilanco, sonislem, saf, ssf, mf, kzo, kzt, anapara, harcanan, agider, sgelir, hf, km
-        global saort, ssort
-        samik, satut, saort = 0,0,0
-        ssmik, sstut, ssort = 0,0,0
+        global bilanco, sonislem, saf, ssf, mf, kzo, kzt, anapara, harcanan, agider, sgelir, hf, km, saort, ssort
+        samik, satut, saort = 0, 0, 0
+        ssmik, sstut, ssort = 0, 0, 0
+
         miktar = ctm
         amiktar = 0
         anapara = mulk
@@ -546,7 +543,6 @@ class coin_trader:
                     if s["side"] == "sell":
                         ssf = round(float(s["price"]), digit)
                         break
-            
 
             if agider > 0:
                 for a in ralsat_gecmisi:
@@ -813,39 +809,38 @@ while True:
     for i in range(5):
         afi = i
         ataf = taf[i] + k
-        if max(tsm[m],50/tsf[m]) <= tam[i]:
+        if max(tsm[m], 50 / tsf[m]) <= tam[i]:
             break
     for i in range(5):
         sfi = i
         stsf = tsf[i] - k
-        if max(tam[m], 50/taf[m]) <= tsm[i]:
+        if max(tam[m], 50 / taf[m]) <= tsm[i]:
             break
 
     p1 = min(usd, mulk / 4)
     m1 = min(ctm, mulk / 4 / cp)
+
     if taf[0] >= aldo / 1.01 and tsf[0] <= usdo * 1.01 and kes >= 2:
         bolge = "YATAY"
-        af = min(ataf, aldo)
-        sf = max(stsf, usdo, saf * 1.014)       
+        af = min(ataf, aldo, mab / 1.01)
+        sf = max(stsf, usdo, mab * 1.01)
 
     elif dmumlar[0] > mab >= taf[0] > saort * 1.01:
         bolge = "SATIŞ"
         af = min(ataf, taf[0] / km)
         sf = stsf
         sfi = 1
-        
+
     elif tmumlar[0] < mab <= tsf[0]:
         bolge = "ALIŞ"
         afi = 1
         af = ataf
         sf = max(stsf, ott * km)
-        
+
     elif taf[0] > mab:
         bolge = "YÜKSELİŞTE"
-        af = ataf
-        sf = max(stsf, ott * km)
-        if kemao > 5:
-            af = min(ataf, tsf[0] / km)
+        af = min(ataf, tsf[0] / km)
+        sf = max(stsf, tsf[0] * km)
         if taf[0] < ott:
             sf = stsf
             af = min(ataf, taf[0] / km)
@@ -853,7 +848,7 @@ while True:
     elif tsf[0] < mab:
         bolge = "DÜŞÜŞTE"
         af = min(ataf, taf[0] / km)
-        sf = max(stsf, mab/1.01)
+        sf = max(stsf, mab * 1.01)
         if tsf[0] > ott:
             af = ataf
             sf = mab * km
@@ -861,7 +856,7 @@ while True:
         bolge = "SAÇMA"
         af = min(ataf, mab / km)
         sf = max(stsf, mab * km)
-  
+
     # ************- TAF *************************************************************#
     alist = [tsf[0]] + taf[:afi + 1]
     if alist[- 1] <= af:
