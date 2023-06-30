@@ -686,7 +686,7 @@ def ikinci_elek():
         ct.toplu_islem()
 
         yer = "BOŞ"
-        for i in range(len(maks)):
+        for i in range(len(mabs)):
             if mabs[0] / mabs[i] >= 1.05:
                 yer = "TEPE"
                 break
