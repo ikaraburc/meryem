@@ -498,7 +498,9 @@ class coin_trader:
 
         # ------------Alsat_gecmisi
         global bilanco, sonislem, saf, ssf, mf, kzo, kzt, anapara, harcanan, agider, sgelir, hf, km
-
+        global saort, ssort
+        saort = 0
+        ssort = 0
         miktar = ctm
         amiktar = 0
         anapara = mulk
@@ -544,9 +546,7 @@ class coin_trader:
                     if s["side"] == "sell":
                         ssf = round(float(s["price"]), digit)
                         break
-            global saort, ssort
-            samik, satut, saort = 0, 0, 0
-            ssmik, sstut, ssort = 0, 0, 0
+            
 
             if agider > 0:
                 for a in ralsat_gecmisi:
