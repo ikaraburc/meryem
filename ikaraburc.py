@@ -458,6 +458,11 @@ class coin_trader:
         aldo = round(aldo * mabk, digit)
         usdo = round(usdo * mabk, digit)
 
+        if len(alts) == 0:
+            aldo = mab
+        if len(usts) == 0:
+            usdo = mab
+
         kes = 0
         for i in range(mabp):
             if min(kmumlar[i], kmumlar[i + 1]) <= mab <= max(kmumlar[i], kmumlar[i + 1]):
@@ -804,25 +809,25 @@ while True:
     sf = max(hf, tsf[5])
     ksf = max(hf, saort * km)
 
-    m = 2
+    m = 3
     for i in range(5):
         afi = i
         ataf = taf[i] + k
-        if tsm[m] <= tam[i]:
+        if max(tsm[m],50/tsf[m]) <= tam[i]:
             break
     for i in range(5):
         sfi = i
         stsf = tsf[i] - k
-        if tam[m] <= tsm[i]:
+        if max(tam[m], 50/taf[m]) <= tsm[i]:
             break
 
     p1 = min(usd, mulk / 4)
     m1 = min(ctm, mulk / 4 / cp)
 
-    if abs(mabo) < 2 and kes >= 2:
+    if taf[0] >= aldo / 1.01 and tsf[0] <= usdo * 1.01 and kes >= 2:
         bolge = "YATAY"
         af = min(ataf, aldo)
-        sf = max(stsf, usdo)
+        sf = max(stsf, usdo)       
 
     elif mab > mabs[12]:
         bolge = "TEMİZ YÜKSELİŞ"
@@ -837,7 +842,7 @@ while True:
     elif mab < mabs[12]:
         bolge = "TEMİZ DÜŞÜŞ"
         af = min(ataf, taf[0] / km)
-        sf = max(stsf, mab)
+        sf = max(stsf, ott * km)
         if tsf[0] > ott:
             af = ataf
             sf = mab * km
