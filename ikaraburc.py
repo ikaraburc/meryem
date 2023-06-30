@@ -823,19 +823,20 @@ while True:
 
     p1 = min(usd, mulk / 4)
     m1 = min(ctm, mulk / 4 / cp)
-
-    if taf[0] >= aldo / 1.01 and tsf[0] <= usdo * 1.01 and kes >= 2:
+        if taf[0] >= aldo / 1.01 and tsf[0] <= usdo * 1.01 and kes >= 2:
         bolge = "YATAY"
         af = min(ataf, aldo)
-        sf = max(stsf, usdo)       
+        sf = max(stsf, usdo, saf * 1.014)       
 
-    elif dmumlar[0] > mab >= taf[0]:
+    elif dmumlar[0] > mab >= taf[0] > saort * 1.01:
         bolge = "SATIŞ"
         af = min(ataf, taf[0] / km)
         sf = stsf
+        sfi = 1
         
     elif tmumlar[0] < mab <= tsf[0]:
         bolge = "ALIŞ"
+        afi = 1
         af = ataf
         sf = max(stsf, ott * km)
         
@@ -860,7 +861,7 @@ while True:
         bolge = "SAÇMA"
         af = min(ataf, mab / km)
         sf = max(stsf, mab * km)
-
+  
     # ************- TAF *************************************************************#
     alist = [tsf[0]] + taf[:afi + 1]
     if alist[- 1] <= af:
