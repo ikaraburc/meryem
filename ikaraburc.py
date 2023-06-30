@@ -823,7 +823,7 @@ while True:
 
     p1 = min(usd, mulk / 4)
     m1 = min(ctm, mulk / 4 / cp)
-        if taf[0] >= aldo / 1.01 and tsf[0] <= usdo * 1.01 and kes >= 2:
+    if taf[0] >= aldo / 1.01 and tsf[0] <= usdo * 1.01 and kes >= 2:
         bolge = "YATAY"
         af = min(ataf, aldo)
         sf = max(stsf, usdo, saf * 1.014)       
