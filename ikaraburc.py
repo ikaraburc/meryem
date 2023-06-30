@@ -829,7 +829,7 @@ while True:
         af = min(ataf, aldo)
         sf = max(stsf, usdo)       
 
-    elif mab > mabs[12]:
+    elif taf[0] > mab:
         bolge = "TEMİZ YÜKSELİŞ"
         af = ataf
         sf = max(stsf, ott * km)
@@ -839,7 +839,7 @@ while True:
             sf = stsf
             af = min(ataf, taf[0] / km)
 
-    elif mab < mabs[12]:
+    elif tsf[0] < mab:
         bolge = "TEMİZ DÜŞÜŞ"
         af = min(ataf, taf[0] / km)
         sf = max(stsf, ott * km)
