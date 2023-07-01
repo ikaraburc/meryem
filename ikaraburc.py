@@ -803,8 +803,8 @@ while True:
                 sf = max(stsf, ott * km)
         else:
             bolge = "SAÇMA YATAY"
-            af = min(ataf, ott / ottk)
-            sf = max(stsf, ott * ottk)
+            af = min(ataf, aldo, ott/1.005)
+            sf = max(stsf, usdo, ott*1.005)
 
     elif taf[0] > ott:
         bolge = "YÜKSELİŞ"
