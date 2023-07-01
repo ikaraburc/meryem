@@ -443,7 +443,7 @@ class coin_trader:
             sdipi = mabs.index(sdip)
             stopi = mabs.index(stop)
             yatay = min(sdipi, stopi)
-            if stop / sdip >= ottk:
+            if stop / sdip >= ottdk:
                 if sdipi < stopi:
                     ott = round(sdip * ottk, digit)
                 else:
