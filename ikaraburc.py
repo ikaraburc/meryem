@@ -799,8 +799,8 @@ while True:
                 m1 = ctm
             else:
                 bolge = "YATAY-KES=0"
-                af = min(ataf, ott / ottk)
-                sf = max(stsf, ott * ottk)
+                af = min(ataf, ott / km)
+                sf = max(stsf, ott * km)
         else:
             bolge = "SAÇMA YATAY"
             af = min(ataf, ott / ottk)
