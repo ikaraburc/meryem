@@ -427,7 +427,7 @@ class coin_trader:
         hacimler.reverse()
 
         global mabs, mab, ott, yatay, aldo, usdo, kes, ottk, sdip, stop
-        mabp = int(20 / mumd)
+        mabp = max(int(3 / mumd), mumd)
         mabs = [round((cp + sum(kmumlar[:mabp - 1])) / mabp, digit)]
         for i in range(len(kmumlar) - mabp):
             mabs.append(round(sum(kmumlar[i:i + mabp]) / mabp, digit))
@@ -779,73 +779,29 @@ while True:
         if max(tam[m], 50 / taf[m]) <= tsm[i]:
             break
 
-    p1 = min(usd, mulk / 4)
-    m1 = min(ctm, mulk / 4 / cp)
+    p1 = usd
+    m1 = ctm
 
-    af = min(ataf, ott / km)
-    sf = max(stsf, ott * km)
-
-    if yatay >= 1:
-        if kes == 0:
-            if tmumlar[0] < ott < tsf[0]:
-                bolge = "ALIŞ"
-                afi = 0
-                af = taf[0]
-                sf = max(stsf, ott * km)
-                p1 = usd
-            elif dmumlar[0] > ott > taf[0]:
-                bolge = "SATIŞ"
-                af = min(ataf, ott / km)
-                sfi = 0
-                sf = tsf[0]
-                m1 = ctm
-            else:
-                bolge = "YATAY-KES=0"
-                af = min(ataf, taf[0] / km)
-                sf = max(stsf, tsf[0] * km)
-        else:
-            bolge = "YATAY-KES>=1"
-            af = min(ataf, ott / ottk)
-            sf = max(stsf, ott * ottk)
-
-    elif taf[0] > ott:
+    if tmumlar[0] < ott <= stsf:
+        bolge = "ALIŞ"
+        af = ataf
+        sf = stsf * km
+    elif ataf <= ott < dmumlar[0]:
+        bolge = "SATIŞ"
+        af = ataf / km
+        sf = stsf
+    elif ott <= ataf:
         bolge = "YÜKSELİŞ"
-        af = min(ataf, ott * ottk)
-        sf = max(stsf, tsf[0] * km)
-        p1 = usd
-
-    elif tsf[0] < ott:
+        af = ataf
+        sf = stsf * km
+    elif stsf <= ott:
         bolge = "DÜŞÜŞ"
-        af = min(ataf, taf[0] / km)
-        sf = max(stsf, ott / ottk)
-        m1 = ctm
+        af = ataf / km
+        sf = stsf
     else:
-        bolge = "SAÇMA YATAY1"
-        af = min(ataf, taf[0] / km)
-        sf = max(stsf, tsf[0] * km)
-
-    # ************- TAF *************************************************************#
-    alist = [tsf[0]] + taf[:afi + 1]
-    if alist[- 1] <= af:
-        for a in range(len(alist) - 1, -1, -1):
-            af = alist[a] + k
-            if alist[a] / alist[-1] >= 1.005:
-                af = alist[a + 1] + k
-                break
-        if af - k == afiyat and afiyat > alist[-1]:
-            af = alist[alist.index(af - k) + 1] + k
-
-    # ************- TSF ************************************************************#
-    slist = [taf[0]] + tsf[:sfi + 1]
-
-    if slist[- 1] >= sf:
-        for s in range(len(slist) - 1, -1, -1):
-            sf = slist[s] - k
-            if slist[- 1] / slist[s] >= 1.005:
-                sf = slist[s + 1] - k
-                break
-        if sf + k == sfiyat and sfiyat < slist[-1]:
-            sf = slist[slist.index(sf + k) + 1] - k
+        bolge = "SAÇMA"
+        af = ataf / km
+        sf = stsf * km
 
     # ************- AL SAT EMİRLERİNİ GÖNDER BÖLÜMÜ -*************************************#
     af = round(af, digit)
