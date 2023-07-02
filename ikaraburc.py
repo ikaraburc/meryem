@@ -451,7 +451,7 @@ class coin_trader:
                 break
         kes = 0
         for i in range(yatay):
-            if tmumlar[i] >= ott >= dmumlar[i + 1]:
+            if kmumlar[i] >= ott and kmumlar[i+1] <= ott:
                 kes = kes + 1
 
         # ------------Alsat_gecmisi
@@ -770,47 +770,84 @@ while True:
     m = 2
     for i in range(5):
         afi = i
-        ataf = taf[i] + k
+        ataf = taf[i]
         if max(tsm[m], 50 / tsf[m]) <= tam[i]:
             break
     for i in range(5):
         sfi = i
-        stsf = tsf[i] - k
+        stsf = tsf[i]
         if max(tam[m], 50 / taf[m]) <= tsm[i]:
             break
 
-    if ataf - k == afiyat:
-        ataf = afiyat
-    if stsf + k == sfiyat:
-        stsf = sfiyat
-        
-    p1 = usd
-    m1 = ctm
-    
-    if tmumlar[0] < ott <= stsf:
-        bolge = "ALIŞ"
-        af = ataf
-        sf = stsf * km
-    elif ataf <= ott < dmumlar[0]:
-        bolge = "SATIŞ"
-        af = ataf / km
-        sf = stsf
-    elif ott <= ataf:
-        bolge = "YÜKSELİŞ"
-        af = ataf
-        sf = stsf * km
-        if ataf < saf:
-            sf = stsf
-    elif stsf <= ott:
-        bolge = "DÜŞÜŞ"
-        af = ataf / km
-        sf = stsf
-        if stsf > ssf:
+    p1 = min(usd, mulk / 4)
+    m1 = min(ctm, mulk / 4 / cp)
+
+    if yatay == 0:
+        if ott <= ataf:
+            bolge = "YÜKSELİŞ"
             af = ataf
+            sf = stsf * km
+        elif stsf <= ott:
+            bolge = "DÜŞÜŞ"
+            af = ataf / km
+            sf = stsf
+        else:
+            bolge = "Hareketli Saçma"
+            af = ataf / km
+            sf = stsf * km
     else:
-        bolge = "SAÇMA"
-        af = ataf / km
-        sf = stsf * km
+        if kes == 0:
+            if ott <= stsf:
+                bolge = "YK0 ALIŞ"
+                af = ataf
+                sf = stsf * km
+                p1 = usd
+            elif ataf <= ott:
+                bolge = "YK0 SATIŞ"
+                af = ataf / km
+                sf = stsf
+                m1 = ctm
+            else:
+                bolge = "YK0 SAÇMA"
+                af = ataf / km
+                sf = stsf * km
+        else:
+            if min(kmumlar[:2])*1.003 < ataf < ott:
+                bolge = "YK1 ALIŞ"
+                af = ataf
+                sf = stsf * km
+            elif ott < stsf < max(kmumlar[:2])/1.003:
+                bolge = "YK1 SATIŞ"
+                af = ataf / km
+                sf = stsf
+            else:
+                bolge = "YK1 SAÇMA"
+                af = ataf / km
+                sf = stsf * km
+
+    # ************- TAF - TSF BÖLÜMÜ -*************************************#
+    alist = [tsf[0]] + taf[:afi]
+    slist = [taf[0]] + tsf[:sfi]
+    slist.reverse()
+
+    if af >= alist[-1]:
+        for a in range(len(alist)):
+            print(alist[a], af)
+            if alist[a] / af <= 1.003:
+                af = alist[a]
+                break
+    if sf < slist[0]:
+        for s in range(len(slist)):
+            print(slist[s], sf)
+            if slist[s] / sf <= 1.003:
+                af = slist[s]
+                break
+    af = af + k
+    sf = sf - k
+    if af - k == afiyat:
+        af = afiyat
+    if sf + k == sfiyat:
+        sf = sfiyat
 
     # ************- AL SAT EMİRLERİNİ GÖNDER BÖLÜMÜ -*************************************#
     af = round(af, digit)
@@ -858,8 +895,8 @@ while True:
     fiyatlar = PrettyTable()
     fiyatlar.field_names = [str(bolge) + " ho%" + str(ho), "ott  " + str(ott), "cp " + str(cp)]
     fiyatlar.add_row(["y:" + str(yatay) + "k:" + str(kes), "af    " + str(af), "sf    " + str(sf)])
-    fiyatlar.add_row(["stop: " + str(stop), "taf0  " + str(taf[0]), "tsf0  " + str(tsf[0])])
-    fiyatlar.add_row(["sdip: " + str(sdip), "saort " + str(saort), "ssort " + str(ssort)])
+    fiyatlar.add_row(["stop: " + str(round(ott * ottk, digit)), "taf0  " + str(taf[0]), "tsf0  " + str(tsf[0])])
+    fiyatlar.add_row(["sdip: " + str(round(ott / ottk, digit)), "saort " + str(saort), "ssort " + str(ssort)])
     fiyatlar.add_row(["ksf: " + str(ksf) + " " + str(sonislem), "saf   " + str(saf), "ssf   " + str(ssf)])
     print(fiyatlar)
 
