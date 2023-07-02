@@ -455,9 +455,9 @@ class coin_trader:
                 kes = kes + 1
 
         # ------------Alsat_gecmisi
-        global bilanco, sonislem, saf, ssf, mf, kzo, kzt, anapara, harcanan, agider, sgelir, hf, km, saort, ssort
-        samik, satut, saort = 0, 0, 0
-        ssmik, sstut, ssort = 0, 0, 0
+        global bilanco, sonislem, mf, kzo, kzt, anapara, harcanan, agider, sgelir, hf, km, saort, ssort, saf, ssf
+        samik, satut, saort, saf = 0, 0, 0, ott
+        ssmik, sstut, ssort, ssf = 0, 0, 0, ott
 
         miktar = ctm
         amiktar = 0
@@ -465,7 +465,7 @@ class coin_trader:
         agider, sgelir, harcanan = 0, 0, 0
         hf, km = 0, 1.03
         mf, mmf, kzo, kzt = 0, 0, 0, 0
-        saf, ssf, sonislem = 0, 0, "boş"
+        sonislem = "boş"
 
         if ceder >= 1:
             for x in ralsat_gecmisi:
@@ -779,14 +779,19 @@ while True:
         if max(tam[m], 50 / taf[m]) <= tsm[i]:
             break
 
+    if ataf - k == afiyat:
+        ataf = afiyat
+    if stsf + k == sfiyat:
+        stsf = sfiyat
+        
     p1 = usd
     m1 = ctm
-
-    if kmumlar[0] < ott <= stsf:
+    
+    if tmumlar[0] < ott <= stsf:
         bolge = "ALIŞ"
         af = ataf
         sf = stsf * km
-    elif ataf <= ott < kmumlar[0]:
+    elif ataf <= ott < dmumlar[0]:
         bolge = "SATIŞ"
         af = ataf / km
         sf = stsf
@@ -794,10 +799,14 @@ while True:
         bolge = "YÜKSELİŞ"
         af = ataf
         sf = stsf * km
+        if ataf < saf:
+            sf = stsf
     elif stsf <= ott:
         bolge = "DÜŞÜŞ"
         af = ataf / km
         sf = stsf
+        if stsf > ssf:
+            af = ataf
     else:
         bolge = "SAÇMA"
         af = ataf / km
