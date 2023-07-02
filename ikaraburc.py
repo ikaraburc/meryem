@@ -782,11 +782,11 @@ while True:
     p1 = usd
     m1 = ctm
 
-    if tmumlar[0] < ott <= stsf:
+    if kmumlar[0] < ott <= stsf:
         bolge = "ALIŞ"
         af = ataf
         sf = stsf * km
-    elif ataf <= ott < dmumlar[0]:
+    elif ataf <= ott < kmumlar[0]:
         bolge = "SATIŞ"
         af = ataf / km
         sf = stsf
