@@ -426,16 +426,16 @@ class coin_trader:
         kmumlar.reverse()
         hacimler.reverse()
 
-        global mabs, mab, ott, yatay, aldo, usdo, kes, ottk
+        global mabs, mab, ott, yatay, aldo, usdo, kes, ottk, sdip, stop
         mabp = int(20 / mumd)
         mabs = [round((cp + sum(kmumlar[:mabp - 1])) / mabp, digit)]
         for i in range(len(kmumlar) - mabp):
             mabs.append(round(sum(kmumlar[i:i + mabp]) / mabp, digit))
 
         mab = mabs[0]
-        ottp = 1.5
-        ottdk = 1.03
-        ottk = 1 + (ottdk - 1) / 2
+        ottp = 1.25
+        ottk = 1 + ottp / 100
+        ottdk = 1 + 2 * ottp / 100
         yatay = 0
         for i in range(len(mabs)):
             stop = max(mabs[:i + 1])
@@ -451,7 +451,7 @@ class coin_trader:
                 break
         kes = 0
         for i in range(yatay):
-            if tmumlar[i] >= ott >= dmumlar[i+1]:
+            if tmumlar[i] >= ott >= dmumlar[i + 1]:
                 kes = kes + 1
 
         # ------------Alsat_gecmisi
@@ -767,7 +767,7 @@ while True:
     ksf = round(max(hf, saort * km), digit)
     ho = round((cp / mabs[20] - 1) * 100, 2)
 
-    m = 3
+    m = 2
     for i in range(5):
         afi = i
         ataf = taf[i] + k
@@ -789,42 +789,40 @@ while True:
         if kes == 0:
             if tmumlar[0] < ott < tsf[0]:
                 bolge = "ALIŞ"
-                af = ataf
+                afi = 0
+                af = taf[0]
                 sf = max(stsf, ott * km)
                 p1 = usd
             elif dmumlar[0] > ott > taf[0]:
                 bolge = "SATIŞ"
                 af = min(ataf, ott / km)
-                sf = stsf
+                sfi = 0
+                sf = tsf[0]
                 m1 = ctm
             else:
                 bolge = "YATAY-KES=0"
-                af = min(ataf, ott / km)
-                sf = max(stsf, ott * km)
+                af = min(ataf, taf[0] / km)
+                sf = max(stsf, tsf[0] * km)
         else:
-            bolge = "SAÇMA YATAY"
-            af = min(ataf, ott/1.005)
-            sf = max(stsf, ott*1.005)
+            bolge = "YATAY-KES>=1"
+            af = min(ataf, ott / ottk)
+            sf = max(stsf, ott * ottk)
 
     elif taf[0] > ott:
         bolge = "YÜKSELİŞ"
-        af = ataf
-        if ho >= 3:
-            af = min(ataf, tsf[0] / km)
-        sf = max(stsf, ott * km)
+        af = min(ataf, ott * ottk)
+        sf = max(stsf, tsf[0] * km)
         p1 = usd
 
     elif tsf[0] < ott:
         bolge = "DÜŞÜŞ"
-        af = min(ataf, ott / km)
-        sf = stsf
-        if ho <= -3:
-            sf = max(stsf, taf[0] * km)
+        af = min(ataf, taf[0] / km)
+        sf = max(stsf, ott / ottk)
         m1 = ctm
     else:
         bolge = "SAÇMA YATAY1"
-        af = min(ataf, ott / ottk)
-        sf = max(stsf, ott * ottk)
+        af = min(ataf, taf[0] / km)
+        sf = max(stsf, tsf[0] * km)
 
     # ************- TAF *************************************************************#
     alist = [tsf[0]] + taf[:afi + 1]
@@ -894,10 +892,10 @@ while True:
     # ************- EKRANA PRİNT BÖLÜMÜ -*******************************#
     fiyatlar = PrettyTable()
     fiyatlar.field_names = [str(bolge) + " ho%" + str(ho), "ott  " + str(ott), "cp " + str(cp)]
-    fiyatlar.add_row(["yatay: " + str(yatay), "af    " + str(af), "sf    " + str(sf)])
-    fiyatlar.add_row(["kes  : " + str(kes), "taf0  " + str(taf[0]), "tsf0  " + str(tsf[0])])    
-    fiyatlar.add_row([str(sonislem), "saf   " + str(saf), "ssf   " + str(ssf)])
-    fiyatlar.add_row(["ksf: " + str(ksf), "saort " + str(saort), "ssort " + str(ssort)])
+    fiyatlar.add_row(["y:" + str(yatay) + "k:" + str(kes), "af    " + str(af), "sf    " + str(sf)])
+    fiyatlar.add_row(["stop: " + str(stop), "taf0  " + str(taf[0]), "tsf0  " + str(tsf[0])])
+    fiyatlar.add_row(["sdip: " + str(sdip), "saf   " + str(saf), "ssf   " + str(ssf)])
+    fiyatlar.add_row(["ksf: " + str(ksf) + " " + str(sonislem), "saort " + str(saort), "ssort " + str(ssort)])
     print(fiyatlar)
 
     continue
