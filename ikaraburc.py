@@ -894,8 +894,8 @@ while True:
     fiyatlar.field_names = [str(bolge) + " ho%" + str(ho), "ott  " + str(ott), "cp " + str(cp)]
     fiyatlar.add_row(["y:" + str(yatay) + "k:" + str(kes), "af    " + str(af), "sf    " + str(sf)])
     fiyatlar.add_row(["stop: " + str(stop), "taf0  " + str(taf[0]), "tsf0  " + str(tsf[0])])
-    fiyatlar.add_row(["sdip: " + str(sdip), "saf   " + str(saf), "ssf   " + str(ssf)])
-    fiyatlar.add_row(["ksf: " + str(ksf) + " " + str(sonislem), "saort " + str(saort), "ssort " + str(ssort)])
+    fiyatlar.add_row(["sdip: " + str(sdip), "saort " + str(saort), "ssort " + str(ssort)])
+    fiyatlar.add_row(["ksf: " + str(ksf) + " " + str(sonislem), "saf   " + str(saf), "ssf   " + str(ssf)])
     print(fiyatlar)
 
     continue
