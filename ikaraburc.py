@@ -451,7 +451,7 @@ class coin_trader:
                 break
         kes = 0
         for i in range(yatay):
-            if kmumlar[i] >= ott and kmumlar[i+1] <= ott:
+            if kmumlar[i] <= ott <= kmumlar[i+1]:
                 kes = kes + 1
 
         # ------------Alsat_gecmisi
@@ -790,7 +790,7 @@ while True:
         elif stsf <= ott:
             bolge = "DÜŞÜŞ"
             af = ataf / km
-            sf = ott
+            sf = stsf
         else:
             bolge = "Hareketli Saçma"
             af = ataf / km
@@ -812,18 +812,18 @@ while True:
                 af = ataf / km
                 sf = stsf * km
         else:
-            if min(kmumlar[:2])*1.003 < ataf < ott:
+            if stsf < min(kmumlar[:3])/1.005:
                 bolge = "YK1 ALIŞ"
                 af = ataf
                 sf = stsf * km
-            elif ott < stsf < max(kmumlar[:2])/1.003:
+            elif max(kmumlar[:3])*1.005 < ataf:
                 bolge = "YK1 SATIŞ"
                 af = ataf / km
                 sf = stsf
             else:
                 bolge = "YK1 SAÇMA"
-                af = ataf / km
-                sf = stsf * km
+                af = ataf / ottk
+                sf = stsf * ottk
 
     # ************- TAF - TSF BÖLÜMÜ -*************************************#
     alist = [tsf[0]] + taf[:afi]
