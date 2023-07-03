@@ -451,7 +451,7 @@ class coin_trader:
                 break
         kes = 0
         for i in range(yatay):
-            if kmumlar[i] <= ott <= kmumlar[i+1]:
+            if kmumlar[i] <= ott <= kmumlar[i + 1]:
                 kes = kes + 1
 
         # ------------Alsat_gecmisi
@@ -657,7 +657,7 @@ def ikinci_elek():
             yero = "XXXXX"
             sil = "evet"
 
-        if (mabs[0] * 1.02) >= taf[0] > mabs[3]:
+        if (mabs[0] * 1.02) >= taf[0] > mabs[3] and taf[0] > ott:
             ema_ok = "OK"
         else:
             ema_ok = "XXXXX"
@@ -813,8 +813,15 @@ while True:
                 sf = stsf * km
         else:
             bolge = "YK1 SAÇMA"
-            af = ott / ottk
-            sf = ott * ottk
+            if dmumlar[0] < ataf < dmumlar[1] < dmumlar[2]:
+                af = ataf
+                sf = tsf[0] * ottk
+            elif tmumlar[0] > stsf > tmumlar[1] > tmumlar[2]:
+                af = taf[0] / ottk
+                sf = stsf
+            else:
+                af = taf[0] / ottk
+                sf = tsf[0] * ottk
 
     # ************- TAF - TSF BÖLÜMÜ -*************************************#
     alist = [tsf[0]] + taf[:afi]
