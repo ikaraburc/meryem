@@ -770,12 +770,12 @@ while True:
     m = 2
     for i in range(5):
         afi = i
-        ataf = taf[i]
+        ataf = taf[1]
         if max(tsm[m], 50 / tsf[m]) <= tam[i]:
             break
     for i in range(5):
         sfi = i
-        stsf = tsf[i]
+        stsf = tsf[1]
         if max(tam[m], 50 / taf[m]) <= tsm[i]:
             break
 
@@ -812,18 +812,9 @@ while True:
                 af = ataf / km
                 sf = stsf * km
         else:
-            if stsf < min(kmumlar[:3])/1.005:
-                bolge = "YK1 ALIŞ"
-                af = ataf
-                sf = stsf * km
-            elif max(kmumlar[:3])*1.005 < ataf:
-                bolge = "YK1 SATIŞ"
-                af = ataf / km
-                sf = stsf
-            else:
-                bolge = "YK1 SAÇMA"
-                af = ataf / ottk
-                sf = stsf * ottk
+            bolge = "YK1 SAÇMA"
+            af = ott / ottk
+            sf = ott * ottk
 
     # ************- TAF - TSF BÖLÜMÜ -*************************************#
     alist = [tsf[0]] + taf[:afi]
