@@ -790,7 +790,7 @@ while True:
         elif stsf <= ott:
             bolge = "DÜŞÜŞ"
             af = ataf / km
-            sf = stsf
+            sf = ott
         else:
             bolge = "Hareketli Saçma"
             af = ataf / km
