@@ -857,10 +857,10 @@ while True:
     # ************- EKRANA PRİNT BÖLÜMÜ -*******************************#
     fiyatlar = PrettyTable()
     fiyatlar.field_names = [str(bolge) + " ho%" + str(ho), "ott  " + str(ott), "cp " + str(cp)]
-    fiyatlar.add_row(["y:" + str(yatay) + "k:" + str(kes), "af    " + str(af), "taf0  " + str(taf[0])])
-    fiyatlar.add_row(["stop: " + str(round(ott * ottk, digit)),"sf    " + str(sf) , "tsf0  " + str(tsf[0])])
-    fiyatlar.add_row(["sdip: " + str(round(ott / ottk, digit)), "saort " + str(saort), "saf   " + str(saf) ])
-    fiyatlar.add_row(["ksf: " + str(ksf) + " " + str(sonislem), "ssort " + str(ssort), "ssf   " + str(ssf)])
+    fiyatlar.add_row(["y:" + str(yatay) + " k:" + str(kes), "af    " + str(af), "taf0  " + str(taf[0])])
+    fiyatlar.add_row(["stop: " + str(round(ott * ottk, digit)), "sf    " + str(sf), "tsf0  " + str(tsf[0])])
+    fiyatlar.add_row(["sdip: " + str(round(ott / ottk, digit)), "ssort " + str(ssort), "ssf   " + str(ssf)])
+    fiyatlar.add_row(["ksf: " + str(ksf) + " " + str(sonislem), "saort " + str(saort), "saf   " + str(saf)])
     print(fiyatlar)
 
     continue
