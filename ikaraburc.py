@@ -799,7 +799,7 @@ while True:
         elif cp < mdip:
             bolge = "Y-Düşüş"
             af = ta / ottk
-            sf = ta
+            sf = max(saf * 1.01, ta)
         else:
             bolge = "Y-Nötr"
             af = ta / ottk
