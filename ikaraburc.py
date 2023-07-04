@@ -792,13 +792,16 @@ while True:
                 mtop = tmumlar[i]
                 mdip = dmumlar[i]
                 break
-        if taf[0] > mtop:
+        if tsf[0] > mtop:
+            bolge = "Y-Yükseliş"
             af = ts
             sf = ts * ottk
-        elif tsf[0] < mdip:
+        elif taf[0] < mdip:
+            bolge = "Y-Düşüş"
             af = ta / ottk
             sf = ta
         else:
+            bolge = "Y-Nötr"
             af = ta / ottk
             sf = ts * ottk              
 
@@ -819,7 +822,7 @@ while True:
             afiyat1 = round(min(afiyat * 0.93, taf[9] + k), digit)
 
             amiktar = (p1 - 0.5) / afiyat
-            amiktar1 = (usd - p1) / afiyat1
+            amiktar1 = (usd - p1 - 0.5) / afiyat1
 
             ct.coklu_al()
 
