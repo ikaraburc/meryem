@@ -771,7 +771,7 @@ while True:
     m1 = min(ctm, mulk / 4 / cp)
     ta = taf[0]
     ts = tsf[0]
-    if yatay == 0:
+    if yatay <= 1:
         if ott <= ta:
             bolge = "YÜKSELİŞ"
             af = ts
@@ -785,32 +785,22 @@ while True:
             af = ta / km
             sf = ts * km
     else:
-        if kes == 0:
-            if ott <= ts:
-                bolge = "YK0 ALIŞ"
-                af = ts
-                sf = ts * km
-                p1 = usd
-            elif ta <= ott:
-                bolge = "YK0 SATIŞ"
-                af = ta / km
-                sf = ta
-                m1 = ctm
-            else:
-                bolge = "YK0 SAÇMA"
-                af = ta / km
-                sf = ts * km
+        bolge = "YATAY"
+        for i in range(50):
+            mboy = round(tmumlar[i] - dmumlar[i], digit)
+            if mboy > 0:
+                mtop = tmumlar[i]
+                mdip = dmumlar[i]
+                break
+        if taf[0] > mtop:
+            af = ts
+            sf = ts * ottk
+        elif tsf[0] < mdip:
+            af = ta / ottk
+            sf = ta
         else:
-            bolge = "YK1 SAÇMA"
-            if dmumlar[0] < ta < dmumlar[1] < dmumlar[2]:
-                af = ts
-                sf = ts * ottk
-            elif tmumlar[0] > ts > tmumlar[1] > tmumlar[2]:
-                af = ta / ottk
-                sf = ta
-            else:
-                af = ta / ottk
-                sf = ts * ottk
+            af = ta / ottk
+            sf = ts * ottk              
 
     # ************- AL SAT EMİRLERİNİ GÖNDER BÖLÜMÜ -*************************************#
     af = round(af, digit)
