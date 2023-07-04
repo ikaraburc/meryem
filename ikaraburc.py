@@ -767,8 +767,8 @@ while True:
     ksf = round(max(hf, saort * km), digit)
     ho = round((cp / mabs[20] - 1) * 100, 2)
 
-    p1 = min(usd, mulk / 4)
-    m1 = min(ctm, mulk / 4 / cp)
+    p1 = usd
+    m1 = ctm
     ta = taf[0]
     ts = tsf[0]
     if yatay <= 1:
@@ -792,11 +792,11 @@ while True:
                 mtop = tmumlar[i]
                 mdip = dmumlar[i]
                 break
-        if tsf[0] > mtop:
+        if cp > mtop:
             bolge = "Y-Yükseliş"
             af = ts
             sf = ts * ottk
-        elif taf[0] < mdip:
+        elif cp < mdip:
             bolge = "Y-Düşüş"
             af = ta / ottk
             sf = ta
