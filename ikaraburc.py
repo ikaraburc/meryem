@@ -414,7 +414,7 @@ class coin_trader:
         taf = [float(x[0]) for x in rtahta_getir["bids"]]
         tsf = [float(x[0]) for x in rtahta_getir["asks"]]
 
-        # ---------------Mumlar
+        # -----------------------------------------------------------------------------------Mumlar
 
         global kmumlar, hacimler, tmumlar, dmumlar
         tmumlar = [float(i[3]) for i in rmumlar]
@@ -426,16 +426,23 @@ class coin_trader:
         kmumlar.reverse()
         hacimler.reverse()
 
-        global mabs, mab, ott, yatay, aldo, usdo, kes, ottk, sdip, stop
-        mabp = max(int(5 / mumd), mumd)
-        mabs = [round((cp + sum(kmumlar[:mabp - 1])) / mabp, digit)]
-        for i in range(len(kmumlar) - mabp):
-            mabs.append(round(sum(kmumlar[i:i + mabp]) / mabp, digit))
+        global mabs, mab, ott, yatay, aldo, usdo, kes, ottk, sdip, stop, maks, mak
 
-        mab = mabs[0]
+        mabp = max(int(10 / mumd), mumd)
+        makp = max(int(5 / mumd), mumd)
         ottp = 1.25
         ottk = 1 + ottp / 100
         ottdk = 1 + 2 * ottp / 100
+
+        mabs = [round((cp + sum(kmumlar[:mabp - 1])) / mabp, digit)]
+        maks = [round((cp + sum(kmumlar[:makp - 1])) / makp, digit)]
+        for i in range(len(kmumlar) - mabp):
+            mabs.append(round(sum(kmumlar[i:i + mabp]) / mabp, digit))
+            maks.append(round(sum(kmumlar[i:i + makp]) / makp, digit))
+
+        mab = mabs[0]
+        mak = maks[0]
+
         yatay = 0
         for i in range(len(mabs)):
             stop = max(mabs[:i + 1])
@@ -451,8 +458,23 @@ class coin_trader:
                 break
         kes = 0
         for i in range(yatay):
-            if kmumlar[i] <= ott <= kmumlar[i + 1]:
+            if (kmumlar[i] <= ott <= kmumlar[i + 1]) or (dmumlar[i] <= ott <= tmumlar[i]):
                 kes = kes + 1
+        global ote, donmak, kema
+        ote = 2
+        donmak = maks[int((ote + 1) / 2)]
+        kyer = 0
+        kemas = []
+        for i in range(0, len(maks) - ote):
+            if maks[i] < maks[int(i + ote)]:
+                if kyer == 1:
+                    kemas.append(round(maks[i], digit))
+                kyer = -1
+            else:
+                if kyer == -1:
+                    kemas.append(round(maks[i], digit))
+                kyer = 1
+        kema = kemas[0]
 
         # ------------Alsat_gecmisi
         global bilanco, sonislem, mf, kzo, kzt, anapara, harcanan, agider, sgelir, hf, km, saort, ssort, saf, ssf
@@ -769,21 +791,30 @@ while True:
 
     p1 = usd
     m1 = ctm
-    ta = taf[1]
-    ts = tsf[1]
 
-    ote = 3
-    donmab = mabs[int((ote + 1) / 2)]
-    if mabs[0] < donmab:
-        bolge = "DÜŞÜŞ"
+    if kes == 0:
+        if tsf[0] <= ott:
+            bolge = "DÜŞÜŞ TR"
+            af = taf[0] / km
+            sf = taf[0]
+        elif taf[0] >= ott:
+            bolge = "YÜKSELİŞ TR"
+            af = tsf[0]
+            sf = tsf[0] * km
+        else:
+            bolge = "SAÇMA TR"
+            af = taf[0] / km
+            sf = tsf[0] * km
+    elif maks[0] < donmak:
+        bolge = "YATAY DÜŞÜŞ"
         af = taf[0] / km
-        sf = taf[0]
-    elif mabs[0] > donmab:
-        bolge = "YÜKSELİŞ"
-        af = tsf[0]
+        sf = max(taf[0], kema / 1.01)
+    elif maks[0] > donmak:
+        bolge = "YATAY YÜKSELİŞ"
+        af = min(tsf[0], kema * 1.01)
         sf = tsf[0] * km
     else:
-        bolge = "SAÇMA"
+        bolge = "YATAY SAÇMA"
         af = taf[0] / km
         sf = tsf[0] * km
 
@@ -832,12 +863,10 @@ while True:
     # ************- EKRANA PRİNT BÖLÜMÜ -*******************************#
     fiyatlar = PrettyTable()
     fiyatlar.field_names = [str(bolge) + " ho%" + str(ho), "ott  " + str(ott), "cp " + str(cp)]
-    fiyatlar.add_row(["y:" + str(yatay) + " k:" + str(kes), "af    " + str(af), "taf0  " + str(taf[0])])
+    fiyatlar.add_row(["kes:" + str(kes) + " kema:" + str(kema), "af    " + str(af), "taf0  " + str(taf[0])])
     fiyatlar.add_row(["stop: " + str(round(ott * ottk, digit)), "sf    " + str(sf), "tsf0  " + str(tsf[0])])
-    fiyatlar.add_row(["sdip: " + str(round(ott / ottk, digit)), "ssort " + str(ssort), "ssf   " + str(ssf)])
-    fiyatlar.add_row(["ksf: " + str(ksf) + " " + str(sonislem), "saort " + str(saort), "saf   " + str(saf)])
+    fiyatlar.add_row(["sdip: " + str(round(ott / ottk, digit)), "saf   " + str(saf), "ssf   " + str(ssf)])
+    fiyatlar.add_row(["ksf: " + str(ksf) + " " + str(sonislem), "saort " + str(saort), "ssort " + str(ssort)])
     print(fiyatlar)
-
-    continue
 
     continue
