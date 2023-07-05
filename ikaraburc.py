@@ -427,7 +427,7 @@ class coin_trader:
         hacimler.reverse()
 
         global mabs, mab, ott, yatay, aldo, usdo, kes, ottk, sdip, stop
-        mabp = max(int(3 / mumd), mumd)
+        mabp = max(int(5 / mumd), mumd)
         mabs = [round((cp + sum(kmumlar[:mabp - 1])) / mabp, digit)]
         for i in range(len(kmumlar) - mabp):
             mabs.append(round(sum(kmumlar[i:i + mabp]) / mabp, digit))
@@ -761,7 +761,7 @@ while True:
                     birinci_elek()
                     continue
 
-    # ************- EMA STRATEJİSİ -*******************************#
+    # ************- STRATEJİ -*******************************#
     af = taf[5]
     sf = max(hf, tsf[5])
     ksf = round(max(hf, saort * km), digit)
@@ -769,41 +769,23 @@ while True:
 
     p1 = usd
     m1 = ctm
-    ta = taf[0]
-    ts = tsf[0]
-    if yatay <= 1:
-        if ott <= ta:
-            bolge = "YÜKSELİŞ"
-            af = ts
-            sf = ts * km
-        elif ts <= ott:
-            bolge = "DÜŞÜŞ"
-            af = ta / km
-            sf = ta
-        else:
-            bolge = "Hareketli Saçma"
-            af = ta / km
-            sf = ts * km
+    ta = taf[1]
+    ts = tsf[1]
+
+    ote = 3
+    donmab = mabs[int((ote + 1) / 2)]
+    if mabs[0] < donmab:
+        bolge = "DÜŞÜŞ"
+        af = taf[0] / km
+        sf = taf[0]
+    elif mabs[0] > donmab:
+        bolge = "YÜKSELİŞ"
+        af = tsf[0]
+        sf = tsf[0] * km
     else:
-        bolge = "YATAY"
-        for i in range(50):
-            mboy = round(tmumlar[i] - dmumlar[i], digit)
-            if mboy > 0:
-                mtop = tmumlar[i]
-                mdip = dmumlar[i]
-                break
-        if cp > mtop:
-            bolge = "Y-Yükseliş"
-            af = ts
-            sf = ts * ottk
-        elif cp < mdip:
-            bolge = "Y-Düşüş"
-            af = ta / ottk
-            sf = max(saf * 1.01, ta)
-        else:
-            bolge = "Y-Nötr"
-            af = ta / ottk
-            sf = ts * ottk              
+        bolge = "SAÇMA"
+        af = taf[0] / km
+        sf = tsf[0] * km
 
     # ************- AL SAT EMİRLERİNİ GÖNDER BÖLÜMÜ -*************************************#
     af = round(af, digit)
@@ -855,5 +837,7 @@ while True:
     fiyatlar.add_row(["sdip: " + str(round(ott / ottk, digit)), "ssort " + str(ssort), "ssf   " + str(ssf)])
     fiyatlar.add_row(["ksf: " + str(ksf) + " " + str(sonislem), "saort " + str(saort), "saf   " + str(saf)])
     print(fiyatlar)
+
+    continue
 
     continue
