@@ -807,10 +807,10 @@ while True:
     elif maks[0] < donmak:
         bolge = "YATAY DÜŞÜŞ"
         af = taf[0] / km
-        sf = max(taf[0], kema / 1.01)
+        sf = max(taf[0], saf * 1.01)
     elif maks[0] > donmak:
         bolge = "YATAY YÜKSELİŞ"
-        af = min(tsf[0], kema * 1.01)
+        af = min(tsf[0], ssf / 1.01)
         sf = tsf[0] * km
     else:
         bolge = "YATAY SAÇMA"
