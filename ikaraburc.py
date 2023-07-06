@@ -789,6 +789,18 @@ while True:
     ksf = round(max(hf, saort * km), digit)
     ho = round((cp / mabs[20] - 1) * 100, 2)
 
+    m = 2
+    for i in range(5):
+        afi = i
+        ataf = taf[i] + k
+        if max(tsm[m], 50 / tsf[m]) <= tam[i]:
+            break
+    for i in range(3):
+        sfi = i
+        stsf = tsf[i] - k
+        if max(tam[m], 50 / taf[m]) <= tsm[i]:
+            break
+
     p1 = usd
     m1 = ctm
 
@@ -796,10 +808,10 @@ while True:
         if tsf[0] <= ott:
             bolge = "DÜŞÜŞ TR"
             af = taf[0] / km
-            sf = taf[0]
+            sf = stsf
         elif taf[0] >= ott:
             bolge = "YÜKSELİŞ TR"
-            af = tsf[0]
+            af = ataf
             sf = tsf[0] * km
         else:
             bolge = "SAÇMA TR"
@@ -809,13 +821,13 @@ while True:
         bolge = "SAÇMA YATAY"
         if taf[0] > saort * 1.01 and tsf[0] < min(tmumlar[:2]):
             af = taf[0] / km
-            sf = taf[0]
+            sf = stsf
         elif tsf[0] < ssort / 1.01 and taf[0] > max(dmumlar[:2]):
-            af = tsf[0]
+            af = ataf
             sf = tsf[0] * km
         else:
-            af = min(taf[1] + k, ott / otto)
-            sf = max(tsf[1] - k, ott * otto)
+            af = min(ataf, ott / otto)
+            sf = max(stsf, ott * otto)
 
     # ************- AL SAT EMİRLERİNİ GÖNDER BÖLÜMÜ -*************************************#
     af = round(af, digit)
