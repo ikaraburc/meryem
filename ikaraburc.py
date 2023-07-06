@@ -432,8 +432,7 @@ class coin_trader:
         makp = max(int(5 / mumd), mumd)
         ottp = 1.25
         ottk = 1 + ottp / 100
-        ottdk = 1 + 2 * ottp / 100
-
+        
         mabs = [round((cp + sum(kmumlar[:mabp - 1])) / mabp, digit)]
         maks = [round((cp + sum(kmumlar[:makp - 1])) / makp, digit)]
         for i in range(len(kmumlar) - mabp):
@@ -450,7 +449,7 @@ class coin_trader:
             sdipi = mabs.index(sdip)
             stopi = mabs.index(stop)
             yatay = min(sdipi, stopi)
-            if stop / sdip >= ottdk:
+            if stop / sdip >= ottk:
                 if sdipi < stopi:
                     ott = round(sdip * ottk, digit)
                 else:
@@ -458,7 +457,7 @@ class coin_trader:
                 break
         kes = 0
         for i in range(yatay):
-            if (kmumlar[i] <= ott <= kmumlar[i + 1]) or (dmumlar[i] <= ott <= tmumlar[i]):
+            if (kmumlar[i] <= ott <= kmumlar[i + 1]):
                 kes = kes + 1
         global ote, donmak, kema
         ote = 2
@@ -863,7 +862,7 @@ while True:
     # ************- EKRANA PRİNT BÖLÜMÜ -*******************************#
     fiyatlar = PrettyTable()
     fiyatlar.field_names = [str(bolge) + " ho%" + str(ho), "ott  " + str(ott), "cp " + str(cp)]
-    fiyatlar.add_row(["kes:" + str(kes) + " kema:" + str(kema), "af    " + str(af), "taf0  " + str(taf[0])])
+    fiyatlar.add_row(["kes:" + str(kes) + " yat:" + str(yatay), "af    " + str(af), "taf0  " + str(taf[0])])
     fiyatlar.add_row(["stop: " + str(round(ott * ottk, digit)), "sf    " + str(sf), "tsf0  " + str(tsf[0])])
     fiyatlar.add_row(["sdip: " + str(round(ott / ottk, digit)), "saf   " + str(saf), "ssf   " + str(ssf)])
     fiyatlar.add_row(["ksf: " + str(ksf) + " " + str(sonislem), "saort " + str(saort), "ssort " + str(ssort)])
