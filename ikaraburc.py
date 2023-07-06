@@ -426,13 +426,14 @@ class coin_trader:
         kmumlar.reverse()
         hacimler.reverse()
 
-        global mabs, mab, ott, yatay, aldo, usdo, kes, ottk, sdip, stop, maks, mak
+        global mabs, mab, ott, yatay, aldo, usdo, kes, ottk, sdip, stop, maks, mak, otto
 
         mabp = max(int(10 / mumd), mumd)
         makp = max(int(5 / mumd), mumd)
         ottp = 1.25
+        otto = 1 + 0.5 / 100
         ottk = 1 + ottp / 100
-        
+
         mabs = [round((cp + sum(kmumlar[:mabp - 1])) / mabp, digit)]
         maks = [round((cp + sum(kmumlar[:makp - 1])) / makp, digit)]
         for i in range(len(kmumlar) - mabp):
@@ -804,18 +805,17 @@ while True:
             bolge = "SAÇMA TR"
             af = taf[0] / km
             sf = tsf[0] * km
-    elif maks[0] < donmak:
-        bolge = "YATAY DÜŞÜŞ"
-        af = taf[0] / km
-        sf = max(taf[0], saf * 1.01)
-    elif maks[0] > donmak:
-        bolge = "YATAY YÜKSELİŞ"
-        af = min(tsf[0], ssf / 1.01)
-        sf = tsf[0] * km
     else:
-        bolge = "YATAY SAÇMA"
-        af = taf[0] / km
-        sf = tsf[0] * km
+        bolge = "SAÇMA YATAY"
+        if taf[0] > saort * 1.01 and tsf[0] < min(tmumlar[:2]):
+            af = taf[0] / km
+            sf = taf[0]
+        elif tsf[0] < ssort / 1.01 and taf[0] > max(dmumlar[:2]):
+            af = tsf[0]
+            sf = tsf[0] * km
+        else:
+            af = min(taf[1] + k, ott / otto)
+            sf = max(tsf[1] - k, ott * otto)
 
     # ************- AL SAT EMİRLERİNİ GÖNDER BÖLÜMÜ -*************************************#
     af = round(af, digit)
