@@ -801,8 +801,8 @@ while True:
         if max(tam[m], 50 / taf[m]) <= tsm[i]:
             break
 
-    p1 = usd
-    m1 = ctm
+    p1 = max(min(usd, mulk/4), 2)
+    m1 = max(min(ctm, mulk/4/cp), 2/cp)
 
     if kes == 0:
         if tsf[0] <= ott:
